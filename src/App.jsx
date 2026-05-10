@@ -6,6 +6,7 @@ import "./App.css";
 import ButtonMain from "./componente/ButtonMain";
 import Secondbutton from "./componente/Secondbutton";
 import HeroButton from "./componente/HeroButton";
+import Section_03 from "./componente/Section_03";
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
       <ButtonMain />
       <HeroButton />
       <Secondbutton />
+       <Section_03 />
     </div>
   );
 }
