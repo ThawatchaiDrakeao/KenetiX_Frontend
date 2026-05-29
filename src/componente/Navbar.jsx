@@ -23,7 +23,7 @@ export default function Navbar({ active = "" }) {
   }[language];
 
   const links = [
-    { label: copy.rental, href: "/#rental", key: "rental" },
+    { label: copy.rental, href: "/product", key: "rental" },
     { label: copy.brand, href: "/#brand", key: "brand" },
     { label: copy.howTo, href: "/how-it-works", key: "how-to" },
     { label: copy.contact, href: "/#contact", key: "contact" },
