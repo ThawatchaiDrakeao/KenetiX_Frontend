@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLanguage } from "../context/useLanguage";
 import Navbar from "./Navbar";
 
@@ -127,12 +127,121 @@ const productCopy = {
 
 const sizes = ["US 7", "US 8", "US 9", "US 10", "US 11", "US 12"];
 
+function formatDateInput(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+
+  if (digits.length <= 2) {
+    return digits;
+  }
+
+  if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  }
+
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function isoToDisplayDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  const [year, month, day] = value.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+function displayToIsoDate(value) {
+  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+
+  if (!match) {
+    return "";
+  }
+
+  const [, day, month, year] = match;
+  const dayNumber = Number(day);
+  const monthNumber = Number(month);
+  const yearNumber = Number(year);
+  const date = new Date(yearNumber, monthNumber - 1, dayNumber);
+
+  if (
+    date.getFullYear() !== yearNumber ||
+    date.getMonth() !== monthNumber - 1 ||
+    date.getDate() !== dayNumber
+  ) {
+    return "";
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+function DatePickerField({ label, value, onChange }) {
+  const pickerRef = useRef(null);
+  const isoValue = displayToIsoDate(value);
+
+  const openPicker = () => {
+    if (pickerRef.current?.showPicker) {
+      pickerRef.current.showPicker();
+      return;
+    }
+
+    pickerRef.current?.focus();
+    pickerRef.current?.click();
+  };
+
+  return (
+    <label className="block">
+      <span className="text-sm font-bold uppercase tracking-[0.16em] text-zinc-300">
+        {label}
+      </span>
+      <div className="relative mt-3">
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder="dd/mm/yyyy"
+          value={value}
+          onChange={(event) => onChange(formatDateInput(event.target.value))}
+          className="h-12 w-full rounded-lg border border-zinc-800 bg-black px-4 pr-14 text-sm font-semibold text-white outline-none transition-colors placeholder:text-zinc-600 focus:border-kinetix-lime"
+          aria-label={label}
+        />
+        <button
+          type="button"
+          onClick={openPicker}
+          className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-white/10 hover:text-kinetix-lime"
+          aria-label={`${label} picker`}
+        >
+          <svg
+            aria-hidden="true"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+          </svg>
+        </button>
+        <input
+          ref={pickerRef}
+          type="date"
+          value={isoValue}
+          onChange={(event) => onChange(isoToDisplayDate(event.target.value))}
+          className="pointer-events-none absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 opacity-0"
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+      </div>
+    </label>
+  );
+}
+
 export default function SingleProductPage() {
   const { language } = useLanguage();
   const copy = productCopy[language];
   const [selectedSize, setSelectedSize] = useState("US 9");
   const [selectedPlan, setSelectedPlan] = useState(copy.plans[0].id);
   const [deliveryMethod, setDeliveryMethod] = useState(copy.deliveryOptions[0]);
+  const [pickupDate, setPickupDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
   const selectedPlanCopy = useMemo(
     () => copy.plans.find((plan) => plan.id === selectedPlan) ?? copy.plans[0],
@@ -262,24 +371,16 @@ export default function SingleProductPage() {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-bold uppercase tracking-[0.16em] text-zinc-300">
-                    {copy.pickupLabel}
-                  </span>
-                  <input
-                    type="date"
-                    className="mt-3 h-12 w-full rounded-lg border border-zinc-800 bg-black px-4 text-sm text-white outline-none transition-colors focus:border-kinetix-lime"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-bold uppercase tracking-[0.16em] text-zinc-300">
-                    {copy.returnLabel}
-                  </span>
-                  <input
-                    type="date"
-                    className="mt-3 h-12 w-full rounded-lg border border-zinc-800 bg-black px-4 text-sm text-white outline-none transition-colors focus:border-kinetix-lime"
-                  />
-                </label>
+                <DatePickerField
+                  label={copy.pickupLabel}
+                  value={pickupDate}
+                  onChange={setPickupDate}
+                />
+                <DatePickerField
+                  label={copy.returnLabel}
+                  value={returnDate}
+                  onChange={setReturnDate}
+                />
               </div>
 
               <div>

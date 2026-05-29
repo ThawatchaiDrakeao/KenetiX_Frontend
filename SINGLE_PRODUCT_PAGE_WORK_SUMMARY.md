@@ -20,7 +20,7 @@
 - แสดงค่าเช่าและเงินประกัน
 - ให้ผู้ใช้เลือกไซส์รองเท้า
 - ให้ผู้ใช้เลือกแพ็กเกจเช่า
-- ให้ผู้ใช้เลือกวันรับรองเท้าและวันคืนรองเท้า
+- ให้ผู้ใช้เลือกวันรับรองเท้าและวันคืนรองเท้า โดยกดเลือกจาก date picker หรือพิมพ์ `dd/mm/yyyy` ได้
 - ให้ผู้ใช้เลือกวิธีรับรองเท้า เช่นรับหน้าร้านหรือจัดส่ง
 - แสดงข้อมูลรองเท้า จุดเด่น และ rental assurance
 - แสดง flow การเช่า 4 ขั้นตอน
@@ -78,6 +78,15 @@
 - ระบุข้อมูล mock ที่ใช้
 - อธิบาย commit ให้ทีมอ่านต่อได้ง่าย
 
+#### `fix(product): improve rental entry flow`
+
+ปรับ flow การเข้าใช้งานหน้าเช่า
+
+สิ่งที่ทำ:
+- เปลี่ยน date field ให้พิมพ์เลขและกดเลือกวันจาก picker ได้
+- เปลี่ยนปุ่มเริ่มเช่าในหน้า How It Works ให้พาไป `/product`
+- จัดลำดับ navbar เป็น `Rental`, `How to`, `Brand`, `Contact` ตาม UX ของการเช่าก่อนอ่านข้อมูลรอง
+
 ### การตรวจสอบ
 
 ใช้คำสั่งต่อไปนี้ตรวจหลังแก้งาน:
@@ -117,7 +126,7 @@ Responsibilities:
 - Displays rental fee and deposit
 - Lets users select shoe size
 - Lets users select a rental plan
-- Lets users select pickup and return dates
+- Lets users select pickup and return dates by typing `dd/mm/yyyy` or opening the date picker
 - Lets users select pickup method such as store pickup or home delivery
 - Displays shoe details, best-for notes, and rental assurance
 - Displays a 4-step rental flow
@@ -174,6 +183,15 @@ Changes:
 - Explains the added and updated files
 - Documents the mock product data
 - Explains the commits for team review
+
+#### `fix(product): improve rental entry flow`
+
+Improves the rental entry flow
+
+Changes:
+- Replaces plain date inputs with fields that support both typed `dd/mm/yyyy` entry and picker selection
+- Sends the How It Works start-renting CTA to `/product`
+- Reorders the navbar to `Rental`, `How to`, `Brand`, `Contact` based on the rental-first user flow
 
 ### Verification
 
