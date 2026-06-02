@@ -191,7 +191,7 @@ export default function HowItWorks() {
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a
-                href="/#signup"
+                href="/product"
                 className="inline-flex h-12 items-center justify-center gap-3 rounded-lg bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
               >
                 {copy.primaryCta}
@@ -316,7 +316,7 @@ export default function HowItWorks() {
             </h2>
           </div>
           <a
-            href="/#signup"
+            href="/product"
             className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-black px-6 text-sm font-bold text-white transition-transform hover:scale-[1.02]"
           >
             {copy.finalCta}

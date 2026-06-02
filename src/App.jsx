@@ -5,6 +5,7 @@ import Section01 from "./componente/Section01";
 import Section_03 from "./componente/Section_03";
 import SignupPage from "./componente/SignupPage";
 import HowItWorks from "./componente/HowItWorks";
+import SingleProductPage from "./componente/SingleProductPage";
 import Navbar from "./componente/Navbar";
 import { LanguageProvider } from "./context/LanguageProvider";
 
@@ -13,6 +14,10 @@ function AppContent() {
 
   if (currentPath === "/how-it-works") {
     return <HowItWorks />;
+  }
+
+  if (currentPath === "/product") {
+    return <SingleProductPage />;
   }
 
   return (
