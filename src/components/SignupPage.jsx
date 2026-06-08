@@ -501,7 +501,7 @@ export default function SignupPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-3xl font-bold">Account Created!</h2>
+                <h2 className="text-4xl font-bold">Account Created!</h2>
                 {apiError ? (
                   <p className="text-amber-400 mt-2 text-sm">{apiError}</p>
                 ) : (

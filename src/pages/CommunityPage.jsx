@@ -180,14 +180,14 @@ function Hero() {
           </motion.span>
 
           <motion.h1 variants={fadeUp}
-            className="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-8">
+            className="text-5xl font-black text-white leading-[0.95] tracking-tight mb-8 lg:text-6xl">
             Move Better.<br />
             <span style={{ color: LIME }}>Recover</span> Smarter.<br />
             Connect Stronger.
           </motion.h1>
 
           <motion.p variants={fadeUp}
-            className="text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-10"
+            className="text-lg max-w-lg mx-auto leading-relaxed mb-10"
             style={{ color: "#A0A0A0" }}>
             Join a community built around movement, recovery, and meaningful connections. Run together. Grow together.
           </motion.p>
@@ -218,7 +218,7 @@ function Hero() {
             {STATS.map((s) => (
               <motion.div key={s.label} variants={fadeUp}>
                 <GlassCard className="p-5 text-center" hoverGlow={false}>
-                  <p className="text-3xl font-black mb-1" style={{ color: LIME }}>{s.value}</p>
+                  <p className="text-2xl font-black mb-1" style={{ color: LIME }}>{s.value}</p>
                   <p className="text-[11px] uppercase tracking-widest" style={{ color: "#606060" }}>{s.label}</p>
                 </GlassCard>
               </motion.div>
@@ -274,7 +274,7 @@ function Experiences() {
                       style={{ color: exp.accentColor }}>
                       {exp.tag}
                     </span>
-                    <h3 className="text-xl font-black text-white mb-5">{exp.title}</h3>
+                    <h3 className="text-2xl font-black text-white mb-5">{exp.title}</h3>
                     <ul className="space-y-2.5">
                       {exp.points.map((pt) => (
                         <li key={pt} className="flex items-center gap-2.5 text-sm" style={{ color: "#A0A0A0" }}>
@@ -558,7 +558,7 @@ function Testimonials() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}>
               <GlassCard className="p-10 text-center" glow>
-                <p className="text-2xl sm:text-3xl font-bold text-white leading-relaxed mb-8">
+                <p className="text-2xl lg:text-3xl font-bold text-white leading-relaxed mb-8">
                   "{TESTIMONIALS[active].text}"
                 </p>
                 <div className="flex flex-col items-center gap-3">
@@ -612,12 +612,12 @@ function FinalCTA() {
                 Ready to Join?
               </motion.p>
               <motion.h2 variants={fadeUp}
-                className="text-5xl sm:text-7xl font-black text-white leading-[0.95] tracking-tight mb-6">
+                className="text-5xl font-black text-white leading-[0.95] tracking-tight mb-6 lg:text-6xl">
                 Run Together.<br />
                 <span style={{ color: LIME }}>Recover</span> Together.<br />
                 Grow Together.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-base mb-10" style={{ color: "#A0A0A0" }}>
+              <motion.p variants={fadeUp} className="text-lg mb-10" style={{ color: "#A0A0A0" }}>
                 Your community is waiting. Join KINETIX and start your journey.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center">

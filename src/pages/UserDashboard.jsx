@@ -539,7 +539,7 @@ const DashboardPage = () => {
         
             {/* Header 
             <header className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-neutral-950 z-50">
-                <div className="text-3xl font-extrabold text-lime-400 tracking-tighter">KINETIX</div>
+                <div className="text-4xl font-extrabold text-lime-400 tracking-tighter">KINETIX</div>
                 <nav className="flex items-center gap-10 text-sm text-neutral-300">
                     {['All Shoes', 'Brands', 'How to rent', 'Pricing'].map(item => (
                         <a key={item} href="#" className="hover:text-lime-400 transition">{item}</a>
@@ -586,7 +586,7 @@ const DashboardPage = () => {
                                     {profile?.initials || "?"}
                                 </div>
                                 {/* profile.name ← จาก GET /user/profile */}
-                                <h1 className="mt-6 text-3xl font-bold tracking-tight">{profile?.name}</h1>
+                                <h1 className="mt-6 text-4xl font-bold tracking-tight">{profile?.name}</h1>
                                 {/* profile.email ← จาก GET /user/profile */}
                                 <p className="text-neutral-500 text-sm">{profile?.email}</p>
                                 {/* profile.level ← จาก GET /user/profile */}
@@ -845,7 +845,7 @@ const DashboardPage = () => {
                                         {/* rewards.points ← GET /rewards/points */}
                                         <p className="text-4xl font-black text-neutral-100 mb-6 flex items-baseline gap-2">
                                             {(rewards?.points || 0).toLocaleString()}
-                                            <span className="text-xl font-bold text-lime-400">pts</span>
+                                            <span className="text-2xl font-bold text-lime-400">pts</span>
                                         </p>
                                         <div className="relative pt-6 border-t border-neutral-800 mt-6">
                                             {/* rewards.nextLevel + rewards.nextLevelPoints ← GET /rewards/points */}
@@ -888,7 +888,7 @@ const DashboardPage = () => {
                                         {/* 🔌 map favBrands ← GET /user/brands */}
                                         {favBrands.map((brand) => (
                                             <div key={brand.name} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex flex-col items-center gap-2.5">
-                                                <div className="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center font-black text-xl text-lime-400 border border-neutral-700">
+                                                <div className="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center font-black text-2xl text-lime-400 border border-neutral-700">
                                                     {brand.name === "New Balance" ? "NB" : brand.name === "ASICS" ? "AS" : brand.name.slice(0, 1).toUpperCase()}
                                                 </div>
                                                 <p className="text-sm font-bold text-neutral-100">{brand.name}</p>

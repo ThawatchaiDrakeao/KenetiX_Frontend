@@ -1,47 +1,46 @@
-import { Link } from "react-router-dom";
-import Button from "./ui/Button";
+import { useLanguage } from "../context/useLanguage";
 
-const ACTIVITIES = [
-  { label: "Run Club",          tag: "Every Tue & Sat",    img: "/community/run-club.png"     },
-  { label: "Ice Bath Recovery", tag: "Every Thursday",     img: "/community/ice-bath.png"     },
-  { label: "Coffee Social",     tag: "Every Sunday",       img: "/community/coffee-social.png"},
-];
+const MEMBERS = [
+  { handle: '@cookieyda',      img: '/community/cookie.png' },
+  { handle: '@annethong',      img: '/community/anne.png'   },
+  { handle: '@jirayu_jj',      img: '/community/jirayu.png' },
+  { handle: '@toey_pongsakon', img: '/community/toey.png'   },
+]
 
 export default function Community() {
+  const { t } = useLanguage();
+
   return (
-    <section id="community" className="py-12 lg:py-16 bg-dark-card/30">
+    <section id="community" className="py-10 lg:py-12 bg-dark-card/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         <div className="mb-8">
-          <span className="text-neon text-xs font-semibold tracking-widest uppercase">Community</span>
-          <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white">
-            JOIN THE<br />COMMUNITY
+          <span className="text-neon text-xs font-semibold tracking-widest uppercase">{t("community.badge")}</span>
+          <h2 className="mt-2 text-4xl lg:text-5xl font-extrabold text-white">
+            {t("community.title")}
           </h2>
-          <p className="mt-3 text-white/40 text-sm">Built for athletes. Backed by community.</p>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-          {ACTIVITIES.map(({ label, tag, img }) => (
-            <div key={label}
-              className="group relative rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer"
-              style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
-              <img src={img} alt={label}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest mb-1"
-                  style={{ color: "#C3FF51" }}>{tag}</p>
-                <p className="text-white font-bold text-sm">{label}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {MEMBERS.map(({ handle, img }) => (
+            <div
+              key={handle}
+              className="group relative rounded-2xl bg-dark-elevated border border-dark-border aspect-[3/4] overflow-hidden flex items-end p-3 cursor-pointer hover:border-neon/20 transition-all duration-300"
+            >
+              <img
+                src={img}
+                alt={handle}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <span className="relative text-white/90 text-xs font-medium drop-shadow">{handle}</span>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <span className="text-white text-2xl font-light leading-none">+</span>
+                </div>
               </div>
             </div>
           ))}
         </div>
-
-        <Button to="/community" size="md">
-          View Community →
-        </Button>
-
       </div>
     </section>
-  );
+  )
 }

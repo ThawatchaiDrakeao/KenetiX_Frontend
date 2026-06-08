@@ -1,31 +1,5 @@
 import { useState } from 'react'
-
-const FAQS = [
-  {
-    q: 'How does a "block" work?',
-    a: 'A block is your rental period. The 48h block starts the moment you pick up the shoes and ends 48 hours later. The weekly block runs for 7 full days. You can always extend a block from the app before it expires.',
-  },
-  {
-    q: 'Where can I pick up and return shoes?',
-    a: 'We have partner locations across Bangkok — running stores, gyms, and sports hubs. You can see all pick-up points on the map in the app. No shipping is required.',
-  },
-  {
-    q: 'What condition are the shoes in?',
-    a: 'Every pair is professionally cleaned, sanitised, and inspected between rentals. We retire pairs after a defined mileage threshold so you always get near-new performance.',
-  },
-  {
-    q: 'What if I damage the shoes?',
-    a: 'Normal training wear is fully covered. Accidental damage (e.g. a rock tearing the upper) incurs a flat ฿300 assessment fee. Intentional or extreme damage is charged at replacement cost. Full policy is available during checkout.',
-  },
-  {
-    q: 'Can I buy the shoes I rented?',
-    a: 'Yes! If you fall in love with a pair, you get a 10–15% discount on a brand-new purchase (depending on your plan). We can connect you with our retail partners instantly.',
-  },
-  {
-    q: 'Is there a membership or subscription?',
-    a: 'No. KINETIX is entirely pay-per-block. There are no recurring fees, no credit card holds beyond your active block, and you can rent as often or as rarely as you like.',
-  },
-]
+import { useLanguage } from '../context/useLanguage'
 
 function FAQItem({ faq, isOpen, onToggle }) {
   return (
@@ -64,22 +38,24 @@ function FAQItem({ faq, isOpen, onToggle }) {
 }
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState(0)
+  const { t } = useLanguage();
+  const [openIndex, setOpenIndex] = useState(0);
+  const faqs = t("faq.items");
 
   return (
     <section id="faq" className="pt-10 pb-6 lg:pt-12 lg:pb-8 bg-dark-card/20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="text-neon text-xs font-semibold tracking-widest uppercase">
-            FAQ
+            {t("faq.badge")}
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">
-            Questions answered
+          <h2 className="mt-3 text-4xl lg:text-5xl font-extrabold text-white">
+            {t("faq.title")}
           </h2>
         </div>
 
         <div className="flex flex-col">
-          {FAQS.map((faq, i) => (
+          {faqs.map((faq, i) => (
             <FAQItem
               key={i}
               faq={faq}
@@ -90,7 +66,7 @@ export default function FAQ() {
         </div>
 
         <p className="mt-10 text-center text-white/35 text-sm">
-          Still have questions?{' '}
+          {t("faq.stillQuestions")}{' '}
           <a href="mailto:hello@kinetix.run" className="text-neon hover:underline underline-offset-2 transition-colors">
             hello@kinetix.run
           </a>

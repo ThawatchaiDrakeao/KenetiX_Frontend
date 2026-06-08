@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export default function CatalogHero() {
   return (
     <div className="relative bg-[#080809] overflow-hidden pt-16" style={{ minHeight: 220 }}>
@@ -27,11 +25,7 @@ export default function CatalogHero() {
       </div>
 
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 py-10">
-        <div className="flex items-center gap-1.5 text-[11px] text-white/35 mb-4">
-          <Link to="/" className="hover:text-[#C3FF51] transition-colors">Home</Link>
-          <span>/</span>
-          <span className="text-white/60">All Products</span>
-        </div>
+
         <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white leading-none mb-3">ALL PRODUCTS</h1>
         <p className="text-white/35 text-sm mb-4">Discover the best performance running shoes and gear.</p>
         <p className="text-white/55 text-sm font-semibold">1,248 products</p>

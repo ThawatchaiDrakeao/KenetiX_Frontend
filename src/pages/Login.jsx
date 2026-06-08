@@ -56,7 +56,7 @@ function Login() {
                         style={{ color: "#94A3B8" }}>
                         Running Shoe Rental
                     </p>
-                    <h1 className="text-3xl font-bold font-sora" style={{ color: "#0F172A" }}>
+                    <h1 className="text-4xl font-bold font-sora" style={{ color: "#0F172A" }}>
                         KINE<span style={{ color: "#C3FF51" }}>TIX</span>
                     </h1>
                 </div>
@@ -65,7 +65,7 @@ function Login() {
                 <div className="rounded-2xl p-8"
                     style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
 
-                    <h2 className="text-xl font-semibold font-sora mb-1" style={{ color: "#0F172A" }}>
+                    <h2 className="text-2xl font-semibold font-sora mb-1" style={{ color: "#0F172A" }}>
                         Sign in to your account
                     </h2>
                     <p className="text-sm font-sora mb-6" style={{ color: "#94A3B8" }}>

@@ -152,7 +152,7 @@ export default function Catalog() {
         </div>
 
         {/* Partners Animated Infinite Slider */}
-        <div className="mb-10">
+        <div id="partners" className="mb-10">
           <div className="flex items-center gap-4 mb-6">
             <div className="flex-1 h-px bg-[#1e1e20]" />
             <h2 className="text-white text-xs font-bold tracking-[0.4em] uppercase">

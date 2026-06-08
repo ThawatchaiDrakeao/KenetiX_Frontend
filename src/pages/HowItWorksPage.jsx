@@ -1,5 +1,269 @@
 import { useLanguage } from "../context/useLanguage.js";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar.jsx";
+import { useEffect, useRef } from "react";
+
+function RunningShoeVisualizer() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const LIME = "#C3FF51";
+    const L = (a) => `rgba(195,255,81,${a})`;
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // ── Shoe drawing (side profile, pointing right) ───────────────────
+    const drawShoe = (cx, cy, sc, alpha) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(sc, sc);
+      ctx.globalAlpha = alpha;
+
+      // outsole (bottom thick band)
+      ctx.beginPath();
+      ctx.moveTo(-62, 22);
+      ctx.bezierCurveTo(-62, 32, -40, 38, 10, 38);
+      ctx.bezierCurveTo(50, 38, 72, 30, 78, 20);
+      ctx.bezierCurveTo(72, 14, 50, 14, 10, 14);
+      ctx.bezierCurveTo(-30, 14, -62, 14, -62, 22);
+      ctx.closePath();
+      ctx.fillStyle   = L(0.12);
+      ctx.strokeStyle = L(0.7);
+      ctx.lineWidth   = 1.5;
+      ctx.fill();
+      ctx.stroke();
+
+      // midsole stripe
+      ctx.beginPath();
+      ctx.moveTo(-58, 16);
+      ctx.bezierCurveTo(-20, 10, 30, 10, 74, 18);
+      ctx.strokeStyle = L(0.35);
+      ctx.lineWidth   = 2.5;
+      ctx.stroke();
+
+      // upper body
+      ctx.beginPath();
+      ctx.moveTo(-58, 14);
+      ctx.bezierCurveTo(-58, -14, -28, -28, 10, -22);
+      ctx.bezierCurveTo(42, -16, 68, 0, 76, 14);
+      ctx.lineTo(-58, 14);
+      ctx.closePath();
+      ctx.fillStyle   = L(0.07);
+      ctx.strokeStyle = L(0.6);
+      ctx.lineWidth   = 1.5;
+      ctx.fill();
+      ctx.stroke();
+
+      // heel counter curve
+      ctx.beginPath();
+      ctx.moveTo(-58, 14);
+      ctx.bezierCurveTo(-58, -14, -42, -22, -22, -20);
+      ctx.strokeStyle = L(0.25);
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+
+      // toe box arc
+      ctx.beginPath();
+      ctx.arc(72, 8, 14, -Math.PI * 0.55, Math.PI * 0.45);
+      ctx.strokeStyle = L(0.3);
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+
+      // laces (4 crossbars)
+      for (let i = 0; i < 4; i++) {
+        const lx = -18 + i * 18;
+        ctx.beginPath();
+        ctx.moveTo(lx - 6, -18);
+        ctx.lineTo(lx + 6, 6);
+        ctx.strokeStyle = L(0.18);
+        ctx.lineWidth   = 1.8;
+        ctx.stroke();
+      }
+
+      // tongue
+      ctx.beginPath();
+      ctx.moveTo(-22, -20);
+      ctx.bezierCurveTo(-22, -36, 4, -40, 14, -30);
+      ctx.bezierCurveTo(4, -20, -10, -18, -22, -20);
+      ctx.strokeStyle = L(0.22);
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    };
+
+    // ── Footprint (sole imprint from above) ───────────────────────────
+    const drawFootprint = (fx, fy, alpha) => {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = LIME;
+      ctx.lineWidth   = 1;
+      // heel
+      ctx.beginPath();
+      ctx.ellipse(fx, fy + 14, 9, 13, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      // ball
+      ctx.beginPath();
+      ctx.ellipse(fx, fy - 6, 11, 8, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      // toes
+      [-10, -5, 0, 5, 10].forEach((tx, i) => {
+        ctx.beginPath();
+        ctx.arc(fx + tx, fy - 18 + (i === 0 || i === 4 ? 3 : 0), 2.5, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.restore();
+    };
+
+    // ── State ─────────────────────────────────────────────────────────
+    let tick      = 0;
+    let shoeX     = -120;
+    const SPEED   = 2.2;
+    const GROUND  = 0; // % from bottom, set each frame
+    let stepCount = 0;
+    let nextStep  = 180;
+
+    // footprints array
+    const prints  = [];
+
+    // speed lines
+    const speedLines = Array.from({ length: 8 }, (_, i) => ({
+      yOff : -30 + i * 10,
+      len  : 30 + Math.random() * 40,
+      alpha: 0.1 + Math.random() * 0.25,
+    }));
+
+    let frameId;
+    const draw = () => {
+      const w  = canvas.width;
+      const h  = canvas.height;
+      const gy = h * 0.72; // ground Y
+      tick++;
+
+      // background
+      ctx.fillStyle = "#07090b";
+      ctx.fillRect(0, 0, w, h);
+
+      // subtle grid
+      ctx.strokeStyle = L(0.04);
+      ctx.lineWidth   = 0.5;
+      for (let gx = 0; gx < w; gx += 40) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+      }
+      for (let gy2 = 0; gy2 < h; gy2 += 40) {
+        ctx.beginPath(); ctx.moveTo(0, gy2); ctx.lineTo(w, gy2); ctx.stroke();
+      }
+
+      // ground line
+      ctx.beginPath();
+      ctx.moveTo(0, gy + 32);
+      ctx.lineTo(w, gy + 32);
+      ctx.strokeStyle = L(0.15);
+      ctx.lineWidth   = 1;
+      ctx.stroke();
+
+      // ground glow
+      const gGrad = ctx.createLinearGradient(0, gy + 32, 0, h);
+      gGrad.addColorStop(0, L(0.06));
+      gGrad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = gGrad;
+      ctx.fillRect(0, gy + 32, w, h - gy - 32);
+
+      // shoe bob (vertical sine)
+      const bobY = gy - 2 * Math.abs(Math.sin(tick * 0.12)) * 12;
+      shoeX += SPEED;
+      if (shoeX > w + 150) {
+        shoeX     = -140;
+        stepCount = 0;
+        prints.length = 0;
+      }
+
+      // drop a footprint every ~nextStep px
+      if (shoeX > nextStep && shoeX < w + 80) {
+        prints.push({ x: shoeX - 30, y: gy + 34, life: 1 });
+        stepCount++;
+        nextStep = shoeX + 90 + Math.random() * 20;
+      }
+
+      // draw footprints (fade over time)
+      prints.forEach((p) => {
+        p.life -= 0.004;
+        if (p.life > 0) drawFootprint(p.x, p.y, Math.min(p.life, 0.55));
+      });
+
+      // speed lines (behind shoe)
+      speedLines.forEach((sl) => {
+        const lx = shoeX - 80;
+        ctx.beginPath();
+        ctx.moveTo(lx, bobY + sl.yOff);
+        ctx.lineTo(lx - sl.len, bobY + sl.yOff);
+        ctx.strokeStyle = L(sl.alpha);
+        ctx.lineWidth   = 1;
+        ctx.stroke();
+      });
+
+      // shoe glow under
+      const shoeGlow = ctx.createRadialGradient(shoeX, gy + 32, 0, shoeX, gy + 32, 80);
+      shoeGlow.addColorStop(0, L(0.14));
+      shoeGlow.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = shoeGlow;
+      ctx.beginPath();
+      ctx.arc(shoeX, gy + 32, 80, 0, Math.PI * 2);
+      ctx.fill();
+
+      // shoe (scale 1.15 for visibility)
+      ctx.shadowColor = LIME;
+      ctx.shadowBlur  = 18;
+      drawShoe(shoeX, bobY, 1.15, 1);
+      ctx.shadowBlur  = 0;
+
+      // HUD — top left
+      ctx.font      = "bold 10px monospace";
+      ctx.fillStyle = L(0.5);
+      ctx.fillText("KINETIX RENTAL", 16, 22);
+      ctx.font      = "10px monospace";
+      ctx.fillStyle = L(0.3);
+      ctx.fillText(`STEPS  ${String(stepCount).padStart(3, "0")}`, 16, 38);
+      ctx.fillText(`SPEED  ${SPEED.toFixed(1)} m/s`, 16, 52);
+      ctx.fillText(`DIST   ${((shoeX < 0 ? 0 : shoeX) / 100).toFixed(2)} km`, 16, 66);
+
+      // pace dot (blinking)
+      if (Math.floor(tick / 30) % 2 === 0) {
+        ctx.beginPath();
+        ctx.arc(w - 18, 18, 4, 0, Math.PI * 2);
+        ctx.fillStyle   = LIME;
+        ctx.shadowColor = LIME;
+        ctx.shadowBlur  = 10;
+        ctx.fill();
+        ctx.shadowBlur  = 0;
+      }
+      ctx.font      = "10px monospace";
+      ctx.fillStyle = L(0.3);
+      ctx.textAlign = "right";
+      ctx.fillText("REC", w - 26, 22);
+      ctx.textAlign = "left";
+
+      frameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
+}
 
 const pageCopy = {
   th: {
@@ -173,24 +437,19 @@ export default function HowItWorks() {
   const copy = pageCopy[language] || pageCopy.en;
 
   return (
-    <div className="min-h-screen bg-kinetix-black text-kinetix-white pt-20">
+    <div className="min-h-screen bg-kinetix-black text-kinetix-white">
+      <Navbar />
 
-      <div className="mx-auto max-w-[1440px] px-5 pt-4 sm:px-8 lg:px-12">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-kinetix-lime transition-colors">
-          ← Back to Home
-        </Link>
-      </div>
-
-      <section className="border-y border-kinetix-border/80 mt-4">
+      <section className="border-y border-kinetix-border/80 mt-16">
         <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
               {copy.eyebrow}
             </p>
-            <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white lg:text-6xl">
               {copy.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
               {copy.intro}
             </p>
 
@@ -220,11 +479,7 @@ export default function HowItWorks() {
           </div>
 
           <div className="relative h-[520px] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 sm:h-[620px] lg:h-[656px]">
-            <img
-              src="/how-it-works-shoe.png"
-              alt={copy.imageAlt}
-              className="h-full w-full object-cover"
-            />
+            <RunningShoeVisualizer />
             <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/80 px-5 py-4 backdrop-blur-md sm:px-6">
               <div className="grid grid-cols-3 gap-3 text-center">
                 {copy.stats.map(([value, label]) => (
@@ -316,7 +571,7 @@ export default function HowItWorks() {
             <p className="text-xs font-black uppercase tracking-[0.24em]">
               {copy.finalEyebrow}
             </p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-5xl">
+            <h2 className="mt-3 max-w-3xl text-4xl font-black leading-tight lg:text-5xl">
               {copy.finalTitle}
             </h2>
           </div>

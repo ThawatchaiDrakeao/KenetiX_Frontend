@@ -4,27 +4,26 @@ import { useAuth } from "../context/AuthContext";
 import Button from "./ui/Button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/useLanguage";
 
-
-const NAV_LINKS = [
-  { id: "catalog",   label: "Catalog",      to: "/catalog"        },
-  { id: "how",       label: "How it works", to: "/howitworkspage" },
-  { id: "community", label: "Community",    to: "/community"      },
-  { id: "contact",   label: "Contact Us",   to: "/contact"        },
-];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  // TEMPORARY
-  // Replace later with:
   const { user } = useAuth();
   const { cartCount } = useCart();
+  const { language, setLanguage, t } = useLanguage();
   const isLoggedIn = !!user;
   const isAdmin = user?.userRank === "admin" || user?.role === "admin";
-  //const isLoggedIn = true;
+
+  const NAV_LINKS = [
+    { id: "catalog",   label: t("nav.catalog"),   to: "/catalog"        },
+    { id: "how",       label: t("nav.howItWorks"), to: "/howitworkspage" },
+    { id: "community", label: t("nav.community"),  to: "/community"      },
+    { id: "contact",   label: t("nav.contactUs"),  to: "/contact"        },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,15 +69,32 @@ export default function Navbar() {
               ))}
             </nav>
 
-            {/* Desktop User Actions */}
+            {/* Desktop User Actions + Language Switcher */}
             <div className="hidden md:flex items-center gap-3">
+              {/* Language Switcher */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setLanguage('th')}
+                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'th' ? 'text-neon' : 'text-white/30 hover:text-white'}`}
+                >
+                  TH
+                </button>
+                <span className="text-white/20 text-xs">|</span>
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'en' ? 'text-neon' : 'text-white/30 hover:text-white'}`}
+                >
+                  EN
+                </button>
+              </div>
+
               {isLoggedIn ? (
                 <UserActions
                   onOpenCart={() => setCartOpen(true)}
                   cartCount={cartCount}
                 />
               ) : (
-                <GuestActions />
+                <GuestActions t={t} />
               )}
             </div>
 
@@ -126,14 +142,13 @@ export default function Navbar() {
             <div className="flex flex-col gap-2 pt-4">
               {isLoggedIn ? (
                 <>
-
                   <Button
                     variant="outline"
                     size="sm"
                     to="/profile"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Profile
+                    {t('nav.profile')}
                   </Button>
 
                   <Button
@@ -144,7 +159,7 @@ export default function Navbar() {
                       setMenuOpen(false);
                     }}
                   >
-                    Cart
+                    {t('nav.cart')}
                   </Button>
                 </>
               ) : (
@@ -155,7 +170,7 @@ export default function Navbar() {
                     to="/login"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Log in
+                    {t('nav.login')}
                   </Button>
 
                   <Button
@@ -164,7 +179,7 @@ export default function Navbar() {
                     to="/signup"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Sign Up
+                    {t('nav.signup')}
                   </Button>
                 </>
               )}
@@ -182,7 +197,7 @@ export default function Navbar() {
   );
 }
 
-function GuestActions() {
+function GuestActions({ t }) {
   return (
     <>
       <Button
@@ -190,7 +205,7 @@ function GuestActions() {
         size="sm"
         to="/login"
       >
-        Log in
+        {t('nav.login')}
       </Button>
 
       <Button
@@ -198,7 +213,7 @@ function GuestActions() {
         size="sm"
         to="/signup"
       >
-        Sign Up
+        {t('nav.signup')}
       </Button>
     </>
   );

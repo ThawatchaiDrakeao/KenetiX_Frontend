@@ -1,25 +1,25 @@
-const FOOTER_LINKS = {
-  RENTAL: [
-    { label: "Catalog", href: "#catalog" },
-    { label: "How it works", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "Reviews", href: "#reviews" },
-  ],
-  BRAND: [
-    { label: "Our story", href: "#story" },
-    { label: "Partners", href: "#partners" },
-    { label: "Press", href: "#press" },
-    { label: "Careers", href: "#careers" },
-  ],
-  LEGAL: [
-    { label: "Terms", href: "#terms" },
-    { label: "Privacy", href: "#privacy" },
-    { label: "Damage policy", href: "#damage" },
-    { label: "Contact", href: "mailto:hello@kinetix.run" },
-  ],
-};
+import { useLanguage } from '../context/useLanguage';
 
 export default function Footer() {
+  const { language, setLanguage, t } = useLanguage();
+
+  const FOOTER_LINKS = {
+    [t("footer.sections.rental")]: [
+      { label: t("footer.links.catalog"),    href: "/catalog" },
+      { label: t("footer.links.howItWorks"), href: "#features" },
+      { label: t("footer.links.reviews"),    href: "#reviews" },
+    ],
+    [t("footer.sections.brand")]: [
+      { label: t("footer.links.ourStory"),  href: "/#story" },
+      { label: t("footer.links.partners"),  href: "/catalog#partners" },
+    ],
+    [t("footer.sections.legal")]: [
+      { label: t("footer.links.terms"),        href: "/terms" },
+      { label: t("footer.links.privacy"),      href: "/privacy" },
+      { label: t("footer.links.damagePolicy"), href: "/damage" },
+    ],
+  };
+
   return (
     <footer className="bg-[#0e0e0f] border-t border-dark-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4 lg:pt-10 lg:pb-5">
@@ -33,9 +33,9 @@ export default function Footer() {
               KINETI<span className="text-[#C3FF51]">X</span>
             </a>
             <p className="text-white/35 text-sm leading-relaxed">
-              Rent. Test. Run. Decide.
+              {t("footer.tagline1")}
               <br />
-              Premium running shoes, by the rental.
+              {t("footer.tagline2")}
             </p>
             <div className="flex gap-3 mt-2">
               <a
@@ -105,10 +105,10 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div className="flex flex-col gap-3">
-            <p className="text-white/30 text-xs font-semibold tracking-widest uppercase">Stay in the loop</p>
-            <p className="text-white/35 text-xs leading-relaxed">Get exclusive offers, new arrivals, and more.</p>
+            <p className="text-white/30 text-xs font-semibold tracking-widest uppercase">{t("footer.newsletter.label")}</p>
+            <p className="text-white/35 text-xs leading-relaxed">{t("footer.newsletter.desc")}</p>
             <div className="flex mt-1">
-              <input type="email" placeholder="Enter your email" className="flex-1 bg-dark-elevated border border-dark-border border-r-0 rounded-l-lg px-3 py-2 text-xs text-white/60 placeholder-white/20 focus:outline-none focus:border-neon/30 transition-colors" />
+              <input type="email" placeholder={t("footer.newsletter.placeholder")} className="flex-1 bg-dark-elevated border border-dark-border border-r-0 rounded-l-lg px-3 py-2 text-xs text-white/60 placeholder-white/20 focus:outline-none focus:border-neon/30 transition-colors" />
               <button className="bg-neon text-dark px-3 py-2 rounded-r-lg hover:bg-neon-hover transition-colors flex items-center justify-center">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -121,13 +121,19 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-dark-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/25 text-xs">
-            © {new Date().getFullYear()} KINETIX. All rights reserved.
+            © {new Date().getFullYear()} KINETIX. {t("footer.copyright")}
           </p>
           <div className="flex items-center gap-3">
-            <button className="text-neon text-xs font-semibold px-3 py-1 rounded-full border border-neon/30 hover:bg-neon/10 transition-colors duration-200">
+            <button
+              onClick={() => setLanguage('en')}
+              className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors duration-200 ${language === 'en' ? 'text-neon border-neon/30 hover:bg-neon/10' : 'text-white/30 border-transparent hover:text-white'}`}
+            >
               EN
             </button>
-            <button className="text-white/30 text-xs px-3 py-1 rounded-full hover:text-white transition-colors duration-200">
+            <button
+              onClick={() => setLanguage('th')}
+              className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors duration-200 ${language === 'th' ? 'text-neon border-neon/30 hover:bg-neon/10' : 'text-white/30 border-transparent hover:text-white'}`}
+            >
               TH
             </button>
           </div>

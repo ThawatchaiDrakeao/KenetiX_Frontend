@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/useLanguage';
 
 export default function CartDrawer({ isOpen, onClose }) {
     const { cart, cartCount, removeFromCart, fetchUserCart } = useCart();
+    const { t } = useLanguage();
     const [loading] = React.useState(false);
     const navigate = useNavigate();
 
@@ -29,18 +31,18 @@ export default function CartDrawer({ isOpen, onClose }) {
             <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-[#0a0a0a] border-l border-zinc-800 z-50 transform transition-transform duration-300 flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-zinc-800">
-                    <h2 className="text-white text-2xl font-bold">Your Cart ({cartCount})</h2>
+                    <h2 className="text-white text-2xl font-bold">{t("cart.title")} ({cartCount})</h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">✕</button>
                 </div>
 
                 {/* Items */}
                 <div className="flex-1 overflow-y-auto p-6">
-                    {loading && <p className="text-gray-400 text-center">Loading cart...</p>}
+                    {loading && <p className="text-gray-400 text-center">{t("cart.loading")}</p>}
                     {!loading && cart.length === 0 && (
                         <div className="text-center py-12">
-                            <p className="text-gray-400">Your cart is empty</p>
+                            <p className="text-gray-400">{t("cart.empty")}</p>
                             <button onClick={() => { onClose(); navigate("/catalog"); }} className="mt-4 text-[#C3FF51] text-sm hover:underline">
-                                Browse Products
+                                {t("cart.browseProducts")}
                             </button>
                         </div>
                     )}
@@ -59,9 +61,9 @@ export default function CartDrawer({ isOpen, onClose }) {
                             </div>
                             {/* Info */}
                             <div className="flex-grow">
-                                <h3 className="text-white font-bold text-sm">{item.name}</h3>  {/* ← name instead of ID */}
+                                <h3 className="text-white font-bold text-sm">{item.name}</h3>
                                 <p className="text-gray-400 text-xs mt-1">Size: {item.size} | Qty: {item.quantity || 1}</p>
-                                <p className="text-gray-500 text-xs">฿{(item.price || 0).toLocaleString()} / day</p> {/* ← price instead of SKU */}
+                                <p className="text-gray-500 text-xs">฿{(item.price || 0).toLocaleString()} / day</p>
                                 <div className="flex justify-between items-center mt-2">
                                     <span className="text-[#C3FF51] font-bold text-sm">
                                         ฿{((item.price || 0) * (item.quantity || 1)).toLocaleString()}
