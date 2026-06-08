@@ -173,9 +173,15 @@ export default function HowItWorks() {
   const copy = pageCopy[language] || pageCopy.en;
 
   return (
-    <div className="min-h-screen bg-kinetix-black text-kinetix-white pt-32">
+    <div className="min-h-screen bg-kinetix-black text-kinetix-white pt-20">
 
-      <section className="border-y border-kinetix-border/80">
+      <div className="mx-auto max-w-[1440px] px-5 pt-4 sm:px-8 lg:px-12">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-kinetix-lime transition-colors">
+          ← Back to Home
+        </Link>
+      </div>
+
+      <section className="border-y border-kinetix-border/80 mt-4">
         <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">

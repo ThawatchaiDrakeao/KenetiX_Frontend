@@ -3,7 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";  // ← Already imported
 import API from "../api/axios";
 
-// ... (initialFormData stays the same)
+const initialFormData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  shoeSize: "",
+  bankName: "",
+  accountNumber: "",
+  accountName: "",
+  password: "",
+  confirmPassword: "",
+  agreeTerms: false,
+  ageConfirm: false,
+};
 
 function ErrorMsg({ field, errors }) {
   return errors[field] ? (
@@ -21,7 +35,46 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const { login } = useAuth();  // ← ADD THIS LINE
 
-  // ... (handleChange, validate, buildPayload stay the same)
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!formData.firstName.trim())    errs.firstName    = "First name is required";
+    if (!formData.lastName.trim())     errs.lastName     = "Last name is required";
+    if (!formData.email.trim())        errs.email        = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = "Invalid email format";
+    if (!formData.phone.trim())        errs.phone        = "Phone number is required";
+    if (!formData.address.trim())      errs.address      = "Address is required";
+    if (!formData.shoeSize)            errs.shoeSize     = "Shoe size is required";
+    if (!formData.bankName.trim())     errs.bankName     = "Bank name is required";
+    if (!formData.accountNumber.trim()) errs.accountNumber = "Account number is required";
+    if (!formData.accountName.trim())  errs.accountName  = "Account name is required";
+    if (!formData.password)            errs.password     = "Password is required";
+    else if (formData.password.length < 8) errs.password = "Password must be at least 8 characters";
+    if (formData.password !== formData.confirmPassword) errs.confirmPassword = "Passwords do not match";
+    if (!formData.agreeTerms)          errs.agreeTerms   = "You must agree to the terms";
+    if (!formData.ageConfirm)          errs.ageConfirm   = "You must confirm your age";
+    return errs;
+  };
+
+  const buildPayload = () => ({
+    name: `${formData.firstName} ${formData.lastName}`.trim(),
+    email: formData.email,
+    password: formData.password,
+    phone: formData.phone,
+    address: formData.address,
+    shoe_size: Number(formData.shoeSize),
+    bank_name: formData.bankName,
+    bank_account_number: formData.accountNumber,
+    bank_account_name: formData.accountName,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -132,8 +185,14 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
+      {/* Back to Home */}
+      <div className="max-w-7xl mx-auto px-6 pt-8">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-lime-400 transition-colors font-sora">
+          ← Back to Home
+        </Link>
+      </div>
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 pt-28 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+      <div className="max-w-7xl mx-auto px-6 pt-10 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
         {/* Left Content */}
         <div className="space-y-8">
           <div>

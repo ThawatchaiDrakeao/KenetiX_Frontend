@@ -1,6 +1,6 @@
 export default function ContactForm() {
 
-    const inputStyle = "w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white text-sm outline-none focus:border-[#b4ff39] transition";
+    const inputStyle = "w-full p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white text-sm outline-none focus:border-[#C3FF51] transition";
 
     return (
         <form className="bg-zinc-950 border border-zinc-900 p-8 rounded-2xl space-y-5">
@@ -55,7 +55,7 @@ export default function ContactForm() {
             </div>
 
             <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-[#b4ff39] hover:bg-[#a2e632] text-black font-bold py-3 px-6 rounded-full text-sm flex items-center gap-2 transition transform active:scale-95">
+                <button type="submit" className="bg-[#C3FF51] hover:bg-[#a2e632] text-black font-bold py-3 px-6 rounded-full text-sm flex items-center gap-2 transition transform active:scale-95">
                     Send Message ➔
                 </button>
             </div>

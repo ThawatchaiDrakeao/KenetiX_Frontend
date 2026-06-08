@@ -6,8 +6,8 @@ import UserDashboard from "./pages/UserDashboard";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ContactPage from "./pages/ContactPage";
 import CheckOut from "./pages/CheckOut";
-import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import CommunityPage from "./pages/CommunityPage";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import SignupPage from "./components/SignupPage";
 
@@ -21,8 +21,8 @@ export default function App() {
             <Route path="/userdashboard"   element={<UserDashboard />} />
             <Route path="/howitworkspage"  element={<HowItWorksPage />} />
             <Route path="/contact"         element={<ContactPage />} />
+            <Route path="/community"       element={<CommunityPage />} />
             <Route path="/checkout"        element={<CheckOut />} />
-            <Route path="/admin/login"     element={<AdminLogin />} />
             <Route
                 path="/admin"
                 element={

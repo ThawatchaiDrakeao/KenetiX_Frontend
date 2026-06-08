@@ -4,7 +4,7 @@ export default function ContactInfo() {
 
 
             <div>
-                <span className="text-[#b4ff39] text-xs font-bold uppercase tracking-wider block mb-2">Contact Us</span>
+                <span className="text-[#C3FF51] text-xs font-bold uppercase tracking-wider block mb-2">Contact Us</span>
                 <h1 className="text-4xl font-bold text-white mb-4">Contact Us</h1>
                 <p className="text-gray-400 text-sm">Have questions or issues? The Kinetix team is ready to help.</p>
             </div>
@@ -21,7 +21,7 @@ export default function ContactInfo() {
                             <p className="text-[10px] text-gray-500">Open daily 9:00 AM - 9:00 PM</p>
                         </div>
                     </div>
-                    <span className="bg-green-950 text-[#b4ff39] text-[10px] font-bold px-2 py-1 rounded-full border border-green-800">● Online</span>
+                    <span className="bg-green-950 text-[#C3FF51] text-[10px] font-bold px-2 py-1 rounded-full border border-green-800">● Online</span>
                 </div>
 
 
@@ -46,7 +46,7 @@ export default function ContactInfo() {
 
 
             <div className="border border-dashed border-lime-900 bg-lime-950/20 p-4 rounded-xl text-xs text-gray-400">
-                Our team will <span className="text-[#b4ff39] font-bold">contact you back within 24 hours</span> after receiving your form.
+                Our team will <span className="text-[#C3FF51] font-bold">contact you back within 24 hours</span> after receiving your form.
             </div>
         </div>
     );

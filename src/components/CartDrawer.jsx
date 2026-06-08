@@ -4,12 +4,14 @@ import { useCart } from '../context/CartContext';
 
 export default function CartDrawer({ isOpen, onClose }) {
     const { cart, cartCount, removeFromCart, fetchUserCart } = useCart();
-    const [loading, setLoading] = React.useState(false);
+    const [loading] = React.useState(false);
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (isOpen) fetchUserCart();
-    }, [isOpen]);
+        if (isOpen) {
+            fetchUserCart();
+        }
+    }, [isOpen, fetchUserCart]);
 
     const handleRemoveItem = async (item) => {
         await removeFromCart({

@@ -3,7 +3,7 @@ import { useCart } from "../../context/CartContext"; // Fixed import
 
 export default function ProductCard({ product }) {
   const [wished, setWished] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [, setIsModalOpen] = useState(false);
   const [adding, setAdding] = useState(false);
 
   // ✅ Use useCart() hook, not CartProvider()
@@ -28,6 +28,7 @@ export default function ProductCard({ product }) {
       return;
     }
     setAdding(true);
+
     await addToCart({
       item: product._id,
       name: product.modelName,

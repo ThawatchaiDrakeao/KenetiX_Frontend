@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAdminAuth } from "../../context/AdminAuthContext";
 
 const NAV_ITEMS = [
   {
@@ -90,6 +92,14 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminSidebar({ active, onChange }) {
+  const { logoutAdmin } = useAdminAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logoutAdmin();
+    navigate("/login");
+  };
+
   return (
     <aside
       className="flex flex-col h-full shrink-0"
@@ -181,6 +191,7 @@ export default function AdminSidebar({ active, onChange }) {
             </p>
           </div>
           <button
+            onClick={handleLogout}
             className="shrink-0 p-1 rounded transition-colors"
             style={{ color: "#CBD5E1" }}
             onMouseEnter={(e) => { e.currentTarget.style.color = "#94A3B8"; }}
