@@ -38,7 +38,7 @@ export default function Reviews() {
 
   return (
     <section id="reviews" className="py-10 lg:py-12 bg-dark-card/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex items-end justify-between mb-10">
           <div>
@@ -69,7 +69,7 @@ export default function Reviews() {
           {REVIEWS.map((r, i) => (
             <div
               key={r.handle}
-              className="group relative rounded-2xl bg-dark-elevated border border-dark-border overflow-hidden flex flex-col p-5 gap-4 hover:border-neon/20 transition-all duration-300"
+              className="group relative rounded-lg bg-dark-elevated border border-dark-border overflow-hidden flex flex-col p-5 gap-4 hover:border-neon/20 transition-all duration-300"
             >
               {/* Background gradient */}
               <div

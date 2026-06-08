@@ -7,22 +7,6 @@ export default function CatalogHero() {
 
       <div className="absolute right-[30%] top-1/2 -translate-y-1/2 w-[360px] h-[360px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(195,255,81,0.1) 0%, transparent 70%)" }} aria-hidden="true" />
 
-      <div className="absolute right-0 top-0 bottom-0 w-[48%] hidden md:flex items-center justify-center pr-10">
-        <div className="relative flex flex-col items-center">
-          <div className="absolute w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(195,255,81,0.12) 0%, transparent 65%)" }} aria-hidden="true" />
-          <div className="relative w-56 h-40 rounded-2xl border border-[#1e1e20] bg-[#0f0f10] flex flex-col items-center justify-center gap-2 z-10">
-            <svg className="w-20 h-14 text-white/10" viewBox="0 0 100 50" fill="none" stroke="currentColor" strokeWidth={1.5}>
-              <path d="M8 38 Q15 10 38 14 Q62 18 86 26 L90 36 Q60 44 24 42 Z" />
-              <path d="M8 38 Q9 42 14 43" />
-              <path d="M38 14 Q42 8 50 8 Q58 8 62 14" />
-            </svg>
-            <p className="text-white/15 text-[9px] text-center leading-relaxed px-4">
-              Drop <code className="text-[#C3FF51]/30">hero-banner.jpg</code><br />
-              into <code className="text-[#C3FF51]/30">public/catalog/</code>
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 py-10">
 

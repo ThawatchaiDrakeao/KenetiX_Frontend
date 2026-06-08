@@ -13,7 +13,7 @@ export default function Pricing() {
 
   return (
     <section id="pricing" className="py-10 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
           <span className="text-neon text-xs font-semibold tracking-widest uppercase">
             {t("pricing.badge")}
@@ -32,7 +32,7 @@ export default function Pricing() {
             return (
               <div
                 key={idx}
-                className={`relative rounded-2xl border p-7 flex flex-col gap-6 transition-all duration-300 ${
+                className={`relative rounded-lg border p-7 flex flex-col gap-6 transition-all duration-300 ${
                   highlight
                     ? "bg-neon/5 border-neon/40 shadow-[0_0_40px_rgba(195,255,81,0.08)] scale-[1.02]"
                     : "bg-dark-card border-dark-border hover:border-neon/15"

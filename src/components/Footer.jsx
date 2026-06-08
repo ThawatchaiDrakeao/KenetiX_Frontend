@@ -1,7 +1,21 @@
+import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/useLanguage';
 
 export default function Footer() {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+    setSubmitted(true);
+    setEmail('');
+    timerRef.current = setTimeout(() => setSubmitted(false), 3000);
+  };
 
   const FOOTER_LINKS = {
     [t("footer.sections.rental")]: [
@@ -107,14 +121,27 @@ export default function Footer() {
           <div className="flex flex-col gap-3">
             <p className="text-white/30 text-xs font-semibold tracking-widest uppercase">{t("footer.newsletter.label")}</p>
             <p className="text-white/35 text-xs leading-relaxed">{t("footer.newsletter.desc")}</p>
-            <div className="flex mt-1">
-              <input type="email" placeholder={t("footer.newsletter.placeholder")} className="flex-1 bg-dark-elevated border border-dark-border border-r-0 rounded-l-lg px-3 py-2 text-xs text-white/60 placeholder-white/20 focus:outline-none focus:border-neon/30 transition-colors" />
-              <button className="bg-neon text-dark px-3 py-2 rounded-r-lg hover:bg-neon-hover transition-colors flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+            <form onSubmit={handleSubscribe} className="flex mt-1">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("footer.newsletter.placeholder")}
+                className="flex-1 bg-dark-elevated border border-dark-border border-r-0 rounded-l-lg px-3 py-2 text-xs text-white/60 placeholder-white/20 focus:outline-none focus:border-neon/30 transition-colors"
+              />
+              <button type="submit" className="bg-neon text-dark px-3 py-2 rounded-r-lg hover:bg-neon-hover transition-colors flex items-center justify-center">
+                {submitted ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                )}
               </button>
-            </div>
+            </form>
+            {submitted && <p className="text-neon text-[11px] mt-1">Subscribed!</p>}
           </div>
         </div>
 
@@ -123,20 +150,6 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} KINETIX. {t("footer.copyright")}
           </p>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setLanguage('en')}
-              className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors duration-200 ${language === 'en' ? 'text-neon border-neon/30 hover:bg-neon/10' : 'text-white/30 border-transparent hover:text-white'}`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('th')}
-              className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors duration-200 ${language === 'th' ? 'text-neon border-neon/30 hover:bg-neon/10' : 'text-white/30 border-transparent hover:text-white'}`}
-            >
-              TH
-            </button>
-          </div>
         </div>
       </div>
     </footer>

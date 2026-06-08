@@ -47,7 +47,7 @@ export default function Navbar() {
           : "bg-transparent"
           }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 lg:h-18">
             {/* Logo */}
             <Link to="/" className="shrink-0">

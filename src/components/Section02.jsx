@@ -24,7 +24,7 @@ export default function Section02() {
                     {brands.map((brand) => (
                         <div
                             key={brand.name}
-                            className="rounded-3xl border border-[#1f2937] bg-[#0b0c10] p-8 flex flex-col items-center justify-center gap-4 hover:border-[#C3FF51] hover:bg-[#0b0c10]/80 transition cursor-pointer"
+                            className="rounded-lg border border-[#1f2937] bg-[#0b0c10] p-8 flex flex-col items-center justify-center gap-4 hover:border-[#C3FF51] hover:bg-[#0b0c10]/80 transition cursor-pointer"
                         >
                             <div className="text-5xl">{brand.logo}</div>
                             <p className="text-center font-semibold text-[15px]">{brand.name}</p>

@@ -40,7 +40,7 @@ export default function Features() {
 
   return (
     <section id="features" className="py-10 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
           <span className="text-neon text-xs font-semibold tracking-widest uppercase">
             {t("features.badge")}
@@ -57,7 +57,7 @@ export default function Features() {
           {items.map((f, idx) => (
             <div
               key={idx}
-              className="group bg-dark-card border border-dark-border rounded-2xl px-6 pt-6 pb-4 transition-all duration-300 hover:border-neon/20"
+              className="group bg-dark-card border border-dark-border rounded-lg px-6 pt-6 pb-4 transition-all duration-300 hover:border-neon/20"
             >
               <div className="w-11 h-11 rounded-xl bg-neon/10 border border-neon/15 flex items-center justify-center text-neon mb-4 group-hover:bg-neon/15 transition-colors duration-200">
                 {FEATURE_ICONS[idx]}

@@ -12,7 +12,7 @@ export default function Community() {
 
   return (
     <section id="community" className="py-10 lg:py-12 bg-dark-card/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         <div className="mb-8">
           <span className="text-neon text-xs font-semibold tracking-widest uppercase">{t("community.badge")}</span>
           <h2 className="mt-2 text-4xl lg:text-5xl font-extrabold text-white">
@@ -23,7 +23,7 @@ export default function Community() {
           {MEMBERS.map(({ handle, img }) => (
             <div
               key={handle}
-              className="group relative rounded-2xl bg-dark-elevated border border-dark-border aspect-[3/4] overflow-hidden flex items-end p-3 cursor-pointer hover:border-neon/20 transition-all duration-300"
+              className="group relative rounded-lg bg-dark-elevated border border-dark-border aspect-[3/4] overflow-hidden flex items-end p-3 cursor-pointer hover:border-neon/20 transition-all duration-300"
             >
               <img
                 src={img}
@@ -40,6 +40,7 @@ export default function Community() {
             </div>
           ))}
         </div>
+
       </div>
     </section>
   )

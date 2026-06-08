@@ -1,6 +1,7 @@
 import { useLanguage } from "../context/useLanguage.js";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import { useEffect, useRef } from "react";
 
 function RunningShoeVisualizer() {
@@ -272,7 +273,6 @@ const pageCopy = {
     intro:
       "KenetiX ช่วยให้คุณทดลองรองเท้าวิ่งระดับพรีเมียมก่อนตัดสินใจซื้อจริง เลือกรุ่น จองวัน ชำระเงิน รับรองเท้า และคืนผ่านระบบเดียวที่ติดตามสถานะได้ตั้งแต่ต้นจนจบ",
     primaryCta: "เริ่มเช่าเลย",
-    secondaryCta: "กลับหน้าแรก",
     imageAlt: "รองเท้าวิ่งสำหรับระบบเช่า KenetiX",
     stats: [
       ["5", "ขั้นตอน"],
@@ -353,8 +353,7 @@ const pageCopy = {
     title: "Rent running shoes for your next training block in a few steps",
     intro:
       "KenetiX lets you test premium running shoes before buying. Choose a model, book dates, pay securely, pick up the shoes, and return them through one trackable rental flow.",
-    primaryCta: "Start renting",
-    secondaryCta: "Back home",
+    primaryCta: "Start Rental",
     imageAlt: "Running shoes for the KenetiX rental system",
     stats: [
       ["5", "Steps"],
@@ -440,7 +439,7 @@ export default function HowItWorks() {
     <div className="min-h-screen bg-kinetix-black text-kinetix-white">
       <Navbar />
 
-      <section className="border-y border-kinetix-border/80 mt-16">
+      <section className="border-y border-kinetix-border/80 mt-20">
         <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
@@ -456,16 +455,9 @@ export default function HowItWorks() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/catalog"
-                className="inline-flex h-12 items-center justify-center gap-3 rounded-lg bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
               >
                 {copy.primaryCta}
-                <span aria-hidden="true">-&gt;</span>
-              </Link>
-              <Link
-                to="/"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-zinc-700 px-6 text-sm font-semibold text-white transition-colors hover:border-kinetix-aqua hover:text-kinetix-aqua"
-              >
-                {copy.secondaryCta}
               </Link>
             </div>
 
@@ -479,7 +471,11 @@ export default function HowItWorks() {
           </div>
 
           <div className="relative h-[520px] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 sm:h-[620px] lg:h-[656px]">
-            <RunningShoeVisualizer />
+            <img
+              src="/videoframe_5325.png"
+              alt="Running"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
             <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/80 px-5 py-4 backdrop-blur-md sm:px-6">
               <div className="grid grid-cols-3 gap-3 text-center">
                 {copy.stats.map(([value, label]) => (
@@ -583,6 +579,7 @@ export default function HowItWorks() {
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

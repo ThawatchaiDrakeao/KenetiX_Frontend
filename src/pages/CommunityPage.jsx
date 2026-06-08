@@ -195,7 +195,7 @@ function Hero() {
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center mb-20">
             <Link to="/signup">
               <motion.button
-                className="px-8 py-4 rounded-2xl font-bold text-sm tracking-wide text-black"
+                className="px-8 py-4 rounded-lg font-bold text-sm tracking-wide text-black"
                 style={{ background: LIME }}
                 whileHover={{ scale: 1.04, boxShadow: GLOW }}
                 whileTap={{ scale: 0.97 }}>
@@ -203,7 +203,7 @@ function Hero() {
               </motion.button>
             </Link>
             <motion.button
-              className="px-8 py-4 rounded-2xl font-semibold text-sm tracking-wide"
+              className="px-8 py-4 rounded-lg font-semibold text-sm tracking-wide"
               style={{ background: SURFACE, border: `1px solid ${BORDER}`, color: "#fff" }}
               whileHover={{ borderColor: "rgba(141,255,0,0.30)", scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
@@ -243,7 +243,7 @@ function Hero() {
 function Experiences() {
   return (
     <section id="experiences" className="py-28 px-4" style={{ background: BG }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="text-center mb-16">
           <SectionLabel text="Featured Experiences" />
@@ -354,7 +354,7 @@ function Events() {
 function Feed() {
   return (
     <section className="py-28 px-4" style={{ background: BG }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="mb-16">
           <SectionLabel text="Community Feed" />
@@ -463,7 +463,7 @@ function Leaderboard() {
 function Gallery() {
   return (
     <section className="py-28 px-4" style={{ background: BG }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="mb-16">
           <SectionLabel text="Community Gallery" />
@@ -502,7 +502,7 @@ function Gallery() {
 function Benefits() {
   return (
     <section className="py-28 px-4" style={{ background: "#080808" }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="text-center mb-16">
           <SectionLabel text="Membership Benefits" />
@@ -648,6 +648,8 @@ function FinalCTA() {
 
 // ── PAGE ──────────────────────────────────────────────────────────────────────
 export default function CommunityPage() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   return (
     <div className="font-sora overflow-x-hidden" style={{ background: BG }}>
       <Navbar />
