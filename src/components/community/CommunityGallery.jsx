@@ -533,13 +533,13 @@ export default function CommunityGallery() {
 
   return (
     <>
-      <section className="py-16 px-4 sm:px-6" style={{ background: "#080808" }}>
-        <div className="max-w-[1400px] mx-auto">
+      <section className="py-16" style={{ background: "#080808" }}>
 
-          {/* Header */}
+        {/* Header — stays in max-width container */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 mb-8">
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
+            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4"
           >
             <div>
               <motion.span variants={fadeUp}
@@ -576,14 +576,14 @@ export default function CommunityGallery() {
               </button>
             </motion.div>
           </motion.div>
-
-          {/* Content */}
-          {loading      ? <PreviewSkeleton />
-          : fetchError  ? <p className="text-white/25 text-sm py-12 text-center">{fetchError}</p>
-          : moments.length === 0 ? <EmptyState onShare={() => setShareOpen(true)} />
-          : <PhotoMarquee moments={moments} onViewAll={() => setGalleryOpen(true)} />
-          }
         </div>
+
+        {/* Content — marquee runs full viewport width, others stay padded */}
+        {loading     ? <div className="px-4 sm:px-6"><PreviewSkeleton /></div>
+        : fetchError ? <p className="text-white/25 text-sm py-12 text-center px-4">{fetchError}</p>
+        : moments.length === 0 ? <div className="px-4 sm:px-6"><EmptyState onShare={() => setShareOpen(true)} /></div>
+        : <PhotoMarquee moments={moments} onViewAll={() => setGalleryOpen(true)} />
+        }
       </section>
 
       <AnimatePresence>
