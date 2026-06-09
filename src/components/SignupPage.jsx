@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";  // ← Already imported
+import { useAuth } from "../context/AuthContext"; // ← Already imported
 import API from "../api/axios";
 
 const initialFormData = {
@@ -33,7 +33,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();  // ← ADD THIS LINE
+  const { login } = useAuth(); // ← ADD THIS LINE
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,26 +46,32 @@ export default function SignupPage() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.firstName.trim())    errs.firstName    = "First name is required";
-    if (!formData.lastName.trim())     errs.lastName     = "Last name is required";
-    if (!formData.email.trim())        errs.email        = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = "Invalid email format";
-    if (!formData.phone.trim())        errs.phone        = "Phone number is required";
-    if (!formData.address.trim())      errs.address      = "Address is required";
-    if (!formData.shoeSize)            errs.shoeSize     = "Shoe size is required";
-    if (!formData.bankName.trim())     errs.bankName     = "Bank name is required";
-    if (!formData.accountNumber.trim()) errs.accountNumber = "Account number is required";
-    if (!formData.accountName.trim())  errs.accountName  = "Account name is required";
-    if (!formData.password)            errs.password     = "Password is required";
-    else if (formData.password.length < 8) errs.password = "Password must be at least 8 characters";
-    if (formData.password !== formData.confirmPassword) errs.confirmPassword = "Passwords do not match";
-    if (!formData.agreeTerms)          errs.agreeTerms   = "You must agree to the terms";
-    if (!formData.ageConfirm)          errs.ageConfirm   = "You must confirm your age";
+    if (!formData.firstName.trim()) errs.firstName = "First name is required";
+    if (!formData.lastName.trim()) errs.lastName = "Last name is required";
+    if (!formData.email.trim()) errs.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      errs.email = "Invalid email format";
+    if (!formData.phone.trim()) errs.phone = "Phone number is required";
+    if (!formData.address.trim()) errs.address = "Address is required";
+    if (!formData.shoeSize) errs.shoeSize = "Shoe size is required";
+    if (!formData.bankName.trim()) errs.bankName = "Bank name is required";
+    if (!formData.accountNumber.trim())
+      errs.accountNumber = "Account number is required";
+    if (!formData.accountName.trim())
+      errs.accountName = "Account name is required";
+    if (!formData.password) errs.password = "Password is required";
+    else if (formData.password.length < 8)
+      errs.password = "Password must be at least 8 characters";
+    if (formData.password !== formData.confirmPassword)
+      errs.confirmPassword = "Passwords do not match";
+    if (!formData.agreeTerms) errs.agreeTerms = "You must agree to the terms";
+    if (!formData.ageConfirm) errs.ageConfirm = "You must confirm your age";
     return errs;
   };
 
   const buildPayload = () => ({
-    name: `${formData.firstName} ${formData.lastName}`.trim(),
+    name: `${formData.firstName}`,
+    surname: `${formData.lastName}`.trim(),
     email: formData.email,
     password: formData.password,
     phone: formData.phone,
@@ -84,7 +90,8 @@ export default function SignupPage() {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       const firstErrorField = document.querySelector(".error-field");
-      if (firstErrorField) firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (firstErrorField)
+        firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
@@ -110,25 +117,27 @@ export default function SignupPage() {
         // Step 3: Set success state and redirect to dashboard
         setPreviewData({
           ...payload,
-          userId: registerResponse.data?.data?._id || loginResponse.data?.user?._id,
+          userId:
+            registerResponse.data?.data?._id || loginResponse.data?.user?._id,
         });
         setSubmitted(true);
 
         setTimeout(() => {
           navigate("/userdashboard");
         }, 1500);
-
       } catch (loginError) {
-        console.error("⚠️ Registration succeeded but auto-login failed:", loginError);
+        console.error(
+          "⚠️ Registration succeeded but auto-login failed:",
+          loginError,
+        );
         console.log("Login error response:", loginError.response?.data);
 
         // Registration worked, but login failed
         setApiError(
-          "Account created successfully! However, auto-login failed. Please go to the login page."
+          "Account created successfully! However, auto-login failed. Please go to the login page.",
         );
         setSubmitted(true);
       }
-
     } catch (registerError) {
       console.error("❌ Registration failed:");
       console.log("Error object:", registerError);
@@ -144,7 +153,10 @@ export default function SignupPage() {
 
       let message = rawMessage;
 
-      if (typeof message === "string" && message.trim().toLowerCase() === "error!") {
+      if (
+        typeof message === "string" &&
+        message.trim().toLowerCase() === "error!"
+      ) {
         if (registerError.response?.data?.errors) {
           const fieldErrors = registerError.response.data.errors;
           const joined = Object.values(fieldErrors)
@@ -178,16 +190,20 @@ export default function SignupPage() {
   };
 
   const inputClass = (field) =>
-    `w-full bg-black border rounded-xl px-4 py-3 focus:outline-none transition-colors ${errors[field]
-      ? "border-red-500 focus:border-red-400 error-field"
-      : "border-zinc-700 focus:border-lime-400"
+    `w-full bg-black border rounded-xl px-4 py-3 focus:outline-none transition-colors ${
+      errors[field]
+        ? "border-red-500 focus:border-red-400 error-field"
+        : "border-zinc-700 focus:border-lime-400"
     }`;
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
       {/* Back to Home */}
       <div className="max-w-7xl mx-auto px-6 pt-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-lime-400 transition-colors font-sora">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-lime-400 transition-colors font-sora"
+        >
           ← Back to Home
         </Link>
       </div>
@@ -234,7 +250,9 @@ export default function SignupPage() {
                 className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6"
               >
                 <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{card.desc}</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {card.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -268,7 +286,9 @@ export default function SignupPage() {
             <>
               <div className="mb-8 text-center">
                 <h2 className="text-4xl font-bold">Create Account</h2>
-                <p className="text-zinc-400 mt-3">Join the Kinetix ecosystem today</p>
+                <p className="text-zinc-400 mt-3">
+                  Join the Kinetix ecosystem today
+                </p>
               </div>
 
               {/* API Error Message */}
@@ -441,7 +461,9 @@ export default function SignupPage() {
                         onChange={handleChange}
                         className="mt-1 accent-lime-400"
                       />
-                      <span>I agree to the Terms of Service and Privacy Policy.</span>
+                      <span>
+                        I agree to the Terms of Service and Privacy Policy.
+                      </span>
                     </label>
                     <ErrorMsg field="agreeTerms" errors={errors} />
                   </div>
@@ -463,10 +485,11 @@ export default function SignupPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${loading
-                    ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-                    : "bg-lime-400 text-black hover:scale-[1.01]"
-                    }`}
+                  className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${
+                    loading
+                      ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                      : "bg-lime-400 text-black hover:scale-[1.01]"
+                  }`}
                 >
                   {loading ? "CREATING ACCOUNT..." : "+ CREATE ACCOUNT"}
                 </button>
