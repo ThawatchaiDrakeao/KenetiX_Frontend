@@ -35,27 +35,27 @@ const EXPERIENCES = [
   },
   {
     id: "ice", title: "ICE BATH RECOVERY", tag: "Every Thursday — 18:30",
-    accentColor: "#00D4FF", img: "/community/ice-bath.png",
+    accentColor: LIME, img: "/community/ice-bath.png",
     points: ["Guided cold exposure", "Breathwork protocol", "3–8 min immersion", "Performance recovery"],
   },
   {
     id: "coffee", title: "COFFEE SOCIAL", tag: "Every Sunday — 08:00",
-    accentColor: "#FFB347", img: "/community/coffee-social.png",
+    accentColor: LIME, img: "/community/coffee-social.png",
     points: ["Community networking", "Wellness conversations", "Specialty coffee", "Post-run gathering"],
   },
 ];
 
 const EVENTS = [
   { id: 1, title: "Run Club Night Session",      date: "Sat 14 Jun", time: "19:00", seats: 8,  type: "RUN",    color: LIME      },
-  { id: 2, title: "Ice Bath Recovery Workshop",  date: "Thu 19 Jun", time: "18:30", seats: 4,  type: "ICE",    color: "#00D4FF" },
-  { id: 3, title: "Coffee Community Meetup",     date: "Sun 22 Jun", time: "08:00", seats: 12, type: "COFFEE", color: "#FFB347" },
+  { id: 2, title: "Ice Bath Recovery Workshop",  date: "Thu 19 Jun", time: "18:30", seats: 4,  type: "ICE",    color: LIME },
+  { id: 3, title: "Coffee Community Meetup",     date: "Sun 22 Jun", time: "08:00", seats: 12, type: "COFFEE", color: LIME },
 ];
 
 
 const TESTIMONIALS = [
   { name: "Jirayu J.",  initials: "JJ", role: "Top Runner",          color: LIME,      rating: 5, text: "Running brought me here. The people made me stay. KINETIX Community completely changed how I approach fitness and recovery." },
-  { name: "Anne T.",    initials: "AT", role: "Recovery Champion",   color: "#00D4FF", rating: 5, text: "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it." },
-  { name: "Cookie Y.",  initials: "CY", role: "Community Connector", color: "#FFB347", rating: 5, text: "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week." },
+  { name: "Anne T.",    initials: "AT", role: "Recovery Champion",   color: LIME, rating: 5, text: "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it." },
+  { name: "Cookie Y.",  initials: "CY", role: "Community Connector", color: LIME, rating: 5, text: "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week." },
 ];
 
 // ── SHARED UI COMPONENTS ──────────────────────────────────────────────────────
