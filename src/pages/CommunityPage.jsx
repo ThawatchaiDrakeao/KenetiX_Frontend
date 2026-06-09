@@ -211,7 +211,7 @@ function Experiences() {
           className="text-center mb-6">
           <SectionLabel text="Featured Experiences" />
           <motion.h2 variants={fadeUp}
-            className="text-4xl sm:text-5xl font-black text-white">
+            className="text-3xl sm:text-4xl font-black text-white">
             What We Do Together
           </motion.h2>
         </motion.div>
@@ -272,7 +272,7 @@ function Events() {
         >
           <div className="mb-6">
             <SectionLabel text="Upcoming Events" />
-            <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-black text-white">
               Join This Week
             </motion.h2>
           </div>
