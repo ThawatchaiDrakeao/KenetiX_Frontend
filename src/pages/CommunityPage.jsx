@@ -318,20 +318,20 @@ function Testimonials() {
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="text-center mb-6">
           <SectionLabel text="Testimonials" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
+          <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl font-black text-white">
             Heard from the Community
           </motion.h2>
         </motion.div>
 
-        <div className="relative min-h-[220px] flex items-center justify-center">
+        <div className="relative min-h-[180px] flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div key={active}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}>
-              <GlassCard className="p-10 text-center" hoverGlow={false}>
-                <p className="text-2xl lg:text-3xl font-bold text-white leading-relaxed mb-8">
+              <GlassCard className="p-6 sm:p-8 text-center" hoverGlow={false}>
+                <p className="text-base lg:text-lg font-medium text-white/85 leading-relaxed mb-5">
                   "{TESTIMONIALS[active].text}"
                 </p>
                 <div className="flex flex-col items-center gap-3">
@@ -371,7 +371,7 @@ function FinalCTA() {
     <section className="py-10 px-4" style={{ background: "#080808" }}>
       <div className="max-w-4xl mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}>
-          <GlassCard className="p-12 sm:p-20 text-center relative overflow-hidden" hoverGlow={false}
+          <GlassCard className="p-8 sm:p-12 text-center relative overflow-hidden" hoverGlow={false}
             style={{ background: "rgba(141,255,0,0.04)", border: "1px solid rgba(141,255,0,0.15)" }}>
 
             {/* Background glow */}
@@ -380,23 +380,23 @@ function FinalCTA() {
 
             <div className="relative">
               <motion.p variants={fadeUp}
-                className="text-[11px] font-bold tracking-[0.4em] uppercase mb-6"
+                className="text-[11px] font-bold tracking-[0.4em] uppercase mb-4"
                 style={{ color: LIME }}>
                 Ready to Join?
               </motion.p>
               <motion.h2 variants={fadeUp}
-                className="text-5xl font-black text-white leading-[0.95] tracking-tight mb-6 lg:text-6xl">
+                className="text-3xl font-black text-white leading-[1.05] tracking-tight mb-4 lg:text-4xl">
                 Run Together.<br />
                 <span style={{ color: LIME }}>Recover</span> Together.<br />
                 Grow Together.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-lg mb-6" style={{ color: "#A0A0A0" }}>
+              <motion.p variants={fadeUp} className="text-sm mb-5" style={{ color: "#A0A0A0" }}>
                 Your community is waiting. Join KINETIX and start your journey.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to="/signup">
                   <motion.button
-                    className="px-10 py-4 rounded-lg font-black text-sm tracking-wide text-black"
+                    className="px-8 py-3 rounded-lg font-black text-sm tracking-wide text-black"
                     style={{ background: LIME }}
                     whileHover={{ scale: 1.04, boxShadow: GLOW }}
                     whileTap={{ scale: 0.97 }}>
@@ -405,7 +405,7 @@ function FinalCTA() {
                 </Link>
                 <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
                   <motion.button
-                    className="px-10 py-4 rounded-lg font-semibold text-sm tracking-wide"
+                    className="px-8 py-3 rounded-lg font-semibold text-sm tracking-wide"
                     style={{ background: SURFACE, border: "1px solid rgba(141,255,0,0.25)", color: LIME }}
                     whileHover={{ background: "rgba(141,255,0,0.08)", scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}>
