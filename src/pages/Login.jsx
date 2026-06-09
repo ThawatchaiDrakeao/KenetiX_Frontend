@@ -13,6 +13,7 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { loginAdmin } = useAdminAuth();
+  const { t } = useLanguage();
 
   const MOCK_ADMIN = { email: "admin@delivery.com", password: "password123" };
 
@@ -47,7 +48,7 @@ function Login() {
       }
     } catch (err) {
       setError(
-        err.response?.data?.message || "Login failed. Please try again.",
+        err.response?.data?.message || t("login.loginFailed"),
       );
     } finally {
       setLoading(false);
@@ -66,7 +67,7 @@ function Login() {
             className="text-xs font-sora tracking-[0.25em] uppercase mb-2"
             style={{ color: "#94A3B8" }}
           >
-            Running Shoe Rental
+            {t("login.runningShoeRental")}
           </p>
           <h1
             className="text-4xl font-bold font-sora"
@@ -89,10 +90,10 @@ function Login() {
             className="text-2xl font-semibold font-sora mb-1"
             style={{ color: "#0F172A" }}
           >
-            Sign in to your account
+            {t("login.title")}
           </h2>
           <p className="text-sm font-sora mb-6" style={{ color: "#94A3B8" }}>
-            Enter your credentials to continue
+            {t("login.desc")}
           </p>
 
           {error && (
@@ -114,13 +115,13 @@ function Login() {
                 className="block text-xs font-sora mb-1.5"
                 style={{ color: "#64748B" }}
               >
-                Email Address
+                {t("login.emailLabel")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t("login.emailPlaceholder")}
                 required
                 className="w-full text-sm rounded-xl px-4 py-3 font-sora focus:outline-none transition-colors"
                 style={{
@@ -142,13 +143,13 @@ function Login() {
                 className="block text-xs font-sora mb-1.5"
                 style={{ color: "#64748B" }}
               >
-                Password
+                {t("login.passwordLabel")}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder={t("login.passwordPlaceholder")}
                 required
                 className="w-full text-sm rounded-xl px-4 py-3 font-sora focus:outline-none transition-colors"
                 style={{
@@ -179,13 +180,13 @@ function Login() {
                   : { background: "#C3FF51", color: "#0F172A" }
               }
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t("login.signingIn") : t("login.signIn")}
             </button>
           </form>
 
           <div className="mt-6 space-y-3 text-center">
             <p className="text-sm font-sora" style={{ color: "#64748B" }}>
-              Don't have an account?{" "}
+              {t("login.noAccount")}{" "}
               <Link
                 to="/signup"
                 className="font-medium font-sora transition-colors"
@@ -197,7 +198,7 @@ function Login() {
                   e.target.style.color = "#4D7C0F";
                 }}
               >
-                Sign up
+                {t("login.signUp")}
               </Link>
             </p>
             <Link
@@ -211,7 +212,7 @@ function Login() {
                 e.target.style.color = "#94A3B8";
               }}
             >
-              ← Back to Home
+              {t("login.backToHome")}
             </Link>
           </div>
         </div>

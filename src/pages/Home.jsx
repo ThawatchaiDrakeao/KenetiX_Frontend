@@ -23,6 +23,7 @@ import SignupPage from "../components/SignupPage";
 import ScrollArrow from "../components/ScrollArrow";
 import UserDashboard from "../pages/UserDashboard";
 import CheckOut from "./CheckOut";
+import ProtectedUserRoute from "../components/ProtectedUserRoute";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 36 },
@@ -67,13 +68,13 @@ export default function Home() {
           <Route path="signup" element={<SignupPage />} />
           <Route path="login" element={<Login />} />
           <Route path="catalog" element={<Catalog />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="userdashboard" element={<UserDashboard />} />
+          <Route path="userdashboard" element={<ProtectedUserRoute><UserDashboard /></ProtectedUserRoute>} />
           {/* <Route path="catalognavbar" element={<CatalogNavbar />} /> */}
           <Route path="checkout" element={<CheckOut />} />
           <Route path="terms" element={<TermsSection />} />
           <Route path="privacy" element={<PrivacySection />} />
           <Route path="damage" element={<DamagePolicySection />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <Footer />

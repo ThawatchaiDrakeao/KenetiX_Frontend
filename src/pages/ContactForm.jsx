@@ -75,6 +75,7 @@ export default function ContactForm() {
                 body: JSON.stringify({ ...form, images }),
             });
             if (!res.ok) throw new Error('api_error');
+            setStatus('success');
         } catch {
             // Fallback: open mail client with form data
             const body = [
@@ -86,10 +87,9 @@ export default function ContactForm() {
                 `Issue Details:\n${form.issueDetails}`,
                 files.length ? `\n(${files.length} image(s) attached — please forward separately)` : '',
             ].join('\n');
+            setStatus('success');
             window.location.href = `mailto:hello@kinetix.run?subject=Contact from ${encodeURIComponent(form.fullName)}&body=${encodeURIComponent(body)}`;
         }
-
-        setStatus('success');
     };
 
     // ── Success state ─────────────────────────────────────────────────────────

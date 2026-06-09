@@ -149,8 +149,8 @@ export default function SignupPage() {
     setPreviewData(null); setApiError(""); setLoading(false);
   };
 
-  const inputClass = (field) =>
-    `w-full bg-black border rounded-xl px-4 py-3 focus:outline-none transition-colors ${
+  const inp = (field) =>
+    `w-full border rounded-xl px-4 py-3 focus:outline-none transition-colors ${
       errors[field]
         ? "border-red-500 focus:border-red-400 error-field"
         : "border-zinc-700 focus:border-lime-400"
@@ -166,13 +166,13 @@ export default function SignupPage() {
       <div className="max-w-7xl mx-auto px-6 pt-8">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-lime-400 transition-colors font-sora"
+          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-lime-500 transition-colors font-sora"
         >
           ← Back to Home
         </Link>
       </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {!submitted && <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               {
                 title: "Profile Data",
@@ -201,7 +201,7 @@ export default function SignupPage() {
                 </p>
               </div>
             ))}
-          </div>
+          </div>}
 
         {/* Form Card */}
         {!submitted ? (
@@ -219,18 +219,6 @@ export default function SignupPage() {
                 </Link>
               </p>
             </div>
-
-        {/* Register Form */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-[32px] p-8 shadow-2xl shadow-lime-500/10">
-          {!submitted ? (
-            <>
-              <div className="mb-8 text-center">
-                <h2 className="text-4xl font-bold">Create Account</h2>
-                <p className="text-zinc-400 mt-3">
-                  Join the Kinetix ecosystem today
-                </p>
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} noValidate>
 
@@ -412,8 +400,6 @@ export default function SignupPage() {
           </div>
         )}
 
-      </div>
     </div>
   );
-  // ... (rest of the component stays the same)
 }
