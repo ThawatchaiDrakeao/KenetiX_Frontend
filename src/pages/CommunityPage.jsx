@@ -414,7 +414,7 @@ function FinalCTA() {
                     style={{ background: SURFACE, border: "1px solid rgba(141,255,0,0.25)", color: LIME }}
                     whileHover={{ background: "rgba(141,255,0,0.08)", scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}>
-                    Join WhatsApp
+                    Booking Activities
                   </motion.button>
                 </a>
               </motion.div>
