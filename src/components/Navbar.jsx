@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Button from "./ui/Button";
@@ -8,7 +8,6 @@ import { useLanguage } from "../context/useLanguage";
 
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -16,7 +15,6 @@ export default function Navbar() {
   const { cartCount } = useCart();
   const { language, setLanguage, t } = useLanguage();
   const isLoggedIn = !!user;
-  const isAdmin = user?.userRank === "admin" || user?.role === "admin";
 
   const NAV_LINKS = [
     { id: "catalog",   label: t("nav.catalog"),   to: "/catalog"        },
@@ -25,33 +23,14 @@ export default function Navbar() {
     { id: "contact",   label: t("nav.contactUs"),  to: "/contact"        },
   ];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? "bg-dark/90 backdrop-blur-md border-b border-dark-border"
-          : "bg-transparent"
-          }`}
-      >
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 lg:h-18">
             {/* Logo */}
             <Link to="/" className="shrink-0">
-              <span className="text-[24px] font-extrabold tracking-widest text-white">
+              <span className="text-[24px] font-extrabold tracking-widest text-black">
                 KINETI<span className="text-[#C3FF51]">X</span>
               </span>
             </Link>
@@ -62,7 +41,7 @@ export default function Navbar() {
                 <Link
                   key={link.id}
                   to={link.to}
-                  className="text-sm text-white/60 hover:text-neon transition-colors duration-200 font-medium"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -75,24 +54,21 @@ export default function Navbar() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setLanguage('th')}
-                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'th' ? 'text-neon' : 'text-white/30 hover:text-white'}`}
+                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'th' ? 'text-[#4D7C0F]' : 'text-gray-400 hover:text-gray-700'}`}
                 >
                   TH
                 </button>
-                <span className="text-white/20 text-xs">|</span>
+                <span className="text-xs text-gray-300">|</span>
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'en' ? 'text-neon' : 'text-white/30 hover:text-white'}`}
+                  className={`text-xs font-semibold px-2 py-0.5 rounded transition-colors ${language === 'en' ? 'text-[#4D7C0F]' : 'text-gray-400 hover:text-gray-700'}`}
                 >
                   EN
                 </button>
               </div>
 
               {isLoggedIn ? (
-                <UserActions
-                  onOpenCart={() => setCartOpen(true)}
-                  cartCount={cartCount}
-                />
+                <UserActions onOpenCart={() => setCartOpen(true)} cartCount={cartCount} />
               ) : (
                 <GuestActions t={t} />
               )}
@@ -104,18 +80,9 @@ export default function Navbar() {
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "opacity-0" : ""
-                  }`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-white transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""
-                  }`}
-              />
+              <span className={`block h-0.5 w-6 bg-black transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block h-0.5 w-6 bg-black transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`} />
+              <span className={`block h-0.5 w-6 bg-black transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
             </button>
           </div>
         </div>
@@ -200,34 +167,18 @@ export default function Navbar() {
 function GuestActions({ t }) {
   return (
     <>
-      <Button
-        variant="primary"
-        size="sm"
-        to="/login"
-      >
-        {t('nav.login')}
-      </Button>
-
-      <Button
-        variant="primary"
-        size="sm"
-        to="/signup"
-      >
-        {t('nav.signup')}
-      </Button>
+      <Button variant="primary" size="sm" to="/login">{t('nav.login')}</Button>
+      <Button variant="primary" size="sm" to="/signup">{t('nav.signup')}</Button>
     </>
   );
 }
 
 function UserActions({ onOpenCart, cartCount }) {
+  const iconCls = "w-8 h-8 flex items-center justify-center transition-colors text-gray-500 hover:text-[#C3FF51]";
   return (
     <>
       {/* Cart */}
-      <button
-        onClick={onOpenCart}
-        className="relative w-8 h-8 flex items-center justify-center text-white/35 hover:text-[#C3FF51] transition-colors"
-        aria-label="Cart"
-      >
+      <button onClick={onOpenCart} className={`relative ${iconCls}`} aria-label="Cart">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
         </svg>
@@ -239,7 +190,7 @@ function UserActions({ onOpenCart, cartCount }) {
       </button>
 
       {/* Profile */}
-      <Link to="/userdashboard" className="w-8 h-8 flex items-center justify-center text-white/35 hover:text-[#C3FF51] transition-colors" aria-label="Account">
+      <Link to="/userdashboard" className={iconCls} aria-label="Account">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
         </svg>
