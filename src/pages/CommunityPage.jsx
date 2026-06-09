@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -7,7 +7,6 @@ import CommunityGallery from "../components/community/CommunityGallery";
 
 // ── THEME ─────────────────────────────────────────────────────────────────────
 const LIME    = "#C3FF51";
-const LIME2   = "#52D600";
 const BG      = "#050505";
 const SURFACE = "rgba(255,255,255,0.03)";
 const BORDER  = "rgba(255,255,255,0.07)";
@@ -19,7 +18,6 @@ const fadeUp = {
   show:   { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
-const fadeIn  = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.6 } } };
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const STATS = [
@@ -32,68 +30,32 @@ const STATS = [
 const EXPERIENCES = [
   {
     id: "run", title: "RUN CLUB", tag: "Tue & Sat — 19:00",
-    icon: "", accentColor: LIME, img: "/community/run-club.png",
+    accentColor: LIME, img: "/community/run-club.png",
     points: ["Group runs every week", "5km / 10km routes", "Urban night running", "GPS tracked sessions"],
   },
   {
     id: "ice", title: "ICE BATH RECOVERY", tag: "Every Thursday — 18:30",
-    icon: "", accentColor: "#00D4FF", img: "/community/ice-bath.png",
+    accentColor: "#00D4FF", img: "/community/ice-bath.png",
     points: ["Guided cold exposure", "Breathwork protocol", "3–8 min immersion", "Performance recovery"],
   },
   {
     id: "coffee", title: "COFFEE SOCIAL", tag: "Every Sunday — 08:00",
-    icon: "", accentColor: "#FFB347", img: "/community/coffee-social.png",
+    accentColor: "#FFB347", img: "/community/coffee-social.png",
     points: ["Community networking", "Wellness conversations", "Specialty coffee", "Post-run gathering"],
   },
 ];
 
 const EVENTS = [
-  { id: 1, title: "Run Club Night Session",      date: "Sat 14 Jun", time: "19:00", seats: 8,  type: "RUN",    color: LIME,      icon: "" },
-  { id: 2, title: "Ice Bath Recovery Workshop",  date: "Thu 19 Jun", time: "18:30", seats: 4,  type: "ICE",    color: "#00D4FF", icon: "" },
-  { id: 3, title: "Coffee Community Meetup",     date: "Sun 22 Jun", time: "08:00", seats: 12, type: "COFFEE", color: "#FFB347", icon: "" },
+  { id: 1, title: "Run Club Night Session",      date: "Sat 14 Jun", time: "19:00", seats: 8,  type: "RUN",    color: LIME      },
+  { id: 2, title: "Ice Bath Recovery Workshop",  date: "Thu 19 Jun", time: "18:30", seats: 4,  type: "ICE",    color: "#00D4FF" },
+  { id: 3, title: "Coffee Community Meetup",     date: "Sun 22 Jun", time: "08:00", seats: 12, type: "COFFEE", color: "#FFB347" },
 ];
 
-const FEED = [
-  { id: 1, user: "cookieyda",     initials: "CY", color: LIME,      action: "Completed 10km night run",  time: "2h",  likes: 48, comments: 12, badge: "" },
-  { id: 2, user: "jirayu_jj",    initials: "JJ", color: "#00D4FF", action: "Ice bath — 5 min hold",      time: "4h",  likes: 63, comments: 8,  badge: "" },
-  { id: 3, user: "annethong",    initials: "AT", color: "#FFB347", action: "Sunday Coffee Social",        time: "6h",  likes: 31, comments: 5,  badge: "" },
-  { id: 4, user: "toey_run",     initials: "TR", color: LIME,      action: "New PB — 5km in 22:14",      time: "1d",  likes: 92, comments: 21, badge: "" },
-  { id: 5, user: "mint_kinetix", initials: "MK", color: "#FF6B9D", action: "Breathwork + cold plunge",   time: "1d",  likes: 44, comments: 9,  badge: "" },
-  { id: 6, user: "pat_stride",   initials: "PS", color: "#FFB347", action: "Best coffee chat ever",      time: "2d",  likes: 27, comments: 6,  badge: "" },
-];
-
-const LEADERBOARD = [
-  { rank: 1, name: "Jirayu J.",  initials: "JJ", pts: 4280, streak: "12w", badge: "", role: "Top Runner",          color: LIME      },
-  { rank: 2, name: "Anne T.",    initials: "AT", pts: 3910, streak: "9w",  badge: "", role: "Recovery Champion",   color: "#00D4FF" },
-  { rank: 3, name: "Cookie Y.",  initials: "CY", pts: 3540, streak: "8w",  badge: "", role: "Community Connector", color: "#FFB347" },
-  { rank: 4, name: "Toey P.",    initials: "TP", pts: 3200, streak: "7w",  badge: "", role: "Top Runner",          color: LIME      },
-  { rank: 5, name: "Mint K.",    initials: "MK", pts: 2880, streak: "6w",  badge: "", role: "Recovery Champion",   color: "#FF6B9D" },
-];
-
-const BENEFITS = [
-  { icon: "", title: "Exclusive Events"       },
-  { icon: "", title: "Partner Discounts"      },
-  { icon: "", title: "Priority Registration"  },
-  { icon: "", title: "Recovery Sessions"      },
-  { icon: "", title: "Wellness Workshops"     },
-  { icon: "", title: "Community Networking"   },
-  { icon: "", title: "Merchandise Access"     },
-  { icon: "", title: "Private Challenges"     },
-];
 
 const TESTIMONIALS = [
   { name: "Jirayu J.",  initials: "JJ", role: "Top Runner",          color: LIME,      rating: 5, text: "Running brought me here. The people made me stay. KINETIX Community completely changed how I approach fitness and recovery." },
   { name: "Anne T.",    initials: "AT", role: "Recovery Champion",   color: "#00D4FF", rating: 5, text: "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it." },
   { name: "Cookie Y.",  initials: "CY", role: "Community Connector", color: "#FFB347", rating: 5, text: "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week." },
-];
-
-const GALLERY = [
-  { id: 1, label: "Night Run — Silom",     tall: true,  bg: "linear-gradient(160deg, #0c1f00 0%, #162e00 50%, #050505 100%)" },
-  { id: 2, label: "Ice Bath Recovery",     tall: false, bg: "linear-gradient(160deg, #001428 0%, #002040 100%)"              },
-  { id: 3, label: "Sunday Coffee Social",  tall: false, bg: "linear-gradient(160deg, #1a0e00 0%, #2a1800 100%)"              },
-  { id: 4, label: "5km PB Day",            tall: true,  bg: "linear-gradient(160deg, #0a1400 0%, #182400 100%)"              },
-  { id: 5, label: "Breathwork Session",    tall: false, bg: "linear-gradient(160deg, #080820 0%, #101030 100%)"              },
-  { id: 6, label: "Community Meetup",      tall: false, bg: "linear-gradient(160deg, #1a0500 0%, #280800 100%)"              },
 ];
 
 // ── SHARED UI COMPONENTS ──────────────────────────────────────────────────────
@@ -333,182 +295,6 @@ function Events() {
                   Join
                 </motion.button>
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── COMMUNITY FEED ────────────────────────────────────────────────────────────
-function Feed() {
-  return (
-    <section className="py-28 px-4" style={{ background: BG }}>
-      <div className="max-w-[1400px] mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="mb-16">
-          <SectionLabel text="Community Feed" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
-            What's Happening
-          </motion.h2>
-        </motion.div>
-
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEED.map((post) => (
-            <motion.div key={post.id} variants={fadeUp}>
-              <GlassCard className="p-5 h-full flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <Avatar initials={post.initials} color={post.color} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white">@{post.user}</p>
-                    <p className="text-xs" style={{ color: "#606060" }}>{post.time} ago</p>
-                  </div>
-                  <span className="text-lg">{post.badge}</span>
-                </div>
-
-                <div className="flex-1 rounded-2xl p-4"
-                  style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${BORDER}` }}>
-                  <p className="text-sm text-white/80 leading-relaxed">{post.action}</p>
-                </div>
-
-                <div className="flex gap-5 pt-1">
-                  <motion.button className="flex items-center gap-1.5 text-xs"
-                    style={{ color: "#606060" }}
-                    whileHover={{ color: LIME }}>
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                    {post.likes}
-                  </motion.button>
-                  <motion.button className="flex items-center gap-1.5 text-xs"
-                    style={{ color: "#606060" }}
-                    whileHover={{ color: "#A0A0A0" }}>
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    {post.comments}
-                  </motion.button>
-                </div>
-              </GlassCard>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── LEADERBOARD ───────────────────────────────────────────────────────────────
-function Leaderboard() {
-  return (
-    <section className="py-28 px-4" style={{ background: "#080808" }}>
-      <div className="max-w-3xl mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="mb-16">
-          <SectionLabel text="Leaderboard" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
-            Top Performers
-          </motion.h2>
-        </motion.div>
-
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="space-y-3">
-          {LEADERBOARD.map((member, i) => (
-            <motion.div key={member.rank} variants={fadeUp}>
-              <GlassCard className="p-4 sm:p-5" glow={i === 0}>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 text-center">
-                    {i === 0
-                      ? <span className="text-xl">👑</span>
-                      : <span className="text-sm font-bold" style={{ color: "#404040" }}>#{member.rank}</span>
-                    }
-                  </div>
-                  <Avatar initials={member.initials} color={member.color} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-sm font-bold text-white">{member.name}</p>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: `${member.color}15`, color: member.color }}>
-                        {member.role}
-                      </span>
-                    </div>
-                    <p className="text-[11px]" style={{ color: "#606060" }}>🔥 {member.streak} streak</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-sm font-black" style={{ color: LIME }}>{member.pts.toLocaleString()}</p>
-                    <p className="text-[10px]" style={{ color: "#404040" }}>pts</p>
-                  </div>
-                </div>
-              </GlassCard>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── GALLERY ───────────────────────────────────────────────────────────────────
-function Gallery() {
-  return (
-    <section className="py-28 px-4" style={{ background: BG }}>
-      <div className="max-w-[1400px] mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="mb-16">
-          <SectionLabel text="Community Gallery" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
-            Moments We Share
-          </motion.h2>
-        </motion.div>
-
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="grid grid-cols-2 md:grid-cols-3 gap-3 auto-rows-[180px]">
-          {GALLERY.map((item) => (
-            <motion.div key={item.id} variants={fadeUp}
-              className={`relative rounded-3xl overflow-hidden cursor-pointer group ${item.tall ? "row-span-2" : ""}`}
-              style={{ background: item.bg, border: `1px solid ${BORDER}` }}
-              whileHover={{ borderColor: "rgba(141,255,0,0.40)", boxShadow: GLOW, scale: 1.01 }}
-              transition={{ duration: 0.3 }}>
-              {/* Noise texture overlay */}
-              <div className="absolute inset-0 opacity-20"
-                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
-              {/* Label overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-xs font-bold text-white tracking-wider">{item.label}</span>
-              </div>
-              {/* Corner accent */}
-              <div className="absolute top-3 right-3 w-2 h-2 rounded-full opacity-60"
-                style={{ background: LIME }} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ── MEMBERSHIP BENEFITS ───────────────────────────────────────────────────────
-function Benefits() {
-  return (
-    <section className="py-28 px-4" style={{ background: "#080808" }}>
-      <div className="max-w-[1400px] mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="text-center mb-16">
-          <SectionLabel text="Membership Benefits" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
-            Everything Included
-          </motion.h2>
-        </motion.div>
-
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {BENEFITS.map((b) => (
-            <motion.div key={b.title} variants={fadeUp}>
-              <GlassCard className="p-6 flex flex-col items-center text-center gap-3">
-                <p className="text-sm font-semibold text-white leading-tight">{b.title}</p>
-              </GlassCard>
             </motion.div>
           ))}
         </motion.div>
