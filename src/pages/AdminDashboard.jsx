@@ -1,19 +1,17 @@
-import { useState } from "react";
+// pages/AdminDashboard.jsx
+import { useState, useEffect } from "react";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import SummaryMetrics from "../components/admin/SummaryMetrics";
 import JobTable from "../components/admin/JobTable";
-import JobTimeline from "../components/admin/JobTimeline";
 import StaffTable from "../components/admin/StaffTable";
 import CancellationQueue from "../components/admin/CancellationQueue";
 import NotificationPanel from "../components/admin/NotificationPanel";
 import OrderManagement from "../components/admin/OrderManagement";
 import ShoeLookup from "../components/admin/ShoeLookup";
-import JobStatusChart from "../components/admin/JobStatusChart";
 import RecentActivity from "../components/admin/RecentActivity";
-import QuickConfirm from "../components/admin/QuickConfirm";
+//import QuickConfirm from "../components/admin/QuickConfirm";
 import ProfitAnalysis from "../components/admin/ProfitAnalysis";
-import DriverOverview from "../components/admin/DriverOverview";
-import LiveDeliveryMap from "../components/admin/LiveDeliveryMap";
+import API from "../api/axios";
 
 function PageHeader({ title, subtitle }) {
   return (
@@ -33,24 +31,83 @@ function PageHeader({ title, subtitle }) {
   );
 }
 
+// Simplified Overview Page - NO driver components
 function OverviewPage() {
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    pendingOrders: 0,
+    totalUsers: 0,
+    totalProducts: 0,
+    totalRevenue: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await API.get("/admin/stats");
+      if (response.data.success) {
+        setStats(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <SummaryMetrics />
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <JobStatusChart />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+          <p className="text-sm text-gray-500">Total Orders</p>
+          <p className="text-3xl font-bold text-gray-900">{stats.totalOrders}</p>
         </div>
-        <div className="lg:col-span-3">
-          <QuickConfirm />
+        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+          <p className="text-sm text-gray-500">Pending Orders</p>
+          <p className="text-3xl font-bold text-yellow-600">{stats.pendingOrders}</p>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+          <p className="text-sm text-gray-500">Total Customers</p>
+          <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+          <p className="text-sm text-gray-500">Active Shoes</p>
+          <p className="text-3xl font-bold text-green-600">{stats.totalProducts}</p>
         </div>
       </div>
+
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DriverOverview />
+        <QuickConfirm />
         <RecentActivity />
       </div>
-      <LiveDeliveryMap />
+
+      <NotificationPanel />
+      <OrderManagement />
     </div>
+  );
+}
+
+// Jobs Page - Simplified for rental (no driver assignment)
+function JobsPage() {
+  return (
+    <>
+      <PageHeader title="Order Management" subtitle="Track customer orders and shipments" />
+      <JobTable />
+    </>
   );
 }
 
@@ -63,10 +120,11 @@ export default function AdminDashboard() {
       case "overview":
         return (
           <>
-            <PageHeader title="Overview" subtitle="Platform-wide performance at a glance" />
+            <PageHeader title="Dashboard" subtitle="Welcome back! Here's what's happening today" />
             <OverviewPage />
           </>
         );
+
       case "profit":
         return (
           <>
@@ -74,25 +132,23 @@ export default function AdminDashboard() {
             <ProfitAnalysis />
           </>
         );
+
       case "jobs":
         return (
           <>
-            <PageHeader title="Job Management" subtitle="Create, assign, and track all delivery jobs" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <JobTable onViewTimeline={setSelectedJobId} />
-              </div>
-              <JobTimeline jobId={selectedJobId} />
-            </div>
+            <PageHeader title="Order Management" subtitle="Create, track, and manage all rental orders" />
+            <JobsPage />
           </>
         );
+
       case "staff":
         return (
           <>
-            <PageHeader title="Staff Management" subtitle="Manage drivers and operations staff" />
+            <PageHeader title="Staff Management" subtitle="Manage admin staff and their roles" />
             <StaffTable />
           </>
         );
+
       case "cancellations":
         return (
           <>
@@ -100,6 +156,7 @@ export default function AdminDashboard() {
             <CancellationQueue />
           </>
         );
+
       case "notifications":
         return (
           <>
@@ -107,6 +164,7 @@ export default function AdminDashboard() {
             <NotificationPanel />
           </>
         );
+
       case "orders":
         return (
           <>
@@ -114,15 +172,22 @@ export default function AdminDashboard() {
             <OrderManagement />
           </>
         );
+
       case "shoes":
         return (
           <>
-            <PageHeader title="Shoe Lookup" subtitle="Search product catalog and inventory" />
+            <PageHeader title="Shoe Inventory" subtitle="Search product catalog and manage inventory" />
             <ShoeLookup />
           </>
         );
+
       default:
-        return null;
+        return (
+          <>
+            <PageHeader title="Dashboard" subtitle="Welcome to Admin Panel" />
+            <OverviewPage />
+          </>
+        );
     }
   };
 
@@ -130,7 +195,7 @@ export default function AdminDashboard() {
     <div className="flex h-screen overflow-hidden" style={{ background: "#F8FAFC" }}>
       <AdminSidebar active={activeTab} onChange={setActiveTab} />
       <main className="flex-1 overflow-y-auto" style={{ background: "#F8FAFC" }}>
-        <div className="px-8 py-8 max-w-[1200px] mx-auto">
+        <div className="px-8 py-8 max-w-[1400px] mx-auto">
           {renderContent()}
         </div>
       </main>

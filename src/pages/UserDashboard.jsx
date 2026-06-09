@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import API from "../api/axios";
 
 const API_BASE =
     import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";

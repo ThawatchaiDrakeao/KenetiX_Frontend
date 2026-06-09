@@ -1,4 +1,4 @@
-import { useState } from "react";
+/*import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import API from "../../api/axios.js";
 import Button from "../ui/Button.jsx";
@@ -100,7 +100,7 @@ export default function QuickConfirm() {
                 className="rounded-xl p-4 flex flex-col gap-3"
                 style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}
               >
-                {/* Header row */}
+                {/* Header row }
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold font-sora tracking-wider" style={{ color: "#4D7C0F" }}>
@@ -118,7 +118,7 @@ export default function QuickConfirm() {
                   </span>
                 </div>
 
-                {/* Customer */}
+                {/* Customer }
                 <div>
                   <p className="font-semibold font-sora text-[14px] leading-snug" style={{ color: "#0F172A" }}>
                     {job.customer}
@@ -128,7 +128,7 @@ export default function QuickConfirm() {
                   </p>
                 </div>
 
-                {/* Driver + Actions */}
+                {/* Driver + Actions }
                 <div className="flex items-center gap-2">
                   <select
                     value={selectedDriver[job.id] || ""}
@@ -192,3 +192,4 @@ export default function QuickConfirm() {
     </motion.div>
   );
 }
+*/

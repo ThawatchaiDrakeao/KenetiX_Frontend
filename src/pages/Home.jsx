@@ -45,7 +45,8 @@ export default function Home() {
       <Navbar />
       <main>
         <Routes>
-          <Route index element={<HomeContent />} />
+          {/*<Route index element={<HomeContent />} /> */}
+          <Route path="/*" element={<HomeContent />} />
           <Route path="howitworkspage" element={<HowItWorksPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="signup" element={<SignupPage />} />

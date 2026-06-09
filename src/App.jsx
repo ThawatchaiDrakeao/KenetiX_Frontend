@@ -6,7 +6,6 @@ import UserDashboard from "./pages/UserDashboard";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ContactPage from "./pages/ContactPage";
 import CheckOut from "./pages/CheckOut";
-import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import SignupPage from "./components/SignupPage";
@@ -14,15 +13,14 @@ import SignupPage from "./components/SignupPage";
 export default function App() {
     return (
         <Routes>
-            <Route path="/"                element={<Home />} />
-            <Route path="/catalog"         element={<Catalog />} />
-            <Route path="/login"           element={<Login />} />
-            <Route path="/signup"          element={<SignupPage />} />
-            <Route path="/userdashboard"   element={<UserDashboard />} />
-            <Route path="/howitworkspage"  element={<HowItWorksPage />} />
-            <Route path="/contact"         element={<ContactPage />} />
-            <Route path="/checkout"        element={<CheckOut />} />
-            <Route path="/admin/login"     element={<AdminLogin />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/userdashboard" element={<UserDashboard />} />
+            <Route path="/howitworkspage" element={<HowItWorksPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/checkout" element={<CheckOut />} />
             <Route
                 path="/admin"
                 element={

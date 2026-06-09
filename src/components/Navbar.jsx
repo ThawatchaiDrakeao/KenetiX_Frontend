@@ -7,10 +7,10 @@ import { useCart } from "../context/CartContext";
 
 
 const NAV_LINKS = [
-  { id: "catalog",   label: "Catalog",      to: "/catalog"        },
-  { id: "how",       label: "How it works", to: "/howitworkspage" },
-  { id: "community", label: "Community",    to: "/userdashboard"  },
-  { id: "contact",   label: "Contact Us",   to: "/contact"        },
+  { id: "catalog", label: "Catalog", to: "/catalog" },
+  { id: "how", label: "How it works", to: "/howitworkspage" },
+  { id: "community", label: "Community", to: "/userdashboard" },
+  { id: "contact", label: "Contact Us", to: "/contact" },
 ];
 
 export default function Navbar() {
@@ -18,13 +18,14 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  // TEMPORARY
-  // Replace later with:
   const { user } = useAuth();
   const { cartCount } = useCart();
   const isLoggedIn = !!user;
-  const isAdmin = user?.userRank === "admin" || user?.role === "admin";
-  //const isLoggedIn = true;
+  const isAdmin = user && (
+    user.role === "ADMIN" ||
+    user.role === "admin" ||
+    user.userRank === "admin"
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,6 +77,7 @@ export default function Navbar() {
                 <UserActions
                   onOpenCart={() => setCartOpen(true)}
                   cartCount={cartCount}
+                  isAdmin={isAdmin}
                 />
               ) : (
                 <GuestActions />
@@ -204,16 +206,17 @@ function GuestActions() {
   );
 }
 
-function UserActions({ onOpenCart, cartCount }) {
+function UserActions({ onOpenCart, cartCount, isAdmin }) {
   return (
     <>
-      {/* Admin Button (temp — remove before production) */}
-      <Link
-        to="/admin/login"
-        className="text-xs text-neon border border-neon/30 px-3 py-1.5 rounded-lg hover:bg-neon/10 transition-colors font-medium"
-      >
-        Admin
-      </Link>
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="text-xs text-neon border border-neon/30 px-3 py-1.5 rounded-lg hover:bg-neon/10 transition-colors font-medium"
+        >
+          Admin
+        </Link>
+      )}
 
       {/* Cart */}
       <button

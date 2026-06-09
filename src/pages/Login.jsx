@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import ActionButton from "../components/ActionButton";
 
 function Login() {
@@ -24,81 +26,94 @@ function Login() {
                 password,
             });
 
-            console.log("Login success:", response.data);
-
-            // Store user in context (and localStorage)
             login(response.data.user);
 
-
-            alert("Login Successfully!");
-            navigate("/userdashboard");
-
-            if (userData.role === "ADMIN") {
+            const userRole = response.data.user.role;
+            if (userRole === "ADMIN" || userRole === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/userdashboard");
             }
+
         } catch (error) {
-            const message = error.response?.data?.message || "Login Failed";
-            setError(message);
+
+            try {
+                const staffResponse = await API.post("/api/staff/admin/login", {
+                    email,
+                    password,
+                });
+
+                if (staffResponse.data.user) {
+                    login(staffResponse.data.user);
+                    navigate("/admin");
+                    return;
+                }
+            } catch (staffError) {
+                // Both logins failed
+                const message = error.response?.data?.message || "Login Failed";
+                setError(message);
+            }
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="max-w-md mx-auto py-20 px-4">
-            <div className="bg-[#12121a] p-8 rounded-2xl border border-gray-800 shadow-2xl">
-                <h2 className="text-4xl font-bold mb-6 text-center text-white">Login</h2>
+        <>
+            <Navbar />
+            <div className="max-w-md mx-auto py-20 px-4">
+                <div className="bg-[#12121a] p-8 rounded-2xl border border-gray-800 shadow-2xl">
+                    <h2 className="text-4xl font-bold mb-6 text-center text-white">Login</h2>
 
-                {error && (
-                    <div className="mb-4 bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">
-                        {error}
-                    </div>
-                )}
+                    {error && (
+                        <div className="mb-4 bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">
+                            {error}
+                        </div>
+                    )}
 
-                <form className="space-y-4" onSubmit={handleLogin}>
-                    <div>
-                        <label className="block text-left mt-5 text-sm text-gray-400 mb-1">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
-                            required
-                            placeholder="Enter your email"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-left text-sm text-gray-400 mb-1">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
-                            required
-                            placeholder="Enter your password"
-                        />
-                    </div>
-                    <ActionButton text={loading ? "Signing In..." : "Sign In"} disabled={loading} />
-                </form>
-                <div className="mt-6 flex flex-col items-center gap-2">
-                    <p className="text-sm text-gray-400">
-                        Don't have an account?{" "}
-                        <Link to="/signup" className="text-blue-500 cursor-pointer hover:underline">
-                            Sign up
+                    <form className="space-y-4" onSubmit={handleLogin}>
+                        <div>
+                            <label className="block text-left mt-5 text-sm text-gray-400 mb-1">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
+                                required
+                                placeholder="Enter your email"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-left text-sm text-gray-400 mb-1">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
+                                required
+                                placeholder="Enter your password"
+                            />
+                        </div>
+                        <ActionButton text={loading ? "Signing In..." : "Sign In"} disabled={loading} />
+                    </form>
+                    <div className="mt-6 flex flex-col items-center gap-2">
+                        <p className="text-sm text-gray-400">
+                            Don't have an account?{" "}
+                            <Link to="/signup" className="text-blue-500 cursor-pointer hover:underline">
+                                Sign up
+                            </Link>
+                        </p>
+                        <Link to="/" className="text-gray-500 hover:text-white text-sm transition-all mt-2 underline">
+                            Back to Home
                         </Link>
-                    </p>
-                    <Link to="/" className="text-gray-500 hover:text-white text-sm transition-all mt-2 underline">
-                        Back to Home
-                    </Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

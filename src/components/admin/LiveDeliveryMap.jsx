@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+/*import { motion } from "framer-motion";
 
 const DRIVERS = [
   { id: "DRV-001", name: "สมชาย ขับดี",      x: 62, y: 55, status: "in-transit", job: "JOB-000011", zone: "สุขุมวิท" },
@@ -35,7 +35,7 @@ export default function LiveDeliveryMap() {
         boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
       }}
     >
-      {/* Header */}
+      {/* Header }
       <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #E2E8F0" }}>
         <div>
           <h3 className="font-semibold font-sora text-[14px]" style={{ color: "#0F172A" }}>
@@ -70,7 +70,7 @@ export default function LiveDeliveryMap() {
         </div>
       </div>
 
-      {/* Map */}
+      {/* Map }
       <div className="relative" style={{ height: "300px" }}>
         <div
           className="absolute inset-0"
@@ -83,7 +83,7 @@ export default function LiveDeliveryMap() {
         />
 
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Route lines */}
+          {/* Route lines }
           {ROUTES.map((r, i) => (
             <line
               key={i}
@@ -94,7 +94,7 @@ export default function LiveDeliveryMap() {
               opacity="0.35"
             />
           ))}
-          {/* Zone dots */}
+          {/* Zone dots }
           {ZONES.map((z) => (
             <circle
               key={z.name}
@@ -108,7 +108,7 @@ export default function LiveDeliveryMap() {
           ))}
         </svg>
 
-        {/* Zone labels */}
+        {/* Zone labels }
         {ZONES.map((z) => (
           <div
             key={z.name}
@@ -131,7 +131,7 @@ export default function LiveDeliveryMap() {
           </div>
         ))}
 
-        {/* Driver markers */}
+        {/* Driver markers }
         {DRIVERS.map((d) => {
           const isActive = d.status === "in-transit";
           const color = isActive ? "#4D7C0F" : "#CBD5E1";
@@ -176,7 +176,7 @@ export default function LiveDeliveryMap() {
           );
         })}
 
-        {/* Footer stats */}
+        {/* Footer stats }
         <div
           className="absolute bottom-0 left-0 right-0 px-6 py-3 flex items-center gap-6"
           style={{ background: "linear-gradient(to top, rgba(248,250,252,0.90) 0%, transparent 100%)" }}
@@ -196,3 +196,4 @@ export default function LiveDeliveryMap() {
     </motion.div>
   );
 }
+  */

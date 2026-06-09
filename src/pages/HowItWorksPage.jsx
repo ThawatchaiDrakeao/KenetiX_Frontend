@@ -1,5 +1,6 @@
 import { useLanguage } from "../context/useLanguage.js";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const pageCopy = {
   th: {
@@ -173,155 +174,158 @@ export default function HowItWorks() {
   const copy = pageCopy[language] || pageCopy.en;
 
   return (
-    <div className="min-h-screen bg-kinetix-black text-kinetix-white pt-32">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-kinetix-black text-kinetix-white pt-32">
 
-      <section className="border-y border-kinetix-border/80">
-        <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
-          <div className="flex flex-col justify-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
-              {copy.eyebrow}
-            </p>
-            <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-              {copy.title}
-            </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
-              {copy.intro}
-            </p>
+        <section className="border-y border-kinetix-border/80">
+          <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
+            <div className="flex flex-col justify-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
+                {copy.eyebrow}
+              </p>
+              <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
+                {copy.title}
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+                {copy.intro}
+              </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/catalog"
-                className="inline-flex h-12 items-center justify-center gap-3 rounded-lg bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
-              >
-                {copy.primaryCta}
-                <span aria-hidden="true">-&gt;</span>
-              </Link>
-              <Link
-                to="/"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-zinc-700 px-6 text-sm font-semibold text-white transition-colors hover:border-kinetix-aqua hover:text-kinetix-aqua"
-              >
-                {copy.secondaryCta}
-              </Link>
-            </div>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  to="/catalog"
+                  className="inline-flex h-12 items-center justify-center gap-3 rounded-lg bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
+                >
+                  {copy.primaryCta}
+                  <span aria-hidden="true">-&gt;</span>
+                </Link>
+                <Link
+                  to="/"
+                  className="inline-flex h-12 items-center justify-center rounded-lg border border-zinc-700 px-6 text-sm font-semibold text-white transition-colors hover:border-kinetix-aqua hover:text-kinetix-aqua"
+                >
+                  {copy.secondaryCta}
+                </Link>
+              </div>
 
-            <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
-              {copy.checkpoints.map((item) => (
-                <div key={item} className="border-l border-kinetix-lime/60 pl-3">
-                  <p className="text-xs leading-5 text-zinc-300">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative h-[520px] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 sm:h-[620px] lg:h-[656px]">
-            <img
-              src="/how-it-works-shoe.png"
-              alt={copy.imageAlt}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/80 px-5 py-4 backdrop-blur-md sm:px-6">
-              <div className="grid grid-cols-3 gap-3 text-center">
-                {copy.stats.map(([value, label]) => (
-                  <div key={label}>
-                    <p className="text-2xl font-bold text-kinetix-lime">
-                      {value}
-                    </p>
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-zinc-400">
-                      {label}
-                    </p>
+              <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+                {copy.checkpoints.map((item) => (
+                  <div key={item} className="border-l border-kinetix-lime/60 pl-3">
+                    <p className="text-xs leading-5 text-zinc-300">{item}</p>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-        <div className="flex flex-col justify-between gap-6 border-b border-zinc-800 pb-8 lg:flex-row lg:items-end">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-aqua">
-              {copy.flowEyebrow}
-            </p>
-            <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl">
-              {copy.flowTitle}
-            </h2>
-          </div>
-          <p className="max-w-xl text-sm leading-7 text-zinc-400">
-            {copy.flowDescription}
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-4 lg:grid-cols-5">
-          {copy.steps.map((step) => (
-            <article
-              key={step.number}
-              className="flex min-h-[300px] flex-col justify-between rounded-lg border border-zinc-800 bg-white/[0.03] p-5 transition-colors hover:border-kinetix-lime/70"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-4xl font-black leading-none text-kinetix-lime">
-                    {step.number}
-                  </span>
-                  <span className="rounded-md border border-zinc-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
-                    {step.meta}
-                  </span>
+            <div className="relative h-[520px] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 sm:h-[620px] lg:h-[656px]">
+              <img
+                src="/how-it-works-shoe.png"
+                alt={copy.imageAlt}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/80 px-5 py-4 backdrop-blur-md sm:px-6">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  {copy.stats.map(([value, label]) => (
+                    <div key={label}>
+                      <p className="text-2xl font-bold text-kinetix-lime">
+                        {value}
+                      </p>
+                      <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-zinc-400">
+                        {label}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="mt-8 text-2xl font-bold leading-tight text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-4 text-sm leading-7 text-zinc-400">
-                  {step.description}
-                </p>
               </div>
-              <div className="mt-8 h-1 w-full rounded-full bg-zinc-800">
-                <div className="h-1 rounded-full bg-gradient-to-r from-kinetix-lime to-kinetix-aqua" />
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+            </div>
+          </div>
+        </section>
 
-      <section className="border-y border-zinc-800 bg-zinc-950/70">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-12">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
-              {copy.simpleEyebrow}
+        <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <div className="flex flex-col justify-between gap-6 border-b border-zinc-800 pb-8 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-aqua">
+                {copy.flowEyebrow}
+              </p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl">
+                {copy.flowTitle}
+              </h2>
+            </div>
+            <p className="max-w-xl text-sm leading-7 text-zinc-400">
+              {copy.flowDescription}
             </p>
-            <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
-              {copy.simpleTitle}
-            </h2>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {copy.systemCards.map(([title, desc]) => (
-              <div key={title} className="rounded-lg border border-zinc-800 bg-black p-5">
-                <h3 className="text-lg font-bold text-white">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-zinc-400">{desc}</p>
-              </div>
+          <div className="mt-10 grid gap-4 lg:grid-cols-5">
+            {copy.steps.map((step) => (
+              <article
+                key={step.number}
+                className="flex min-h-[300px] flex-col justify-between rounded-lg border border-zinc-800 bg-white/[0.03] p-5 transition-colors hover:border-kinetix-lime/70"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-4xl font-black leading-none text-kinetix-lime">
+                      {step.number}
+                    </span>
+                    <span className="rounded-md border border-zinc-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                      {step.meta}
+                    </span>
+                  </div>
+                  <h3 className="mt-8 text-2xl font-bold leading-tight text-white">
+                    {step.title}
+                  </h3>
+                  <p className="mt-4 text-sm leading-7 text-zinc-400">
+                    {step.description}
+                  </p>
+                </div>
+                <div className="mt-8 h-1 w-full rounded-full bg-zinc-800">
+                  <div className="h-1 rounded-full bg-gradient-to-r from-kinetix-lime to-kinetix-aqua" />
+                </div>
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-lg border border-kinetix-lime/40 bg-kinetix-lime px-6 py-8 text-black sm:px-8 lg:flex-row lg:items-center">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em]">
-              {copy.finalEyebrow}
-            </p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-5xl">
-              {copy.finalTitle}
-            </h2>
+        <section className="border-y border-zinc-800 bg-zinc-950/70">
+          <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-12">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
+                {copy.simpleEyebrow}
+              </p>
+              <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
+                {copy.simpleTitle}
+              </h2>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {copy.systemCards.map(([title, desc]) => (
+                <div key={title} className="rounded-lg border border-zinc-800 bg-black p-5">
+                  <h3 className="text-lg font-bold text-white">{title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-zinc-400">{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <Link
-            to="/signup"
-            className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-black px-6 text-sm font-bold text-white transition-transform hover:scale-[1.02]"
-          >
-            {copy.finalCta}
-          </Link>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <div className="flex flex-col items-start justify-between gap-8 rounded-lg border border-kinetix-lime/40 bg-kinetix-lime px-6 py-8 text-black sm:px-8 lg:flex-row lg:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em]">
+                {copy.finalEyebrow}
+              </p>
+              <h2 className="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-5xl">
+                {copy.finalTitle}
+              </h2>
+            </div>
+            <Link
+              to="/signup"
+              className="inline-flex h-12 shrink-0 items-center justify-center rounded-lg bg-black px-6 text-sm font-bold text-white transition-transform hover:scale-[1.02]"
+            >
+              {copy.finalCta}
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
