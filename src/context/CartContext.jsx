@@ -102,7 +102,7 @@ export function CartProvider({ children }) {
     fetchUserCart,
   };
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
