@@ -21,15 +21,25 @@ export function CartProvider({ children }) {
 
     try {
       const response = await API.get(`/api/cart/${user._id}`);
-      if (response.data.success) {
-        const items = response.data.data || [];
-        setCart(items);
-        const count = items.reduce(
-          (sum, item) => sum + (item.quantity || 1),
-          0,
-        );
-        setCartCount(count);
+      const raw = response.data;
+
+      // backend may return various shapes
+      if (raw?.success === false) return;
+
+      let items;
+      if (Array.isArray(raw)) {
+        items = raw;
+      } else {
+        items = raw?.data || raw?.cart || raw?.items || [];
       }
+      if (!Array.isArray(items)) items = [];
+
+      setCart(items);
+      const count = items.reduce(
+        (sum, item) => sum + (item.quantity || 1),
+        0,
+      );
+      setCartCount(count);
     } catch (err) {
       console.error("Failed to fetch cart", err);
     }
