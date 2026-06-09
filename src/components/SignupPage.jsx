@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import API, { setAuthToken } from "../api/axios";
 import Navbar from "../components/Navbar";
-import API from "../api/axios";
 
 const initialFormData = {
   firstName: "",
@@ -42,9 +42,12 @@ export default function SignupPage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // Clear field error on change
     if (errors[name]) {
-      setErrors((prev) => { const n = { ...prev }; delete n[name]; return n; });
+      setErrors((prev) => {
+        const n = { ...prev };
+        delete n[name];
+        return n;
+      });
     }
   };
 
@@ -53,17 +56,23 @@ export default function SignupPage() {
     if (!formData.firstName.trim()) errs.firstName = "First name is required";
     if (!formData.lastName.trim()) errs.lastName = "Last name is required";
     if (!formData.email.trim()) errs.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errs.email = "Invalid email format";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      errs.email = "Invalid email format";
     if (!formData.phone.trim()) errs.phone = "Phone number is required";
     if (!formData.address.trim()) errs.address = "Address is required";
     if (!formData.shoeSize) errs.shoeSize = "Shoe size is required";
     if (!formData.bankName.trim()) errs.bankName = "Bank name is required";
-    if (!formData.accountNumber.trim()) errs.accountNumber = "Account number is required";
-    if (!formData.accountName.trim()) errs.accountName = "Account name is required";
+    if (!formData.accountNumber.trim())
+      errs.accountNumber = "Account number is required";
+    if (!formData.accountName.trim())
+      errs.accountName = "Account name is required";
     if (!formData.password) errs.password = "Password is required";
-    else if (formData.password.length < 8) errs.password = "Password must be at least 8 characters";
-    if (!formData.confirmPassword) errs.confirmPassword = "Please confirm your password";
-    else if (formData.password !== formData.confirmPassword) errs.confirmPassword = "Passwords do not match";
+    else if (formData.password.length < 8)
+      errs.password = "Password must be at least 8 characters";
+    if (!formData.confirmPassword)
+      errs.confirmPassword = "Please confirm your password";
+    else if (formData.password !== formData.confirmPassword)
+      errs.confirmPassword = "Passwords do not match";
     if (!formData.agreeTerms) errs.agreeTerms = "You must agree to the terms";
     if (!formData.ageConfirm) errs.ageConfirm = "You must confirm your age";
     return errs;
@@ -84,27 +93,34 @@ export default function SignupPage() {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       const firstErrorField = document.querySelector(".error-field");
-      if (firstErrorField) firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (firstErrorField)
+        firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     const payload = buildPayload();
     setLoading(true);
     try {
-      const registerResponse = await API.post("/api/users/register", payload);
+      await API.post("/api/users/register", payload);
       try {
         const loginResponse = await API.post("/api/users/login", {
           email: payload.email,
           password: payload.password,
         });
+
+        // 🔥 Save token before setting user
+        setAuthToken(loginResponse.data.accessToken);
         login(loginResponse.data.user);
+
         setPreviewData({
           ...payload,
-          userId: registerResponse.data?.data?._id || loginResponse.data?.user?._id,
+          userId: loginResponse.data.user?._id,
         });
         setSubmitted(true);
         setTimeout(() => navigate("/userdashboard"), 1500);
       } catch (loginError) {
-        setApiError("Account created! However, auto-login failed. Please log in manually.");
+        setApiError(
+          "Account created! However, auto-login failed. Please log in manually."
+        );
         setSubmitted(true);
       }
     } catch (registerError) {
@@ -114,7 +130,10 @@ export default function SignupPage() {
         registerError.message ||
         "Registration failed. Please try again.";
       let message = rawMessage;
-      if (typeof message === "string" && message.trim().toLowerCase() === "error!") {
+      if (
+        typeof message === "string" &&
+        message.trim().toLowerCase() === "error!"
+      ) {
         const fieldErrors = registerError.response?.data?.errors;
         message = fieldErrors
           ? Object.values(fieldErrors).flat().join(" ")
@@ -167,14 +186,31 @@ export default function SignupPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {[
-                { title: "Profile Data", desc: "Store customer information including full name, email, phone number, address, and shoe size." },
-                { title: "Bank Information", desc: "Securely save bank name, account number, and account owner details for refund processing." },
-                { title: "Account Status", desc: "System tracks reject count, account status, suspended date, and account activity." },
-                { title: "Secure Access", desc: "Your account is protected with authentication and encrypted password management." },
+                {
+                  title: "Profile Data",
+                  desc: "Store customer information including full name, email, phone number, address, and shoe size.",
+                },
+                {
+                  title: "Bank Information",
+                  desc: "Securely save bank name, account number, and account owner details for refund processing.",
+                },
+                {
+                  title: "Account Status",
+                  desc: "System tracks reject count, account status, suspended date, and account activity.",
+                },
+                {
+                  title: "Secure Access",
+                  desc: "Your account is protected with authentication and encrypted password management.",
+                },
               ].map((card) => (
-                <div key={card.title} className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6">
+                <div
+                  key={card.title}
+                  className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6"
+                >
                   <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{card.desc}</p>
+                  <p className="text-zinc-400 text-sm leading-relaxed">
+                    {card.desc}
+                  </p>
                 </div>
               ))}
             </div>
@@ -187,10 +223,14 @@ export default function SignupPage() {
                   </h3>
                 </div>
                 <p className="text-zinc-500 text-xs">
-                  {apiError ? "Account created! Please login manually." : "Redirecting to your dashboard..."}
+                  {apiError
+                    ? "Account created! Please login manually."
+                    : "Redirecting to your dashboard..."}
                 </p>
                 {previewData.userId && (
-                  <p className="text-zinc-500 text-xs">User ID: {previewData.userId}</p>
+                  <p className="text-zinc-500 text-xs">
+                    User ID: {previewData.userId}
+                  </p>
                 )}
               </div>
             )}
@@ -202,7 +242,9 @@ export default function SignupPage() {
               <>
                 <div className="mb-8 text-center">
                   <h2 className="text-4xl font-bold">Create Account</h2>
-                  <p className="text-zinc-400 mt-3">Join the Kinetix ecosystem today</p>
+                  <p className="text-zinc-400 mt-3">
+                    Join the Kinetix ecosystem today
+                  </p>
                 </div>
                 {apiError && (
                   <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
@@ -217,36 +259,71 @@ export default function SignupPage() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <input type="text" name="firstName" placeholder="First Name"
-                          value={formData.firstName} onChange={handleChange} className={inputClass("firstName")} />
+                        <input
+                          type="text"
+                          name="firstName"
+                          placeholder="First Name"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          className={inputClass("firstName")}
+                        />
                         <ErrorMsg field="firstName" errors={errors} />
                       </div>
                       <div>
-                        <input type="text" name="lastName" placeholder="Last Name"
-                          value={formData.lastName} onChange={handleChange} className={inputClass("lastName")} />
+                        <input
+                          type="text"
+                          name="lastName"
+                          placeholder="Last Name"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          className={inputClass("lastName")}
+                        />
                         <ErrorMsg field="lastName" errors={errors} />
                       </div>
                     </div>
                     <div className="mt-4 space-y-4">
                       <div>
-                        <input type="email" name="email" placeholder="Email Address"
-                          value={formData.email} onChange={handleChange} className={inputClass("email")} />
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="Email Address"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className={inputClass("email")}
+                        />
                         <ErrorMsg field="email" errors={errors} />
                       </div>
                       <div>
-                        <input type="text" name="phone" placeholder="Phone Number"
-                          value={formData.phone} onChange={handleChange} className={inputClass("phone")} />
+                        <input
+                          type="text"
+                          name="phone"
+                          placeholder="Phone Number"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className={inputClass("phone")}
+                        />
                         <ErrorMsg field="phone" errors={errors} />
                       </div>
                       <div>
-                        <textarea name="address" placeholder="Address" rows={3}
-                          value={formData.address} onChange={handleChange}
-                          className={`${inputClass("address")} resize-none`} />
+                        <textarea
+                          name="address"
+                          placeholder="Address"
+                          rows={3}
+                          value={formData.address}
+                          onChange={handleChange}
+                          className={`${inputClass("address")} resize-none`}
+                        />
                         <ErrorMsg field="address" errors={errors} />
                       </div>
                       <div>
-                        <input type="number" name="shoeSize" placeholder="Shoe Size"
-                          value={formData.shoeSize} onChange={handleChange} className={inputClass("shoeSize")} />
+                        <input
+                          type="number"
+                          name="shoeSize"
+                          placeholder="Shoe Size"
+                          value={formData.shoeSize}
+                          onChange={handleChange}
+                          className={inputClass("shoeSize")}
+                        />
                         <ErrorMsg field="shoeSize" errors={errors} />
                       </div>
                     </div>
@@ -259,18 +336,36 @@ export default function SignupPage() {
                     </h3>
                     <div className="space-y-4">
                       <div>
-                        <input type="text" name="bankName" placeholder="Bank Name"
-                          value={formData.bankName} onChange={handleChange} className={inputClass("bankName")} />
+                        <input
+                          type="text"
+                          name="bankName"
+                          placeholder="Bank Name"
+                          value={formData.bankName}
+                          onChange={handleChange}
+                          className={inputClass("bankName")}
+                        />
                         <ErrorMsg field="bankName" errors={errors} />
                       </div>
                       <div>
-                        <input type="text" name="accountNumber" placeholder="Account Number"
-                          value={formData.accountNumber} onChange={handleChange} className={inputClass("accountNumber")} />
+                        <input
+                          type="text"
+                          name="accountNumber"
+                          placeholder="Account Number"
+                          value={formData.accountNumber}
+                          onChange={handleChange}
+                          className={inputClass("accountNumber")}
+                        />
                         <ErrorMsg field="accountNumber" errors={errors} />
                       </div>
                       <div>
-                        <input type="text" name="accountName" placeholder="Account Name"
-                          value={formData.accountName} onChange={handleChange} className={inputClass("accountName")} />
+                        <input
+                          type="text"
+                          name="accountName"
+                          placeholder="Account Name"
+                          value={formData.accountName}
+                          onChange={handleChange}
+                          className={inputClass("accountName")}
+                        />
                         <ErrorMsg field="accountName" errors={errors} />
                       </div>
                     </div>
@@ -283,13 +378,25 @@ export default function SignupPage() {
                     </h3>
                     <div className="space-y-4">
                       <div>
-                        <input type="password" name="password" placeholder="Password (min 8 characters)"
-                          value={formData.password} onChange={handleChange} className={inputClass("password")} />
+                        <input
+                          type="password"
+                          name="password"
+                          placeholder="Password (min 8 characters)"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className={inputClass("password")}
+                        />
                         <ErrorMsg field="password" errors={errors} />
                       </div>
                       <div>
-                        <input type="password" name="confirmPassword" placeholder="Confirm Password"
-                          value={formData.confirmPassword} onChange={handleChange} className={inputClass("confirmPassword")} />
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          placeholder="Confirm Password"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          className={inputClass("confirmPassword")}
+                        />
                         <ErrorMsg field="confirmPassword" errors={errors} />
                       </div>
                     </div>
@@ -299,16 +406,28 @@ export default function SignupPage() {
                   <div className="space-y-3 text-sm text-zinc-400 pt-2">
                     <div>
                       <label className="flex items-start gap-3 cursor-pointer">
-                        <input type="checkbox" name="agreeTerms" checked={formData.agreeTerms}
-                          onChange={handleChange} className="mt-1 accent-lime-400" />
-                        <span>I agree to the Terms of Service and Privacy Policy.</span>
+                        <input
+                          type="checkbox"
+                          name="agreeTerms"
+                          checked={formData.agreeTerms}
+                          onChange={handleChange}
+                          className="mt-1 accent-lime-400"
+                        />
+                        <span>
+                          I agree to the Terms of Service and Privacy Policy.
+                        </span>
                       </label>
                       <ErrorMsg field="agreeTerms" errors={errors} />
                     </div>
                     <div>
                       <label className="flex items-start gap-3 cursor-pointer">
-                        <input type="checkbox" name="ageConfirm" checked={formData.ageConfirm}
-                          onChange={handleChange} className="mt-1 accent-lime-400" />
+                        <input
+                          type="checkbox"
+                          name="ageConfirm"
+                          checked={formData.ageConfirm}
+                          onChange={handleChange}
+                          className="mt-1 accent-lime-400"
+                        />
                         <span>I confirm that I am over 20 years old.</span>
                       </label>
                       <ErrorMsg field="ageConfirm" errors={errors} />
@@ -318,14 +437,19 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${loading ? "bg-zinc-700 text-zinc-400 cursor-not-allowed" : "bg-lime-400 text-black hover:scale-[1.01]"
+                    className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${loading
+                      ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                      : "bg-lime-400 text-black hover:scale-[1.01]"
                       }`}
                   >
                     {loading ? "CREATING ACCOUNT..." : "+ CREATE ACCOUNT"}
                   </button>
                   <p className="text-center text-zinc-500 text-sm pt-2">
                     Already have an account?{" "}
-                    <Link to="/login" className="text-white hover:text-lime-400 cursor-pointer">
+                    <Link
+                      to="/login"
+                      className="text-white hover:text-lime-400 cursor-pointer"
+                    >
                       Sign In
                     </Link>
                   </p>
@@ -334,8 +458,18 @@ export default function SignupPage() {
             ) : (
               <div className="flex flex-col items-center justify-center py-16 space-y-6 text-center">
                 <div className="w-20 h-20 rounded-full bg-lime-400/10 border border-lime-400/30 flex items-center justify-center">
-                  <svg className="w-10 h-10 text-lime-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-10 h-10 text-lime-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
                 <div>
@@ -343,7 +477,9 @@ export default function SignupPage() {
                   {apiError ? (
                     <p className="text-amber-400 mt-2 text-sm">{apiError}</p>
                   ) : (
-                    <p className="text-zinc-400 mt-2">Redirecting to your dashboard...</p>
+                    <p className="text-zinc-400 mt-2">
+                      Redirecting to your dashboard...
+                    </p>
                   )}
                 </div>
                 <button

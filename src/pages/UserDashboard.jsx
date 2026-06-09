@@ -1,323 +1,156 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
 
-const API_BASE =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
-
-// ───────────────────────────── API LAYER ─────────────────────────────
-async function apiFetch(path, options = {}) {
-    const token = localStorage.getItem("access_token");
-
-    const res = await fetch(`${API_BASE}${path}`, {
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        ...options,
-    });
-
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || "API Error");
-    }
-
-    return res.json();
-}
-
-const api = {
-    getProfile: () => apiFetch("/user/profile"),
-    updateProfile: (b) =>
-        apiFetch("/user/profile", {
-            method: "PUT",
-            body: JSON.stringify(b),
-        }),
-
-    getStats: () => apiFetch("/user/stats"),
-    getActiveRentals: () => apiFetch("/rentals/active"),
-    getNotifications: () => apiFetch("/notifications"),
-
-    markNotificationRead: (id) =>
-        apiFetch(`/notifications/${id}/read`, { method: "PATCH" }),
-
-    getRewards: () => apiFetch("/rewards/points"),
-    redeemPoints: (b) =>
-        apiFetch("/rewards/redeem", {
-            method: "POST",
-            body: JSON.stringify(b),
-        }),
-
-    getFavBrands: () => apiFetch("/user/brands"),
-
-    getRentalHistory: (params = {}) => {
-        const qs = new URLSearchParams(params).toString();
-        return apiFetch(`/rentals/history${qs ? `?${qs}` : ""}`);
-    },
-
-    getPayments: () => apiFetch("/payments"),
-
-    getTracking: (id) => apiFetch(`/rentals/${id}/tracking`),
-
-    getPrebooking: () => apiFetch("/rentals/prebooking"),
-};
-
-// ───────────────────────────── UI COMPONENTS ─────────────────────────────
-const ErrorBanner = ({ message, onRetry }) => (
-    <div className="bg-red-900 text-red-200 p-3 rounded flex justify-between">
-        {message}
-        {onRetry && (
-            <button onClick={onRetry} className="text-sm underline">
-                Retry
-            </button>
-        )}
-    </div>
-);
-
-// ───────────────────────────── DASHBOARD ─────────────────────────────
-export default function DashboardPage() {
-    // ─── STATE ───
+export default function UserDashboard() {
+    const { user } = useAuth();
     const [profile, setProfile] = useState(null);
-    const [editingProfile, setEditingProfile] = useState(false);
-    const [profileForm, setProfileForm] = useState({});
-
-    const [stats, setStats] = useState(null);
-    const [activeRentals, setActiveRentals] = useState([]);
-    const [notifications, setNotifications] = useState([]);
-    const [payments, setPayments] = useState(null);
-    const [prebooking, setPrebooking] = useState([]);
-    const [rewards, setRewards] = useState(null);
-
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
 
-    // ───────────────────────────── INIT LOAD ─────────────────────────────
     useEffect(() => {
-        (async () => {
+        if (!user?._id) {
+            setLoading(false);
+            return;
+        }
+
+        const fetchProfile = async () => {
             try {
-                setLoading(true);
-
-                const [
-                    profile,
-                    stats,
-                    rentals,
-                    notifications,
-                    payments,
-                    rewards,
-                    prebooking,
-                ] = await Promise.all([
-                    api.getProfile(),
-                    api.getStats(),
-                    api.getActiveRentals(),
-                    api.getNotifications(),
-                    api.getPayments(),
-                    api.getRewards(),
-                    api.getPrebooking(),
-                ]);
-
-                setProfile(profile);
-                setStats(stats);
-                setActiveRentals(rentals);
-                setNotifications(notifications);
-                setPayments(payments);
-                setRewards(rewards);
-                setPrebooking(prebooking);
-            } catch (e) {
-                setError(e.message);
+                const res = await API.get(`/api/users/${user._id}`);
+                if (res.data.success) {
+                    setProfile(res.data.data);
+                } else {
+                    setError("Could not load profile");
+                }
+            } catch (err) {
+                console.error(err);
+                setError(err.response?.data?.message || "Failed to load profile");
             } finally {
                 setLoading(false);
             }
-        })();
-    }, []);
+        };
 
-    // ───────────────────────────── PROFILE UPDATE ─────────────────────────────
-    const saveProfile = async () => {
-        try {
-            const updated = await api.updateProfile(profileForm);
-            setProfile(updated);
-            setEditingProfile(false);
-        } catch (e) {
-            alert(e.message);
-        }
-    };
+        fetchProfile();
+    }, [user]);
 
-    // ───────────────────────────── NOTIFICATIONS ─────────────────────────────
-    const markRead = async (id) => {
-        try {
-            await api.markNotificationRead(id);
-            setNotifications((prev) =>
-                prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-            );
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <p>Please log in to view your dashboard.</p>
+            </div>
+        );
+    }
 
-    // ───────────────────────────── REDEEM POINTS ─────────────────────────────
-    const redeem = async () => {
-        try {
-            const res = await api.redeemPoints({ points: 500 });
-            setRewards((prev) => ({
-                ...prev,
-                points: res.remaining,
-            }));
-        } catch (e) {
-            alert(e.message);
-        }
-    };
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <p>Loading...</p>
+            </div>
+        );
+    }
 
-    // ───────────────────────────── UI ─────────────────────────────
-    if (loading) return <div className="p-10 text-white">Loading...</div>;
-    if (error) return <ErrorBanner message={error} />;
-
-    return (
-        <div className="min-h-screen bg-neutral-950 text-white p-10 space-y-10">
-
-            {/* ───────── PROFILE ───────── */}
-            <section className="p-6 bg-neutral-900 rounded-xl">
-                <h2 className="text-xl font-bold mb-4">Profile</h2>
-
-                {!editingProfile ? (
-                    <>
-                        <p>{profile.name}</p>
-                        <p>{profile.email}</p>
-                        <p>{profile.phone}</p>
-                        <p>{profile.address}</p>
-
-                        <button
-                            onClick={() => {
-                                setProfileForm(profile);
-                                setEditingProfile(true);
-                            }}
-                            className="mt-3 text-lime-400"
-                        >
-                            Edit
-                        </button>
-                    </>
-                ) : (
-                    <div className="space-y-2">
-                        <input
-                            value={profileForm.phone || ""}
-                            onChange={(e) =>
-                                setProfileForm({ ...profileForm, phone: e.target.value })
-                            }
-                            className="w-full p-2 bg-neutral-800"
-                            placeholder="Phone"
-                        />
-
-                        <input
-                            value={profileForm.address || ""}
-                            onChange={(e) =>
-                                setProfileForm({ ...profileForm, address: e.target.value })
-                            }
-                            className="w-full p-2 bg-neutral-800"
-                            placeholder="Address"
-                        />
-
-                        <button onClick={saveProfile} className="bg-lime-400 text-black p-2">
-                            Save
-                        </button>
-                    </div>
-                )}
-            </section>
-
-            {/* ───────── STATS ───────── */}
-            <section className="grid grid-cols-4 gap-4">
-                <div className="bg-neutral-900 p-4 rounded">
-                    Rentals: {stats.totalRentals}
-                </div>
-                <div className="bg-neutral-900 p-4 rounded">
-                    Active: {stats.activeRentals}
-                </div>
-                <div className="bg-neutral-900 p-4 rounded">
-                    Points: {rewards.points}
-                </div>
-                <div className="bg-neutral-900 p-4 rounded">
-                    Score: {stats.returnScore}%
-                </div>
-            </section>
-
-            {/* ───────── PAYMENTS ───────── */}
-            <section className="bg-neutral-900 p-6 rounded">
-                <h2 className="text-xl mb-3">Payments</h2>
-
-                <p>Balance: ฿{payments.balance}</p>
-                <p>Outstanding: ฿{payments.outstanding}</p>
-
-                {payments.methods.map((m) => (
-                    <div key={m.id}>
-                        {m.type} •••• {m.last4}
-                    </div>
-                ))}
-            </section>
-
-            {/* ───────── LOGISTICS ───────── */}
-            <section className="bg-neutral-900 p-6 rounded">
-                <h2 className="text-xl mb-3">Active Rentals</h2>
-
-                {activeRentals.map((r) => (
-                    <RentalCard key={r.rentalId} rental={r} />
-                ))}
-            </section>
-
-            {/* ───────── NOTIFICATIONS ───────── */}
-            <section className="bg-neutral-900 p-6 rounded">
-                <h2 className="text-xl mb-3">Notifications</h2>
-
-                {notifications.map((n) => (
-                    <div
-                        key={n.id}
-                        onClick={() => markRead(n.id)}
-                        className={`p-2 cursor-pointer ${n.read ? "opacity-50" : ""}`}
-                    >
-                        {n.title}
-                    </div>
-                ))}
-            </section>
-
-            {/* ───────── PREBOOKING ───────── */}
-            <section className="bg-neutral-900 p-6 rounded">
-                <h2 className="text-xl mb-3">Pre-booking</h2>
-
-                {prebooking.map((p) => (
-                    <div key={p.id}>
-                        {p.brand} {p.model} — {p.availableDate}
-                    </div>
-                ))}
-            </section>
-
-            {/* ───────── REWARDS ───────── */}
-            <section className="bg-neutral-900 p-6 rounded">
-                <h2 className="text-xl mb-3">Rewards</h2>
-
-                <p>{rewards.points} pts</p>
-
-                <button onClick={redeem} className="bg-lime-400 text-black p-2 mt-2">
-                    Redeem 500
+    if (error) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+                <p className="text-red-400">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="bg-lime-400 text-black py-2 px-6 rounded-xl font-semibold"
+                >
+                    Retry
                 </button>
-            </section>
-        </div>
-    );
-}
+            </div>
+        );
+    }
 
-// ───────────────────────────── RENTAL CARD ─────────────────────────────
-function RentalCard({ rental }) {
-    const [tracking, setTracking] = useState(null);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const data = await api.getTracking(rental.rentalId);
-                setTracking(data);
-            } catch (e) { }
-        })();
-    }, [rental.rentalId]);
+    const userData = profile || user;
 
     return (
-        <div className="border p-3 mb-2">
-            <p>{rental.name}</p>
-            <p>Status: {tracking?.status || "loading..."}</p>
-            <p>ETA: {tracking?.eta}</p>
+        <div className="min-h-screen bg-[#080809] text-white font-sora">
+            <Navbar />
+
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12 space-y-8">
+                {/* ── Profile Section ── */}
+                <section className="bg-[#0f0f10] border border-[#1e1e20] rounded-2xl p-6">
+                    <h2 className="text-2xl font-bold mb-4">Profile</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span className="text-zinc-400">Name:</span>{" "}
+                            <span className="text-white">{userData.name} {userData.surname}</span>
+                        </div>
+                        <div>
+                            <span className="text-zinc-400">Email:</span>{" "}
+                            <span className="text-white">{userData.email}</span>
+                        </div>
+                        <div>
+                            <span className="text-zinc-400">Role:</span>{" "}
+                            <span className="text-white capitalize">{userData.role || "user"}</span>
+                        </div>
+                        <div>
+                            <span className="text-zinc-400">Rank:</span>{" "}
+                            <span className="text-white capitalize">{userData.userRank || "bronze"}</span>
+                        </div>
+                        <div className="md:col-span-2">
+                            <span className="text-zinc-400">Address:</span>{" "}
+                            <span className="text-white">{userData.address || "Not set"}</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Stats Overview ── */}
+                <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                        { label: "Total Rentals", value: "0" },
+                        { label: "Active Rentals", value: "0" },
+                        { label: "Return Score", value: "100%" },
+                        { label: "Reward Points", value: "0" },
+                    ].map((stat) => (
+                        <div
+                            key={stat.label}
+                            className="bg-[#0f0f10] border border-[#1e1e20] rounded-xl p-4 text-center"
+                        >
+                            <p className="text-2xl font-bold text-[#C3FF51]">{stat.value}</p>
+                            <p className="text-xs text-zinc-400 mt-1">{stat.label}</p>
+                        </div>
+                    ))}
+                </section>
+
+                {/* ── Active Rentals Placeholder ── */}
+                <section className="bg-[#0f0f10] border border-[#1e1e20] rounded-2xl p-6">
+                    <h2 className="text-2xl font-bold mb-3">Active Rentals</h2>
+                    <div className="text-zinc-500 text-sm py-8 text-center">
+                        No active rentals yet.{" "}
+                        <a href="/catalog" className="text-[#C3FF51] hover:underline">
+                            Browse shoes
+                        </a>
+                    </div>
+                </section>
+
+                {/* ── Notifications Placeholder ── */}
+                <section className="bg-[#0f0f10] border border-[#1e1e20] rounded-2xl p-6">
+                    <h2 className="text-2xl font-bold mb-3">Notifications</h2>
+                    <div className="text-zinc-500 text-sm py-4">
+                        No new notifications.
+                    </div>
+                </section>
+
+                {/* ── Quick Actions ── */}
+                <section className="flex flex-wrap gap-4 justify-center">
+                    <a
+                        href="/catalog"
+                        className="bg-[#C3FF51] text-black font-semibold py-3 px-6 rounded-xl hover:bg-[#d3ff70] transition"
+                    >
+                        Rent Shoes
+                    </a>
+                    <a
+                        href="/howitworkspage"
+                        className="border border-zinc-700 text-white font-semibold py-3 px-6 rounded-xl hover:border-[#C3FF51] transition"
+                    >
+                        How It Works
+                    </a>
+                </section>
+            </main>
         </div>
     );
 }

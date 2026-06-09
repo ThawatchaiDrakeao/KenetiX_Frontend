@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import API from "../api/axios";
+import API, { setAuthToken } from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -20,11 +20,13 @@ function Login() {
         setLoading(true);
 
         try {
-
             const response = await API.post("/api/users/login", {
                 email,
                 password,
             });
+
+            // 🔥 Save token to localStorage
+            setAuthToken(response.data.accessToken);
 
             login(response.data.user);
 
@@ -34,9 +36,7 @@ function Login() {
             } else {
                 navigate("/userdashboard");
             }
-
         } catch (error) {
-
             try {
                 const staffResponse = await API.post("/api/staff/admin/login", {
                     email,
@@ -44,12 +44,12 @@ function Login() {
                 });
 
                 if (staffResponse.data.user) {
+                    setAuthToken(staffResponse.data.accessToken);
                     login(staffResponse.data.user);
                     navigate("/admin");
                     return;
                 }
             } catch (staffError) {
-                // Both logins failed
                 const message = error.response?.data?.message || "Login Failed";
                 setError(message);
             }
