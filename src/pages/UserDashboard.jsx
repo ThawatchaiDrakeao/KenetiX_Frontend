@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 
 // ─── API CONFIG ────────────────────────────────────────────────────────────────
 // 🔧 [CONFIG] เปลี่ยน URL ใน .env ให้ตรงกับ backend จริง
-// dev  → VITE_API_BASE_URL=http://localhost:8000/api
+// dev  → VITE_API_BASE_URL=http://localhost:5000/api
 // prod → VITE_API_BASE_URL=https://api.kinetix.com/api
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE = import.meta.env.URL_BASE || "http://localhost:5000/api";
 
 // 🔧 [AUTH] ฟังก์ชันนี้แนบ Bearer token ทุก request
 // token ต้องได้มาจากหน้า Login แล้ว save ลง localStorage ก่อน
