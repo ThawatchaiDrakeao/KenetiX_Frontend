@@ -264,39 +264,44 @@ function Events() {
   return (
     <section className="py-10 px-4" style={{ background: "#080808" }}>
       <div className="max-w-4xl mx-auto">
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="mb-6">
-          <SectionLabel text="Upcoming Events" />
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
-            Join This Week
-          </motion.h2>
-        </motion.div>
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={stagger}
+        >
+          <div className="mb-6">
+            <SectionLabel text="Upcoming Events" />
+            <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl font-black text-white">
+              Join This Week
+            </motion.h2>
+          </div>
 
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
-          className="space-y-4">
-          {EVENTS.map((ev) => (
-            <motion.div key={ev.id} variants={fadeUp}>
-              <div className="flex items-center gap-5 rounded-lg border border-[#1e1e20] bg-[#0f0f10] px-5 py-4 sm:px-6">
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-white mb-1">{ev.title}</p>
-                  <div className="flex flex-wrap gap-3 text-[12px] text-white/35">
-                    <span>{ev.date}</span>
-                    <span>{ev.time}</span>
-                    <span style={{ color: ev.seats <= 5 ? "#FF6B6B" : undefined }}>
-                      {ev.seats <= 5 ? `${ev.seats} seats left` : `${ev.seats} seats`}
-                    </span>
+          <div className="space-y-4">
+            {EVENTS.map((ev) => (
+              <motion.div key={ev.id} variants={fadeUp}>
+                <div className="flex items-center gap-5 rounded-lg border border-[#1e1e20] bg-[#0f0f10] px-5 py-4 sm:px-6">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-white mb-1">{ev.title}</p>
+                    <div className="flex flex-wrap gap-3 text-[12px] text-white/35">
+                      <span>{ev.date}</span>
+                      <span>{ev.time}</span>
+                      <span style={{ color: ev.seats <= 5 ? "#FF6B6B" : undefined }}>
+                        {ev.seats <= 5 ? `${ev.seats} seats left` : `${ev.seats} seats`}
+                      </span>
+                    </div>
                   </div>
+                  <motion.button
+                    className="px-5 py-2 rounded-lg text-sm font-bold shrink-0"
+                    style={{ background: "transparent", border: "1px solid #C3FF51", color: "#C3FF51" }}
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}>
+                    Join
+                  </motion.button>
                 </div>
-                <motion.button
-                  className="px-5 py-2 rounded-lg text-sm font-bold shrink-0"
-                  style={{ background: "transparent", border: "1px solid #C3FF51", color: "#C3FF51" }}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}>
-                  Join
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>
