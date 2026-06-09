@@ -30,7 +30,7 @@ export default function ContactInfo() {
                     <div className="text-gray-400 bg-zinc-800 p-3 rounded-lg">✉️</div>
                     <div>
                         <p className="text-xs text-gray-500">{t("contact.email.label")}</p>
-                        <p className="text-white font-bold">kinetix@co.th</p>
+                        <p className="text-white font-bold">hello@kinetix.run</p>
                     </div>
                 </div>
 
