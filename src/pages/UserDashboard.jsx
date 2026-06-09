@@ -1,202 +1,59 @@
 import { useState, useEffect, useCallback } from "react";
-
-// ─── API CONFIG ────────────────────────────────────────────────────────────────
-// 🔧 [CONFIG] เปลี่ยน URL ใน .env ให้ตรงกับ backend จริง
-// dev  → VITE_API_BASE_URL=http://localhost:5000/api
-// prod → VITE_API_BASE_URL=https://api.kinetix.com/api
-const API_BASE = import.meta.env.URL_BASE || "http://localhost:5000/api";
-
-// 🔧 [AUTH] ฟังก์ชันนี้แนบ Bearer token ทุก request
-// token ต้องได้มาจากหน้า Login แล้ว save ลง localStorage ก่อน
-// ถ้าใช้ httpOnly cookie แทน → ลบ Authorization header ออก แล้วเพิ่ม credentials: "include"
-async function apiFetch(path, options = {}) {
-    const token = localStorage.getItem("access_token");
-    const res = await fetch(`${API_BASE}${path}`, {
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        ...options,
-    });
-    if (!res.ok) {
-        // 🔧 [ERROR FORMAT] backend ต้องส่ง error กลับในรูปแบบ { "detail": "ข้อความ error" }
-        // ถ้า backend ใช้ format อื่น เช่น { "message": "..." } → แก้ err.detail เป็น err.message
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || `API error ${res.status}`);
-    }
-    return res.json();
-}
+import API from "../api/axios";
+import Navbar from "../components/Navbar";
 
 // ─── API CALLS ─────────────────────────────────────────────────────────────────
 const api = {
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /user/profile                                            │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   name: "Somchai Runner",   ← ชื่อแสดงผลบน sidebar + header   │
-    // │   email: "somchai@...",     ← อีเมลใต้ชื่อ                     │
-    // │   level: "Elite",           ← badge สีเขียว (Elite/Platinum)   │
-    // │   initials: "SR"            ← 2 ตัวอักษรในวงกลม avatar         │
-    // │ }                                                               │
+    // │ 🔌 GET /api/users/profile                                       │
     // └─────────────────────────────────────────────────────────────────┘
-    getProfile: () => apiFetch("/user/profile"),
+    getProfile: () => API.get("/api/users/profile").then(res => res.data),
 
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /user/stats                                              │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   totalRentals: 7840,   ← StatCard "Total Rentals"             │
-    // │   activeRentals: 2,     ← StatCard "Active Rentals"            │
-    // │   points: 2340,         ← StatCard "Reward Points"             │
-    // │   returnScore: 100      ← StatCard "Return Score" (%)          │
-    // │ }                                                               │
+    // │ 🔌 PUT /api/users/profile                                       │
     // └─────────────────────────────────────────────────────────────────┘
-    getStats: () => apiFetch("/user/stats"),
+    updateProfile: (data) => API.put("/api/users/profile", data).then(res => res.data),
 
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /rentals/active                                          │
-    // │ ต้องส่งกลับมา: array ของรายการที่กำลังเช่าอยู่                  │
-    // │ [                                                               │
-    // │   {                                                             │
-    // │     rentalId: "R001",   ← ใช้เป็น key และส่งกลับตอน Order      │
-    // │     brand: "NIKE",                                              │
-    // │     name: "Pegasus 41",                                         │
-    // │     size: 42,                                                   │
-    // │     date: "Apr 8 – Return Apr 15",                              │
-    // │     price: 150          ← ราคาต่อวัน (฿)                       │
-    // │   },                                                            │
-    // │   ...                                                           │
-    // │ ]                                                               │
+    // │ 🔌 GET /api/users/profile/stats                                 │
     // └─────────────────────────────────────────────────────────────────┘
-    getActiveRentals: () => apiFetch("/rentals/active"),
+    getStats: () => API.get("/api/users/profile/stats").then(res => res.data),
 
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /notifications                                           │
-    // │ ต้องส่งกลับมา: array ของ activity ล่าสุด                        │
-    // │ [                                                               │
-    // │   {                                                             │
-    // │     title: "Successfully rented Hoka Clifton 9",               │
-    // │     time: "Today 09:15",                                        │
-    // │     type: "booked"   ← booked | check | points | cancel |      │
-    // │                         upgrade (กำหนดสีจุดใน ActivityItem)     │
-    // │   },                                                            │
-    // │   ...                                                           │
-    // │ ]                                                               │
-    // │ หมายเหตุ: จำนวน item ใน array = ตัวเลข badge บน sidebar        │
+    // │ 🔌 GET /api/users/:id                                           │
     // └─────────────────────────────────────────────────────────────────┘
-    getNotifications: () => apiFetch("/notifications"),
+    getUserById: (id) => API.get(`/api/users/${id}`).then(res => res.data),
 
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /rewards/points                                          │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   points: 2340,             ← คะแนนปัจจุบัน                    │
-    // │   level: "Elite",           ← ระดับปัจจุบัน (highlight badge)   │
-    // │   nextLevel: "Platinum",    ← ระดับถัดไป                       │
-    // │   nextLevelPoints: 3000     ← คะแนนที่ต้องถึง → คำนวณ progress │
-    // │ }                                                               │
+    // │ 🔌 PUT /api/users/:id                                           │
     // └─────────────────────────────────────────────────────────────────┘
-    getRewards: () => apiFetch("/rewards/points"),
+    updateUserById: (id, data) => API.put(`/api/users/${id}`, data).then(res => res.data),
 
     // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /user/brands                                             │
-    // │ ต้องส่งกลับมา: array ของแบรนด์ที่เช่าบ่อย เรียงตามจำนวนครั้ง   │
-    // │ [                                                               │
-    // │   { name: "Nike", count: 10 },                                  │
-    // │   { name: "Hoka", count: 12 },                                  │
-    // │   ...                                                           │
-    // │ ]                                                               │
+    // │ 🔌 DELETE /api/users/:id                                        │
     // └─────────────────────────────────────────────────────────────────┘
-    getFavBrands: () => apiFetch("/user/brands"),
+    deleteUserById: (id) => API.delete(`/api/users/${id}`).then(res => res.data),
 
-    // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /rentals/history                                         │
-    // │ รับ query params:                                               │
-    // │   ?q=ultraboost     ← ค้นหาจาก brand หรือ model               │
-    // │   &brand=Nike       ← กรองตามแบรนด์ (ถ้าเลือก "All" ไม่ส่ง)   │
-    // │   &page=1           ← หน้าปัจจุบัน (pageSize = 5)              │
-    // │                                                                 │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   data: [                                                       │
-    // │     {                                                           │
-    // │       brand: "ADIDAS",                                          │
-    // │       model: "Ultraboost 23",                                   │
-    // │       size: 42,                                                 │
-    // │       dateRange: "1-7 Apr 2025",                                │
-    // │       days: 7,                                                  │
-    // │       price: 1260,                                              │
-    // │       status: "Returned"                                        │
-    // │     },                                                          │
-    // │     ...                                                         │
-    // │   ],                                                            │
-    // │   total: 28,   ← จำนวนทั้งหมด (ใช้คำนวณ pagination)            │
-    // │   page: 1      ← หน้าปัจจุบันที่ backend ส่งกลับ               │
-    // │ }                                                               │
-    // └─────────────────────────────────────────────────────────────────┘
+    // Note: The following endpoints were not provided in the backend list but are needed for UI:
+    getActiveRentals: () => API.get("/api/rentals/active").then(res => res.data).catch(() => []),
+    getNotifications: () => API.get("/api/notifications").then(res => res.data).catch(() => []),
+    getRewards: () => API.get("/api/rewards/points").then(res => res.data).catch(() => null),
+    getFavBrands: () => API.get("/api/user/brands").then(res => res.data).catch(() => []),
     getRentalHistory: (params = {}) => {
         const qs = new URLSearchParams(params).toString();
-        return apiFetch(`/rentals/history${qs ? `?${qs}` : ""}`);
+        return API.get(`/api/rentals/history${qs ? `?${qs}` : ""}`).then(res => res.data).catch(() => ({ data: [], total: 0, page: 1 }));
     },
-
-    // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 GET /rentals/history/export                                  │
-    // │ backend ต้องส่ง response เป็นไฟล์ CSV พร้อม header:            │
-    // │   Content-Type: text/csv                                        │
-    // │   Content-Disposition: attachment; filename="rental-history.csv"│
-    // │ ไม่ต้องส่ง JSON → frontend จะ download ให้อัตโนมัติ            │
-    // └─────────────────────────────────────────────────────────────────┘
     exportHistory: async () => {
-        const token = localStorage.getItem("access_token");
-        const res = await fetch(`${API_BASE}/rentals/history/export`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Export failed");
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
+        const res = await API.get("/api/rentals/history/export", { responseType: 'blob' });
+        const url = URL.createObjectURL(res.data);
         const a = document.createElement("a");
         a.href = url;
         a.download = "rental-history.csv";
         a.click();
         URL.revokeObjectURL(url);
     },
-
-    // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 POST /rentals                                                │
-    // │ ใช้สำหรับทั้ง Order (จากรายการเช่าปัจจุบัน) และ Re-rent         │
-    // │                                                                 │
-    // │ Request body ที่ส่งไป:                                          │
-    // │   Order   → { rentalId: "R001", action: "order" }              │
-    // │   Re-rent → { brand: "ADIDAS", model: "Ultraboost 23",         │
-    // │               size: 42, action: "re-rent" }                    │
-    // │                                                                 │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   rentalId: "R002",   ← ID ของออเดอร์ที่สร้างใหม่              │
-    // │   status: "active"                                              │
-    // │ }                                                               │
-    // │                                                                 │
-    // │ หลัง POST สำเร็จ → frontend จะ refetch /rentals/active         │
-    // │ และ /user/stats อัตโนมัติ                                       │
-    // └─────────────────────────────────────────────────────────────────┘
-    createRental: (body) =>
-        apiFetch("/rentals", { method: "POST", body: JSON.stringify(body) }),
-
-    // ┌─────────────────────────────────────────────────────────────────┐
-    // │ 🔌 POST /rewards/redeem                                         │
-    // │ Request body: { points: 500 }  ← จำนวนคะแนนที่แลก              │
-    // │ (ปัจจุบัน hardcode 500 → ควรเปลี่ยนเป็น modal ให้ user เลือก)  │
-    // │                                                                 │
-    // │ ต้องส่งกลับมา:                                                  │
-    // │ {                                                               │
-    // │   success: true,                                                │
-    // │   remaining: 1840   ← คะแนนคงเหลือหลังแลก                      │
-    // │ }                                                               │
-    // │                                                                 │
-    // │ หลัง POST สำเร็จ → frontend จะ refetch /rewards/points อัตโนมัติ│
-    // └─────────────────────────────────────────────────────────────────┘
-    redeemPoints: (body) =>
-        apiFetch("/rewards/redeem", { method: "POST", body: JSON.stringify(body) }),
+    createRental: (body) => API.post("/api/rentals", body).then(res => res.data),
+    redeemPoints: (body) => API.post("/api/rewards/redeem", body).then(res => res.data),
 };
 
 // ─── SKELETON COMPONENTS ───────────────────────────────────────────────────────
@@ -537,22 +394,7 @@ const DashboardPage = () => {
     return (
         <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans flex flex-col antialiased pt-16 lg:pt-18">
         
-            {/* Header 
-            <header className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-neutral-950 z-50">
-                <div className="text-4xl font-extrabold text-lime-400 tracking-tighter">KINETIX</div>
-                <nav className="flex items-center gap-10 text-sm text-neutral-300">
-                    {['All Shoes', 'Brands', 'How to rent', 'Pricing'].map(item => (
-                        <a key={item} href="#" className="hover:text-lime-400 transition">{item}</a>
-                    ))}
-                </nav>
-                <div className="flex items-center gap-3">
-                    <button className="bg-lime-400 text-neutral-950 font-bold px-6 py-2 rounded-lg text-sm flex items-center gap-2">
-                        <span>Rent Now</span>
-                        <span>→</span>
-                    </button>
-                    <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center font-bold text-lg text-lime-400 border border-neutral-700">SN</div>
-                </div>
-            </header> */}
+            <Navbar />
 
             {/* Main Layout */}
             <div className="flex flex-1">
