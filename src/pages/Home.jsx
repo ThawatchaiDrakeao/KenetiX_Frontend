@@ -10,6 +10,9 @@ import Pricing from '../components/Pricing';
 import Community from '../components/Community';
 import OurStory from '../components/OurStory';
 import FAQ from '../components/FAQ';
+import TermsSection from '../components/TermsSection';
+import PrivacySection from '../components/PrivacySection';
+import DamagePolicySection from '../components/DamagePolicySection';
 import ContactPage from '../pages/ContactPage';
 import Catalog from '../pages/Catalog';
 import CTA from '../components/CTA';
@@ -55,6 +58,9 @@ export default function Home() {
           <Route path="userdashboard" element={<UserDashboard />} />
           {/* <Route path="catalognavbar" element={<CatalogNavbar />} /> */}
           <Route path="checkout" element={<CheckOut />} />
+          <Route path="terms" element={<TermsSection />} />
+          <Route path="privacy" element={<PrivacySection />} />
+          <Route path="damage" element={<DamagePolicySection />} />
         </Routes>
       </main>
       <Footer />

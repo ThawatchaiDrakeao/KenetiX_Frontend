@@ -48,7 +48,7 @@ export default function Section_03() {
           {steps.map((step) => (
             <article
               key={step.number}
-              className="group relative flex min-h-[320px] flex-col items-start justify-start rounded-[28px] border border-transparent px-4 py-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-kinetix-border/80"
+              className="group relative flex min-h-[320px] flex-col items-start justify-start rounded-lg border border-transparent px-4 py-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-kinetix-border/80"
             >
               <div
                 aria-hidden="true"

@@ -1,80 +1,273 @@
-import { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import API from "../api/axios";
 
-const CheckoutPage = () => {
+const DEPOSIT_MULTIPLIER = 9; // deposit = rental fee × 9
 
-    const [orderSummary] = useState({
-        item: "Nike Pegasus 41",
-        pricePerDay: 150,
-        days: 7,
-        shipping: 50,
-        discount: 20
+export default function CheckoutPage() {
+    const { cart, cartCount, fetchUserCart } = useCart();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [rentalDays, setRentalDays] = useState(
+        // initialize per item from cart data
+        Object.fromEntries(cart.map((item) => [item._id, item.rentalDays || 1]))
+    );
+
+    // ── Derived totals ──────────────────────────────────────────
+    const itemsWithDays = cart.map((item) => {
+        const days = rentalDays[item._id] || item.rentalDays || 1;
+        const rentalFee = item.price * days * (item.quantity || 1);
+        const deposit = item.price * DEPOSIT_MULTIPLIER * (item.quantity || 1);
+        return { ...item, days, rentalFee, deposit };
     });
 
-    const subtotal = orderSummary.pricePerDay * orderSummary.days;
-    const total = subtotal + orderSummary.shipping - orderSummary.discount;
+    const totalRental = itemsWithDays.reduce((s, i) => s + i.rentalFee, 0);
+    const totalDeposit = itemsWithDays.reduce((s, i) => s + i.deposit, 0);
+    const grandTotal = totalRental + totalDeposit;
+
+    // ── Submit order ────────────────────────────────────────────
+    const handlePlaceOrder = async () => {
+        if (cart.length === 0) return;
+        setLoading(true);
+        setError("");
+        try {
+            const orderItems = itemsWithDays.map((item) => ({
+                productId: item.productId,
+                name: item.name,
+                image: item.image,
+                price: item.price,
+                size: item.size,
+                quantity: item.quantity || 1,
+                rentalDays: item.days,
+                rentalFee: item.rentalFee,
+                deposit: item.deposit,
+            }));
+
+            const res = await API.post("/api/order", {
+                items: orderItems,
+                totalRental,
+                totalDeposit,
+                grandTotal,
+            });
+
+            if (res.data.success) {
+                await fetchUserCart(); // refresh cart (backend should clear it after order)
+                navigate(`/order-confirmation/${res.data.orderId}`);
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to place order. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ── Update rental days ──────────────────────────────────────
+    const updateDays = (itemId, val) => {
+        const days = Math.max(1, Math.min(30, Number(val)));
+        setRentalDays((prev) => ({ ...prev, [itemId]: days }));
+    };
+
+    if (cart.length === 0) {
+        return (
+            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-gray-400 text-lg mb-4">Your cart is empty</p>
+                    <button
+                        onClick={() => navigate("/catalog")}
+                        className="text-[#C3FF51] underline hover:text-white transition"
+                    >
+                        Browse Products
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-neutral-950 text-neutral-100 p-8 font-sans">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="min-h-screen bg-[#0a0a0a] text-white">
+            <style>{`
+        .day-input::-webkit-outer-spin-button,
+        .day-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .day-input { -moz-appearance: textfield; }
+      `}</style>
 
-                {/* Left Column: Form Sections */}
-                <div className="lg:col-span-2 space-y-8">
-                    <h1 className="text-3xl font-bold">Rental Summary</h1>
+            {/* Header */}
+            <div className="border-b border-zinc-800 px-6 py-20 flex items-center gap-4">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="text-gray-400 hover:text-white transition text-sm flex items-center gap-2"
+                >
+                    ← Back
+                </button>
+                <h1 className="text-xl font-bold">Checkout</h1>
+                <span className="text-gray-500 text-sm ml-1">({cartCount} items)</span>
+            </div>
 
-                    <section className="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
-                        <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Full Name" className="bg-neutral-950 border border-neutral-800 p-3 rounded-lg w-full" />
-                            <input type="tel" placeholder="Phone Number" className="bg-neutral-950 border border-neutral-800 p-3 rounded-lg w-full" />
-                            <textarea placeholder="Shipping Address" className="col-span-2 bg-neutral-950 border border-neutral-800 p-3 rounded-lg w-full h-24" />
-                        </div>
-                    </section>
+            <div className="max-w-4xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
 
-                    <section className="bg-neutral-900 p-6 rounded-2xl border border-neutral-800">
-                        <h2 className="text-xl font-semibold mb-4">Select Dates</h2>
-                        <div className="flex gap-4">
-                            <input type="date" className="bg-neutral-950 border border-neutral-800 p-3 rounded-lg flex-1" />
-                            <span className="self-center">to</span>
-                            <input type="date" className="bg-neutral-950 border border-neutral-800 p-3 rounded-lg flex-1" />
-                        </div>
-                    </section>
+                {/* ── Left: Order Items ────────────────────────────── */}
+                <div>
+                    <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">
+                        Order Summary
+                    </h2>
+
+                    <div className="space-y-4">
+                        {itemsWithDays.map((item) => (
+                            <div
+                                key={item._id}
+                                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex gap-4"
+                            >
+                                {/* Image */}
+                                <div className="w-20 h-20 bg-zinc-800 rounded-lg flex-shrink-0 overflow-hidden">
+                                    {item.image ? (
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <svg className="w-8 h-8 text-zinc-600" fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Details */}
+                                <div className="flex-grow min-w-0">
+                                    <h3 className="text-white font-semibold text-sm truncate">{item.name}</h3>
+                                    <p className="text-gray-400 text-xs mt-0.5">
+                                        Size: {item.size} &nbsp;·&nbsp; Qty: {item.quantity || 1}
+                                    </p>
+                                    <p className="text-gray-500 text-xs">฿{item.price.toLocaleString()} / day</p>
+
+                                    {/* Rental days picker */}
+                                    <div className="flex items-center gap-3 mt-3">
+                                        <span className="text-gray-400 text-xs">Rental days:</span>
+                                        <div className="flex items-center border border-zinc-700 rounded-lg overflow-hidden">
+                                            <button
+                                                onClick={() => updateDays(item._id, item.days - 1)}
+                                                className="px-2.5 py-1 text-gray-400 hover:text-white hover:bg-zinc-700 transition text-sm"
+                                            >−</button>
+                                            <input
+                                                type="number"
+                                                value={item.days}
+                                                min={1}
+                                                max={30}
+                                                onChange={(e) => updateDays(item._id, e.target.value)}
+                                                className="day-input w-10 text-center bg-transparent text-white text-sm py-1 outline-none"
+                                            />
+                                            <button
+                                                onClick={() => updateDays(item._id, item.days + 1)}
+                                                className="px-2.5 py-1 text-gray-400 hover:text-white hover:bg-zinc-700 transition text-sm"
+                                            >+</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Per-item fees */}
+                                <div className="text-right flex-shrink-0 flex flex-col justify-between">
+                                    <div>
+                                        <p className="text-[#C3FF51] font-bold text-sm">
+                                            ฿{item.rentalFee.toLocaleString()}
+                                        </p>
+                                        <p className="text-gray-500 text-xs">rental</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-orange-400 font-semibold text-sm">
+                                            ฿{item.deposit.toLocaleString()}
+                                        </p>
+                                        <p className="text-gray-500 text-xs">deposit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Deposit note */}
+                    <div className="mt-4 bg-orange-950/40 border border-orange-800/40 rounded-xl p-4">
+                        <p className="text-orange-300 text-xs font-semibold mb-1">📋 Deposit Policy</p>
+                        <p className="text-orange-200/70 text-xs leading-relaxed">
+                            A refundable deposit of <strong className="text-orange-300">×{DEPOSIT_MULTIPLIER}</strong> the daily rental fee is charged per item.
+                            It will be returned in full within 3–5 business days after the shoes are returned in original condition.
+                        </p>
+                    </div>
                 </div>
 
-                {/* Right Column: Order Summary */}
-                <div className="lg:col-span-1">
-                    <div className="bg-neutral-900 p-8 rounded-3xl border border-neutral-800 sticky top-8">
-                        <h2 className="text-2xl font-bold mb-6">Payment Total</h2>
+                {/* ── Right: Payment Summary ───────────────────────── */}
+                <div className="lg:sticky lg:top-6 h-fit">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-5">
+                            Payment
+                        </h2>
 
-                        <div className="space-y-4 text-neutral-400">
-                            <div className="flex justify-between">
-                                <span>{orderSummary.item}</span>
-                                <span>฿{subtotal}</span>
+                        {/* Customer info */}
+                        <div className="mb-5 pb-5 border-b border-zinc-800">
+                            <p className="text-gray-400 text-xs mb-1">Renting as</p>
+                            <p className="text-white text-sm font-semibold">{user?.name || user?.email}</p>
+                            <p className="text-gray-500 text-xs">{user?.email}</p>
+                            <p className="text-gray-500 text-xs">{user?.address}</p>
+                        </div>
+
+                        {/* Fee breakdown */}
+                        <div className="space-y-3 mb-5">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">Rental fee</span>
+                                <span className="text-[#C3FF51] font-semibold">฿{totalRental.toLocaleString()}</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Shipping Fee</span>
-                                <span>฿{orderSummary.shipping}</span>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">Deposit (refundable)</span>
+                                <span className="text-orange-400 font-semibold">฿{totalDeposit.toLocaleString()}</span>
                             </div>
-                            <div className="flex justify-between text-red-400">
-                                <span>Discount</span>
-                                <span>-฿{orderSummary.discount}</span>
-                            </div>
-                            <div className="border-t border-neutral-800 pt-4 flex justify-between text-xl font-bold text-neutral-100">
-                                <span>Total Amount</span>
-                                <span className="text-lime-400">฿{total}</span>
+                            <div className="border-t border-zinc-700 pt-3 flex justify-between">
+                                <span className="text-white font-bold">Total Due Now</span>
+                                <span className="text-white font-bold text-lg">฿{grandTotal.toLocaleString()}</span>
                             </div>
                         </div>
 
-                        <button className="w-full mt-8 bg-lime-400 hover:bg-lime-500 text-neutral-950 font-bold py-4 rounded-xl transition duration-200">
-                            Confirm Rental
+                        {/* Deposit refund reminder */}
+                        <p className="text-gray-500 text-xs mb-5 leading-relaxed">
+                            Deposit of <span className="text-orange-400">฿{totalDeposit.toLocaleString()}</span> is
+                            fully refundable upon return.
+                        </p>
+
+                        {error && (
+                            <div className="mb-4 bg-red-950/50 border border-red-800/50 rounded-lg px-4 py-3">
+                                <p className="text-red-400 text-sm">{error}</p>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={handlePlaceOrder}
+                            disabled={loading || cart.length === 0}
+                            className={`w-full py-4 rounded-xl font-bold text-base transition
+                ${loading || cart.length === 0
+                                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                                    : "bg-[#1db559] hover:bg-[#189b4c] text-white active:scale-95"
+                                }`}
+                        >
+                            {loading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    Processing...
+                                </span>
+                            ) : (
+                                `CONFIRM & PAY ฿${grandTotal.toLocaleString()}`
+                            )}
                         </button>
-                        <p className="text-center text-xs text-neutral-600 mt-4">
-                            By clicking, you agree to KINETIX rental terms.
+
+                        <p className="text-center text-gray-600 text-xs mt-3">
+                            By confirming you agree to our rental terms
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     );
-};
-
-export default CheckoutPage;
+}

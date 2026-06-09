@@ -190,7 +190,7 @@ export default function Showcase() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
             <span className="text-neon text-xs font-semibold tracking-widest uppercase">Catalog</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">Our shoes</h2>
+            <h2 className="mt-2 text-4xl lg:text-5xl font-extrabold text-white">Our shoes</h2>
           </div>
         </div>
 

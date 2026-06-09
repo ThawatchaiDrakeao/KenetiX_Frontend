@@ -21,7 +21,7 @@ export default function AdminLogin() {
 
   useEffect(() => {
     if (admin) navigate("/admin");
-  }, [admin]);
+  }, [admin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

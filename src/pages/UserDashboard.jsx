@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import Navbar from '../components/Navbar';
 
 // ─── API CONFIG ────────────────────────────────────────────────────────────────
 // 🔧 [CONFIG] เปลี่ยน URL ใน .env ให้ตรงกับ backend จริง
@@ -400,48 +399,7 @@ const DashboardPage = () => {
     const setError = (key, msg) => setErrors((p) => ({ ...p, [key]: msg }));
     const clearError = (key) => setErrors((p) => { const n = { ...p }; delete n[key]; return n; });
 
-    // ─── INITIAL DATA FETCH ────────────────────────────────────────────────────
-    // 🔌 โหลดข้อมูลทุก section พร้อมกันตอน component mount
-    // แต่ละ endpoint เป็นอิสระ → error จาก endpoint นึงไม่กระทบที่อื่น
-    useEffect(() => {
-        const load = async (key, fn, setter) => {
-            setLoad(key, true);
-            clearError(key);
-            try {
-                const data = await fn();
-                setter(data);
-            } catch (e) {
-                setError(key, e.message);
-            } finally {
-                setLoad(key, false);
-            }
-        };
-
-        // 🔌 [1] GET /user/profile → แสดงชื่อ / อีเมล / ระดับ / initials ใน sidebar
-        load("profile", api.getProfile, setProfile);
-
-        // 🔌 [2] GET /user/stats → 4 stat cards บนสุด
-        load("stats", api.getStats, setStats);
-
-        // 🔌 [3] GET /rentals/active → รายการที่กำลังเช่าอยู่ (Currently Renting)
-        load("activeRentals", api.getActiveRentals, setActiveRentals);
-
-        // 🔌 [4] GET /notifications → Recent Activity feed + badge count บน sidebar
-        load("notifications", api.getNotifications, setNotifications);
-
-        // 🔌 [5] GET /rewards/points → คะแนน / ระดับ / progress bar
-        load("rewards", api.getRewards, setRewards);
-
-        // 🔌 [6] GET /user/brands → Favorite Brands grid
-        load("favBrands", api.getFavBrands, setFavBrands);
-
-        // 🔌 [7] GET /rentals/history → ตาราง Rental History หน้าแรก
-        loadHistory({ q: "", brand: "All", page: 1 });
-    }, []);
-
     // ─── RENTAL HISTORY FETCH (search / filter / paginate) ────────────────────
-    // 🔌 [7] GET /rentals/history?q=...&brand=...&page=...
-    // เรียกซ้ำทุกครั้งที่ user พิมพ์ค้นหา, กดกรองแบรนด์, หรือเปลี่ยนหน้า
     const loadHistory = useCallback(async ({ q, brand, page }) => {
         setLoad("history", true);
         clearError("history");
@@ -458,6 +416,31 @@ const DashboardPage = () => {
             setLoad("history", false);
         }
     }, []);
+
+    // ─── INITIAL DATA FETCH ────────────────────────────────────────────────────
+    useEffect(() => {
+        const load = async (key, fn, setter) => {
+            setLoad(key, true);
+            clearError(key);
+            try {
+                const data = await fn();
+                setter(data);
+            } catch (e) {
+                setError(key, e.message);
+            } finally {
+                setLoad(key, false);
+            }
+        };
+
+        load("profile", api.getProfile, setProfile);
+        load("stats", api.getStats, setStats);
+        load("activeRentals", api.getActiveRentals, setActiveRentals);
+        load("notifications", api.getNotifications, setNotifications);
+        load("rewards", api.getRewards, setRewards);
+        load("favBrands", api.getFavBrands, setFavBrands);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadHistory({ q: "", brand: "All", page: 1 });
+    }, [loadHistory]);
 
     // 🔧 [DEBOUNCE] รอ 400ms หลัง user หยุดพิมพ์แล้วค่อยยิง API
     // ป้องกันยิง request ทุก keystroke
@@ -556,7 +539,7 @@ const DashboardPage = () => {
         
             {/* Header 
             <header className="border-b border-neutral-800 px-6 py-4 flex items-center justify-between sticky top-0 bg-neutral-950 z-50">
-                <div className="text-3xl font-extrabold text-lime-400 tracking-tighter">KINETIX</div>
+                <div className="text-4xl font-extrabold text-lime-400 tracking-tighter">KINETIX</div>
                 <nav className="flex items-center gap-10 text-sm text-neutral-300">
                     {['All Shoes', 'Brands', 'How to rent', 'Pricing'].map(item => (
                         <a key={item} href="#" className="hover:text-lime-400 transition">{item}</a>
@@ -603,7 +586,7 @@ const DashboardPage = () => {
                                     {profile?.initials || "?"}
                                 </div>
                                 {/* profile.name ← จาก GET /user/profile */}
-                                <h1 className="mt-6 text-3xl font-bold tracking-tight">{profile?.name}</h1>
+                                <h1 className="mt-6 text-4xl font-bold tracking-tight">{profile?.name}</h1>
                                 {/* profile.email ← จาก GET /user/profile */}
                                 <p className="text-neutral-500 text-sm">{profile?.email}</p>
                                 {/* profile.level ← จาก GET /user/profile */}
@@ -862,7 +845,7 @@ const DashboardPage = () => {
                                         {/* rewards.points ← GET /rewards/points */}
                                         <p className="text-4xl font-black text-neutral-100 mb-6 flex items-baseline gap-2">
                                             {(rewards?.points || 0).toLocaleString()}
-                                            <span className="text-xl font-bold text-lime-400">pts</span>
+                                            <span className="text-2xl font-bold text-lime-400">pts</span>
                                         </p>
                                         <div className="relative pt-6 border-t border-neutral-800 mt-6">
                                             {/* rewards.nextLevel + rewards.nextLevelPoints ← GET /rewards/points */}
@@ -905,7 +888,7 @@ const DashboardPage = () => {
                                         {/* 🔌 map favBrands ← GET /user/brands */}
                                         {favBrands.map((brand) => (
                                             <div key={brand.name} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex flex-col items-center gap-2.5">
-                                                <div className="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center font-black text-xl text-lime-400 border border-neutral-700">
+                                                <div className="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center font-black text-2xl text-lime-400 border border-neutral-700">
                                                     {brand.name === "New Balance" ? "NB" : brand.name === "ASICS" ? "AS" : brand.name.slice(0, 1).toUpperCase()}
                                                 </div>
                                                 <p className="text-sm font-bold text-neutral-100">{brand.name}</p>
