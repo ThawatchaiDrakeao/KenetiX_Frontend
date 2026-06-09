@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { useLanguage } from "../../context/useLanguage";
 
 export default function ProductCard({ product }) {
   const [adding, setAdding] = useState(false);
   const [wished, setWished] = useState(false);
   const { cart, addToCart, removeFromCart } = useCart();
+  const { t } = useLanguage();
 
   const defaultVariant = product?.variants?.[0];
   const defaultSize    = defaultVariant?.size?.[0];
@@ -17,7 +19,7 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
-    if (!defaultVariant || !defaultSize) { alert("Product out of stock"); return; }
+    if (!defaultVariant || !defaultSize) { alert(t("catalog.outOfStock")); return; }
     setAdding(true);
     await addToCart({
       item: product._id,
@@ -66,7 +68,7 @@ export default function ProductCard({ product }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
             </div>
-            <p className="text-white/20 text-xs">No image</p>
+            <p className="text-white/20 text-xs">{t("catalog.noImage")}</p>
           </div>
         )}
         <span className="absolute bottom-3 right-3 bg-dark-card/80 backdrop-blur-sm border border-dark-border rounded-lg px-2.5 py-1 text-xs font-semibold text-white">
@@ -84,7 +86,7 @@ export default function ProductCard({ product }) {
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-dark-border">
           <div>
             <span className="text-neon font-bold text-lg">฿{rentalPrice.toLocaleString()}</span>
-            <span className="text-white/35 text-xs ml-1">/ day</span>
+            <span className="text-white/35 text-xs ml-1">{t("catalog.perDay")}</span>
           </div>
 
           {isInCart ? (
@@ -92,7 +94,7 @@ export default function ProductCard({ product }) {
               onClick={handleRemove}
               className="text-xs font-semibold text-red-400 border border-red-400/30 rounded-full px-3 py-1.5 hover:bg-red-400/10 transition-all duration-200"
             >
-              Remove
+              {t("catalog.remove")}
             </button>
           ) : (
             <button
@@ -100,7 +102,7 @@ export default function ProductCard({ product }) {
               disabled={adding}
               className="text-xs font-semibold text-neon border border-neon/30 rounded-full px-3 py-1.5 hover:bg-neon hover:text-dark transition-all duration-200 disabled:opacity-50"
             >
-              {adding ? "Adding…" : "Add to Cart"}
+              {adding ? t("catalog.adding") : t("catalog.addToCart")}
             </button>
           )}
         </div>

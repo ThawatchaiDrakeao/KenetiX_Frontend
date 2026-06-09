@@ -1,7 +1,13 @@
-import { useLanguage } from "../context/useLanguage.js";
+import { useLanguage } from "../context/useLanguage";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
+import { motion } from "framer-motion";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import ScrollArrow from "../components/ScrollArrow";
+
+const fadeUp  = { hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } } };
+const fadeRight = { hidden: { opacity: 0, x: 40 }, show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] } } };
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 
 const pageCopy = {
   th: {
@@ -176,38 +182,38 @@ export default function HowItWorks() {
     <div className="min-h-screen bg-kinetix-black text-kinetix-white">
       <Navbar />
 
-      <section className="border-y border-kinetix-border/80 mt-20">
+      <section id="hiw-hero" className="border-y border-kinetix-border/80 mt-20">
         <div className="mx-auto grid max-w-[1400px] gap-12 px-4 pt-14 pb-20 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:pt-20 lg:pb-28">
-          <div className="flex flex-col justify-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
+          <motion.div className="flex flex-col justify-center" initial="hidden" whileInView="show" variants={stagger} viewport={{ once: true, margin: "-60px" }}>
+            <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
               {copy.eyebrow}
-            </p>
-            <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white lg:text-6xl">
+            </motion.p>
+            <motion.h1 variants={fadeUp} className="mt-6 max-w-4xl font-display text-5xl font-bold leading-[1.02] text-white lg:text-6xl">
               {copy.title}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
               {copy.intro}
-            </p>
+            </motion.p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/catalog"
                 className="inline-flex h-12 items-center justify-center rounded-full bg-kinetix-lime px-6 text-sm font-bold text-black transition-transform hover:scale-[1.02]"
               >
                 {copy.primaryCta}
               </Link>
-            </div>
+            </motion.div>
 
-            <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+            <motion.div variants={fadeUp} className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
               {copy.checkpoints.map((item) => (
                 <div key={item} className="border-l border-kinetix-lime/60 pl-3">
                   <p className="text-xs leading-5 text-zinc-300">{item}</p>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 min-h-[420px]">
+          <motion.div initial="hidden" whileInView="show" variants={fadeRight} viewport={{ once: true, margin: "-60px" }} className="relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 min-h-[420px]">
             <img
               src="/videoframe_5325.png"
               alt="Running"
@@ -227,29 +233,30 @@ export default function HowItWorks() {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1400px] px-4 pt-8 pb-16 sm:px-6 lg:pt-10 lg:pb-24">
-        <div className="flex flex-col justify-between gap-6 border-b border-zinc-800 pb-8 lg:flex-row lg:items-end">
+      <section id="hiw-steps" className="mx-auto max-w-[1400px] px-4 pt-8 pb-16 sm:px-6 lg:pt-10 lg:pb-24">
+        <motion.div initial="hidden" whileInView="show" variants={stagger} viewport={{ once: true, margin: "-60px" }} className="flex flex-col justify-between gap-6 border-b border-zinc-800 pb-8 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white">
+            <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-[0.28em] text-white">
               {copy.flowEyebrow}
-            </p>
-            <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl">
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl">
               {copy.flowTitle}
-            </h2>
+            </motion.h2>
           </div>
-          <p className="max-w-xl text-sm leading-7 text-zinc-400">
+          <motion.p variants={fadeUp} className="max-w-xl text-sm leading-7 text-zinc-400">
             {copy.flowDescription}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="mt-10 grid gap-4 lg:grid-cols-5">
+        <motion.div initial="hidden" whileInView="show" variants={stagger} viewport={{ once: true, margin: "-40px" }} className="mt-10 grid gap-4 lg:grid-cols-5">
           {copy.steps.map((step) => (
-            <article
+            <motion.article
               key={step.number}
+              variants={fadeUp}
               className="flex min-h-[300px] flex-col justify-between rounded-lg border border-[#1e1e20] bg-white/[0.03] p-5"
             >
               <div>
@@ -271,35 +278,35 @@ export default function HowItWorks() {
               <div className="mt-8 h-1 w-full rounded-full bg-zinc-800">
                 <div className="h-1 rounded-full bg-gradient-to-r from-kinetix-lime to-kinetix-aqua" />
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      <section className="border-y border-zinc-800 bg-zinc-950/70">
+      <section id="hiw-system" className="border-y border-zinc-800 bg-zinc-950/70">
         <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
+          <motion.div initial="hidden" whileInView="show" variants={stagger} viewport={{ once: true, margin: "-60px" }}>
+            <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
               {copy.simpleEyebrow}
-            </p>
-            <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
               {copy.simpleTitle}
-            </h2>
-          </div>
+            </motion.h2>
+          </motion.div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <motion.div initial="hidden" whileInView="show" variants={stagger} viewport={{ once: true, margin: "-40px" }} className="grid gap-4 sm:grid-cols-2">
             {copy.systemCards.map(([title, desc]) => (
-              <div key={title} className="rounded-lg border border-zinc-800 bg-black p-5">
+              <motion.div key={title} variants={fadeUp} className="rounded-lg border border-zinc-800 bg-black p-5">
                 <h3 className="text-lg font-bold text-white">{title}</h3>
                 <p className="mt-3 text-sm leading-7 text-zinc-400">{desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:py-24">
-        <div className="flex flex-col items-start justify-between gap-8 rounded-lg border border-kinetix-lime/40 bg-kinetix-lime px-6 py-8 text-black sm:px-8 lg:flex-row lg:items-center">
+      <section id="hiw-cta" className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:py-24">
+        <motion.div initial="hidden" whileInView="show" variants={fadeUp} viewport={{ once: true, margin: "-60px" }} className="flex flex-col items-start justify-between gap-8 rounded-lg border border-kinetix-lime/40 bg-kinetix-lime px-6 py-8 text-black sm:px-8 lg:flex-row lg:items-center">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em]">
               {copy.finalEyebrow}
@@ -314,9 +321,10 @@ export default function HowItWorks() {
           >
             {copy.finalCta}
           </Link>
-        </div>
+        </motion.div>
       </section>
       <Footer />
+      <ScrollArrow sections={["hiw-hero", "hiw-steps", "hiw-system", "hiw-cta"]} />
     </div>
   );
 }

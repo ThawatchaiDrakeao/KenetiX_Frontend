@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CommunityGallery from "../components/community/CommunityGallery";
+import ScrollArrow from "../components/ScrollArrow";
+import { useLanguage } from "../context/useLanguage";
 
 // ── THEME ─────────────────────────────────────────────────────────────────────
 const LIME    = "#C3FF51";
@@ -19,44 +21,12 @@ const fadeUp = {
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const STATS = [
-  { value: "3,500+", label: "Members"           },
-  { value: "25+",    label: "Weekly Activities"  },
-  { value: "40+",    label: "Monthly Meetups"    },
-  { value: "4.9★",   label: "Community Rating"  },
-];
-
-const EXPERIENCES = [
-  {
-    id: "run", title: "RUN CLUB", tag: "Tue & Sat — 19:00",
-    accentColor: LIME, img: "/community/run-club.png",
-    points: ["Group runs every week", "5km / 10km routes", "Urban night running", "GPS tracked sessions"],
-  },
-  {
-    id: "ice", title: "ICE BATH RECOVERY", tag: "Every Thursday — 18:30",
-    accentColor: LIME, img: "/community/ice-bath.png",
-    points: ["Guided cold exposure", "Breathwork protocol", "3–8 min immersion", "Performance recovery"],
-  },
-  {
-    id: "coffee", title: "COFFEE SOCIAL", tag: "Every Sunday — 08:00",
-    accentColor: LIME, img: "/community/coffee-social.png",
-    points: ["Community networking", "Wellness conversations", "Specialty coffee", "Post-run gathering"],
-  },
-];
-
-const EVENTS = [
-  { id: 1, title: "Run Club Night Session",      date: "Sat 14 Jun", time: "19:00", seats: 8,  type: "RUN",    color: LIME      },
-  { id: 2, title: "Ice Bath Recovery Workshop",  date: "Thu 19 Jun", time: "18:30", seats: 4,  type: "ICE",    color: LIME },
-  { id: 3, title: "Coffee Community Meetup",     date: "Sun 22 Jun", time: "08:00", seats: 12, type: "COFFEE", color: LIME },
-];
-
-
-const TESTIMONIALS = [
-  { name: "Jirayu J.",  initials: "JJ", role: "Top Runner",          color: LIME,      rating: 5, text: "Running brought me here. The people made me stay. KINETIX Community completely changed how I approach fitness and recovery." },
-  { name: "Anne T.",    initials: "AT", role: "Recovery Champion",   color: LIME, rating: 5, text: "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it." },
-  { name: "Cookie Y.",  initials: "CY", role: "Community Connector", color: LIME, rating: 5, text: "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week." },
-];
+// Experience image map (kept in component since these are static assets, not translatable)
+const EXP_IMGS = {
+  run:    "/community/run-club.png",
+  ice:    "/community/ice-bath.png",
+  coffee: "/community/coffee-social.png",
+};
 
 // ── SHARED UI COMPONENTS ──────────────────────────────────────────────────────
 function GlassCard({ children, className = "", style = {}, glow = false, hoverGlow = true }) {
@@ -114,9 +84,11 @@ function Stars({ count }) {
 }
 
 // ── HERO SECTION ──────────────────────────────────────────────────────────────
-function Hero() {
+function Hero({ t }) {
+  const stats = t("community.page.stats");
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden"
+    <section id="community-hero" className="relative min-h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden"
       style={{ background: BG }}>
 
       {/* Ambient glows */}
@@ -139,20 +111,20 @@ function Hero() {
           <motion.span variants={fadeUp}
             className="inline-block text-[11px] font-bold tracking-[0.4em] uppercase mb-6 px-4 py-1.5 rounded-full"
             style={{ color: LIME, border: `1px solid rgba(141,255,0,0.25)`, background: "rgba(141,255,0,0.06)" }}>
-            KINETIX COMMUNITY
+            {t("community.page.heroBadge")}
           </motion.span>
 
           <motion.h1 variants={fadeUp}
             className="text-5xl font-black text-white leading-[0.95] tracking-tight mb-8 lg:text-6xl">
-            Run Together.<br />
-            <span style={{ color: LIME }}>Recover</span> Together.<br />
-            Grow Together.
+            {t("community.page.heroLine1")}<br />
+            <span style={{ color: LIME }}>{t("community.page.heroLine2")}</span><br />
+            {t("community.page.heroLine3")}
           </motion.h1>
 
           <motion.p variants={fadeUp}
             className="text-lg max-w-lg mx-auto leading-relaxed mb-6"
             style={{ color: "#A0A0A0" }}>
-            Join a community built around movement, recovery, and meaningful connections. Run together. Grow together.
+            {t("community.page.heroDesc")}
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center mb-12">
@@ -162,7 +134,7 @@ function Hero() {
                 style={{ background: LIME }}
                 whileHover={{ scale: 1.04, boxShadow: GLOW }}
                 whileTap={{ scale: 0.97 }}>
-                Join Community →
+                {t("community.page.joinCta")}
               </motion.button>
             </Link>
             <motion.button
@@ -171,14 +143,14 @@ function Hero() {
               whileHover={{ borderColor: "rgba(141,255,0,0.30)", scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.getElementById("experiences")?.scrollIntoView({ behavior: "smooth" })}>
-              Explore Activities
+              {t("community.page.exploreActivities")}
             </motion.button>
           </motion.div>
 
           {/* Stats */}
           <motion.div variants={stagger}
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
-            {STATS.map((s) => (
+            {Array.isArray(stats) && stats.map((s) => (
               <motion.div key={s.label} variants={fadeUp}>
                 <GlassCard className="p-5 text-center" hoverGlow={false}>
                   <p className="text-2xl font-black mb-1" style={{ color: LIME }}>{s.value}</p>
@@ -203,22 +175,27 @@ function Hero() {
 }
 
 // ── FEATURED EXPERIENCES ──────────────────────────────────────────────────────
-function Experiences() {
+function Experiences({ t }) {
+  const experiencesData = t("community.page.experiences");
+  const experiences = Array.isArray(experiencesData)
+    ? experiencesData.map((exp) => ({ ...exp, accentColor: LIME, img: EXP_IMGS[exp.id] }))
+    : [];
+
   return (
     <section id="experiences" className="py-10 px-4" style={{ background: BG }}>
       <div className="max-w-[1400px] mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="text-center mb-6">
-          <SectionLabel text="Featured Experiences" />
+          <SectionLabel text={t("community.page.experiencesBadge")} />
           <motion.h2 variants={fadeUp}
             className="text-3xl sm:text-4xl font-black text-white">
-            What We Do Together
+            {t("community.page.whatWeDo")}
           </motion.h2>
         </motion.div>
 
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {EXPERIENCES.map((exp) => (
+          {experiences.map((exp) => (
             <motion.div key={exp.id} variants={fadeUp}>
               <GlassCard className="h-full flex flex-col cursor-pointer overflow-hidden relative">
                 {/* Photo */}
@@ -235,7 +212,7 @@ function Experiences() {
                     </span>
                     <h3 className="text-2xl font-black text-white mb-5">{exp.title}</h3>
                     <ul className="space-y-2.5">
-                      {exp.points.map((pt) => (
+                      {Array.isArray(exp.points) && exp.points.map((pt) => (
                         <li key={pt} className="flex items-center gap-2.5 text-sm" style={{ color: "#A0A0A0" }}>
                           <span className="w-1 h-1 rounded-full shrink-0" style={{ background: exp.accentColor }} />
                           {pt}
@@ -246,7 +223,7 @@ function Experiences() {
                   <div className="mt-auto pt-4 border-t" style={{ borderColor: BORDER }}>
                     <button className="text-sm font-semibold transition-colors"
                       style={{ color: exp.accentColor }}>
-                      Coming Soon
+                      {t("community.page.comingSoon")}
                     </button>
                   </div>
                 </div>
@@ -260,9 +237,14 @@ function Experiences() {
 }
 
 // ── UPCOMING EVENTS ───────────────────────────────────────────────────────────
-function Events() {
+function Events({ t }) {
+  const eventsData = t("community.page.events");
+  const events = Array.isArray(eventsData)
+    ? eventsData.map((ev) => ({ ...ev, color: LIME }))
+    : [];
+
   return (
-    <section className="py-10 px-4" style={{ background: "#080808" }}>
+    <section id="community-events" className="py-10 px-4" style={{ background: "#080808" }}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial="hidden"
@@ -271,14 +253,14 @@ function Events() {
           variants={stagger}
         >
           <div className="mb-6">
-            <SectionLabel text="Upcoming Events" />
+            <SectionLabel text={t("community.page.eventsBadge")} />
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-black text-white">
-              Join This Week
+              {t("community.page.joinThisWeek")}
             </motion.h2>
           </div>
 
           <div className="space-y-4">
-            {EVENTS.map((ev) => (
+            {events.map((ev) => (
               <motion.div key={ev.id} variants={fadeUp}>
                 <div className="flex items-center gap-5 rounded-lg border border-[#1e1e20] bg-[#0f0f10] px-5 py-4 sm:px-6">
                   <div className="flex-1 min-w-0">
@@ -287,7 +269,9 @@ function Events() {
                       <span>{ev.date}</span>
                       <span>{ev.time}</span>
                       <span style={{ color: ev.seats <= 5 ? "#FF6B6B" : undefined }}>
-                        {ev.seats <= 5 ? `${ev.seats} seats left` : `${ev.seats} seats`}
+                        {ev.seats <= 5
+                          ? `${ev.seats} ${t("community.page.seatsLeft")}`
+                          : `${ev.seats} ${t("community.page.seats")}`}
                       </span>
                     </div>
                   </div>
@@ -296,7 +280,7 @@ function Events() {
                     style={{ background: "transparent", border: "1px solid #C3FF51", color: "#C3FF51" }}
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}>
-                    Join
+                    {t("community.page.join")}
                   </motion.button>
                 </div>
               </motion.div>
@@ -309,22 +293,30 @@ function Events() {
 }
 
 // ── TESTIMONIALS ──────────────────────────────────────────────────────────────
-function Testimonials() {
+function Testimonials({ t }) {
+  const testimonialsData = t("community.page.testimonials");
+  const testimonials = Array.isArray(testimonialsData)
+    ? testimonialsData.map((item) => ({ ...item, color: LIME, rating: 5 }))
+    : [];
+
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setActive((p) => (p + 1) % TESTIMONIALS.length), 4000);
-    return () => clearInterval(t);
-  }, []);
+    if (!testimonials.length) return;
+    const timer = setInterval(() => setActive((p) => (p + 1) % testimonials.length), 4000);
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
+  if (!testimonials.length) return null;
 
   return (
-    <section className="py-10 px-4" style={{ background: BG }}>
+    <section id="community-testimonials" className="py-10 px-4" style={{ background: BG }}>
       <div className="max-w-4xl mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
           className="text-center mb-6">
-          <SectionLabel text="Testimonials" />
+          <SectionLabel text={t("community.page.testimonialsBadge")} />
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl font-black text-white">
-            Heard from the Community
+            {t("community.page.heardFromCommunity")}
           </motion.h2>
         </motion.div>
 
@@ -337,15 +329,15 @@ function Testimonials() {
               transition={{ duration: 0.5 }}>
               <GlassCard className="p-6 sm:p-8 text-center" hoverGlow={false}>
                 <p className="text-base lg:text-lg font-medium text-white/85 leading-relaxed mb-5">
-                  "{TESTIMONIALS[active].text}"
+                  "{testimonials[active].text}"
                 </p>
                 <div className="flex flex-col items-center gap-3">
-                  <Avatar initials={TESTIMONIALS[active].initials}
-                    color={TESTIMONIALS[active].color} size="w-12 h-12" textSize="text-sm" />
+                  <Avatar initials={testimonials[active].initials}
+                    color={testimonials[active].color} size="w-12 h-12" textSize="text-sm" />
                   <div>
-                    <p className="font-bold text-white">{TESTIMONIALS[active].name}</p>
-                    <p className="text-xs mb-2" style={{ color: "#606060" }}>{TESTIMONIALS[active].role}</p>
-                    <Stars count={TESTIMONIALS[active].rating} />
+                    <p className="font-bold text-white">{testimonials[active].name}</p>
+                    <p className="text-xs mb-2" style={{ color: "#606060" }}>{testimonials[active].role}</p>
+                    <Stars count={testimonials[active].rating} />
                   </div>
                 </div>
               </GlassCard>
@@ -355,7 +347,7 @@ function Testimonials() {
 
         {/* Dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {TESTIMONIALS.map((_, i) => (
+          {testimonials.map((_, i) => (
             <button key={i} onClick={() => setActive(i)}
               className="rounded-full transition-all duration-300"
               style={{
@@ -371,9 +363,9 @@ function Testimonials() {
 }
 
 // ── FINAL CTA ─────────────────────────────────────────────────────────────────
-function FinalCTA() {
+function FinalCTA({ t }) {
   return (
-    <section className="py-10 px-4" style={{ background: "#080808" }}>
+    <section id="community-cta" className="py-10 px-4" style={{ background: "#080808" }}>
       <div className="max-w-4xl mx-auto">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}>
           <GlassCard className="p-8 sm:p-12 text-center relative overflow-hidden" hoverGlow={false}
@@ -387,16 +379,16 @@ function FinalCTA() {
               <motion.p variants={fadeUp}
                 className="text-[11px] font-bold tracking-[0.4em] uppercase mb-4"
                 style={{ color: LIME }}>
-                Ready to Join?
+                {t("community.page.readyBadge")}
               </motion.p>
               <motion.h2 variants={fadeUp}
                 className="text-3xl font-black text-white leading-[1.05] tracking-tight mb-4 lg:text-4xl">
-                Run Together.<br />
-                <span style={{ color: LIME }}>Recover</span> Together.<br />
-                Grow Together.
+                {t("community.page.ctaLine1")}<br />
+                <span style={{ color: LIME }}>{t("community.page.ctaLine2")}</span><br />
+                {t("community.page.ctaLine3")}
               </motion.h2>
               <motion.p variants={fadeUp} className="text-sm mb-5" style={{ color: "#A0A0A0" }}>
-                Your community is waiting. Join KINETIX and start your journey.
+                {t("community.page.ctaDesc")}
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to="/signup">
@@ -405,7 +397,7 @@ function FinalCTA() {
                     style={{ background: LIME }}
                     whileHover={{ scale: 1.04, boxShadow: GLOW }}
                     whileTap={{ scale: 0.97 }}>
-                    Become a Member
+                    {t("community.page.becomeMember")}
                   </motion.button>
                 </Link>
                 <a href="https://wa.me/66000000000" target="_blank" rel="noopener noreferrer">
@@ -414,7 +406,7 @@ function FinalCTA() {
                     style={{ background: SURFACE, border: "1px solid rgba(141,255,0,0.25)", color: LIME }}
                     whileHover={{ background: "rgba(141,255,0,0.08)", scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}>
-                    Booking Activities
+                    {t("community.page.bookActivities")}
                   </motion.button>
                 </a>
               </motion.div>
@@ -428,18 +420,20 @@ function FinalCTA() {
 
 // ── PAGE ──────────────────────────────────────────────────────────────────────
 export default function CommunityPage() {
+  const { t } = useLanguage();
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   return (
     <div className="font-sora overflow-x-hidden" style={{ background: BG }}>
       <Navbar />
-      <Hero />
-      <Experiences />
-      <Events />
-      <CommunityGallery />
-      <Testimonials />
-      <FinalCTA />
+      <Hero t={t} />
+      <Experiences t={t} />
+      <Events t={t} />
+      <div id="community-gallery"><CommunityGallery /></div>
+      <Testimonials t={t} />
+      <FinalCTA t={t} />
       <Footer />
+      <ScrollArrow sections={["community-hero", "experiences", "community-events", "community-gallery", "community-testimonials", "community-cta"]} />
     </div>
   );
 }

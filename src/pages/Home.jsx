@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
@@ -20,24 +21,36 @@ import Footer from '../components/Footer';
 import Login from "../pages/Login";
 import SignupPage from "../components/SignupPage";
 import ScrollArrow from "../components/ScrollArrow";
-import UserDashboard from "../pages/UserDashboard"
-//import CatalogNavbar from "../components/catalog/CatalogNavbar";
+import UserDashboard from "../pages/UserDashboard";
 import CheckOut from "./CheckOut";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 36 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+
+function FadeSection({ children }) {
+  return (
+    <motion.div initial="hidden" whileInView="show" variants={fadeUp} viewport={{ once: true, margin: "-80px" }}>
+      {children}
+    </motion.div>
+  );
+}
 
 function HomeContent() {
   return (
     <>
       <ScrollArrow />
       <Hero />
-      <Features />
-      <HowItWorksSection />
-      <Showcase />
-      <Reviews />
-      <Pricing />
-      <Community />
-      <OurStory />
-      <FAQ />
-      <CTA />
+      <FadeSection><Features /></FadeSection>
+      <FadeSection><HowItWorksSection /></FadeSection>
+      <FadeSection><Showcase /></FadeSection>
+      <FadeSection><Reviews /></FadeSection>
+      <FadeSection><Pricing /></FadeSection>
+      <FadeSection><Community /></FadeSection>
+      <FadeSection><OurStory /></FadeSection>
+      <FadeSection><FAQ /></FadeSection>
+      <FadeSection><CTA /></FadeSection>
     </>
   );
 }

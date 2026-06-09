@@ -83,7 +83,54 @@
   },
   "community": {
     "badge": "Community",
-    "title": "Runners sharing the experience"
+    "title": "Runners sharing the experience",
+    "page": {
+      "heroBadge": "KINETIX COMMUNITY",
+      "heroLine1": "Run Together.",
+      "heroLine2": "Recover Together.",
+      "heroLine3": "Grow Together.",
+      "heroDesc": "Join a community built around movement, recovery, and meaningful connections. Run together. Grow together.",
+      "joinCta": "Join Community →",
+      "exploreActivities": "Explore Activities",
+      "experiencesBadge": "Featured Experiences",
+      "whatWeDo": "What We Do Together",
+      "comingSoon": "Coming Soon",
+      "eventsBadge": "Upcoming Events",
+      "joinThisWeek": "Join This Week",
+      "seatsLeft": "seats left",
+      "seats": "seats",
+      "join": "Join",
+      "testimonialsBadge": "Testimonials",
+      "heardFromCommunity": "Heard from the Community",
+      "readyBadge": "Ready to Join?",
+      "ctaLine1": "Run Together.",
+      "ctaLine2": "Recover Together.",
+      "ctaLine3": "Grow Together.",
+      "ctaDesc": "Your community is waiting. Join KINETIX and start your journey.",
+      "becomeMember": "Become a Member",
+      "bookActivities": "Booking Activities",
+      "stats": [
+        { "value": "3,500+", "label": "Members" },
+        { "value": "25+", "label": "Weekly Activities" },
+        { "value": "40+", "label": "Monthly Meetups" },
+        { "value": "4.9★", "label": "Community Rating" }
+      ],
+      "experiences": [
+        { "id": "run", "title": "RUN CLUB", "tag": "Tue & Sat — 19:00", "points": ["Group runs every week", "5km / 10km routes", "Urban night running", "GPS tracked sessions"] },
+        { "id": "ice", "title": "ICE BATH RECOVERY", "tag": "Every Thursday — 18:30", "points": ["Guided cold exposure", "Breathwork protocol", "3–8 min immersion", "Performance recovery"] },
+        { "id": "coffee", "title": "COFFEE SOCIAL", "tag": "Every Sunday — 08:00", "points": ["Community networking", "Wellness conversations", "Specialty coffee", "Post-run gathering"] }
+      ],
+      "events": [
+        { "id": 1, "title": "Run Club Night Session", "date": "Sat 14 Jun", "time": "19:00", "seats": 8, "type": "RUN" },
+        { "id": 2, "title": "Ice Bath Recovery Workshop", "date": "Thu 19 Jun", "time": "18:30", "seats": 4, "type": "ICE" },
+        { "id": 3, "title": "Coffee Community Meetup", "date": "Sun 22 Jun", "time": "08:00", "seats": 12, "type": "COFFEE" }
+      ],
+      "testimonials": [
+        { "name": "Jirayu J.", "initials": "JJ", "role": "Top Runner", "text": "Running brought me here. The people made me stay. KINETIX Community completely changed how I approach fitness and recovery." },
+        { "name": "Anne T.", "initials": "AT", "role": "Recovery Champion", "text": "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it." },
+        { "name": "Cookie Y.", "initials": "CY", "role": "Community Connector", "text": "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week." }
+      ]
+    }
   },
   "ourStory": {
     "badge": "Our Story",
@@ -165,7 +212,7 @@
     "updated": "Last updated: June 2025",
     "items": [
       { "title": "1. Acceptance of Terms", "body": "By registering or using Kinetix shoe rental services, you accept all terms of service. If you do not accept, please do not use the service." },
-      { "title": "2. User Eligibility", "body": "Must be 18 years or older, or have parental consent. · Must provide a valid delivery address. · Must provide correct bank account information for deposit refunds." },
+      { "title": "2. User Eligibility", "body": "Must be 20 years or older, or have parental consent. · Must provide a valid delivery address. · Must provide correct bank account information for deposit refunds." },
       { "title": "3. Ordering and Cancellation", "body": "Orders are confirmed when Omise reports successful payment. · Cancellations accepted only before 23:59 on the order date for a full refund. · After 23:59 cancellations are not possible as items are packed." },
       { "title": "4. Delivery and Receipt", "body": "Kinetix delivers the next day (D+1) before noon, every day including holidays. · Rental period starts from 12:00 PM on the delivery date. · Refusing delivery 3+ times may result in temporary account suspension." },
       { "title": "5. Returning Shoes", "body": "Press Notify Return in the app before 12:00 PM on the due date, or within Grace Period 1:00 PM. · The time you press notify determines Late/On-time status. · Driver will pick up from your address." },
@@ -200,5 +247,104 @@
       { "grade": "D", "label": "Major Damage", "criteria": "Heavy damage, not worth repairing", "cost": "Damage fee ≤ retail price", "refund": "Partial refund after 48hr dispute window" },
       { "grade": "E", "label": "Lost", "criteria": "Lost / not returned", "cost": "Full retail price", "refund": "No refund + charge difference" }
     ]
+  },
+  "login": {
+    "runningShoeRental": "Running Shoe Rental",
+    "title": "Sign in to your account",
+    "desc": "Enter your credentials to continue",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signingIn": "Signing in…",
+    "signIn": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "backToHome": "← Back to Home"
+  },
+  "signup": {
+    "runningShoeRental": "Running Shoe Rental",
+    "label": "Customer Registration",
+    "title": "Create Account",
+    "backToHome": "← Back to Home",
+    "alreadyHave": "Already have an account?",
+    "signIn": "Sign In",
+    "personalInfo": "Personal Information",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "emailPlaceholder": "Email Address",
+    "phonePlaceholder": "Phone Number",
+    "shoeSizePlaceholder": "Shoe Size",
+    "addressPlaceholder": "Address",
+    "bankInfo": "Bank Information",
+    "bankNamePlaceholder": "Bank Name",
+    "accountNumberPlaceholder": "Account Number",
+    "accountNamePlaceholder": "Account Name",
+    "security": "Security",
+    "passwordPlaceholder": "Password (min 8 characters)",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "agreeTerms": "I agree to the Terms of Service and Privacy Policy.",
+    "ageConfirm": "I confirm that I am over 20 years old.",
+    "creating": "Creating Account…",
+    "submit": "+ Create Account",
+    "accountCreated": "Account Created!",
+    "redirecting": "Redirecting to your dashboard…",
+    "goToDashboard": "Go to Dashboard",
+    "registerAnother": "Register Another Account",
+    "errRequired": "Required",
+    "errEmail": "Invalid email",
+    "errMinPassword": "Min 8 characters",
+    "errPasswordMatch": "Passwords do not match",
+    "errRegistration": "Registration failed. Please try again.",
+    "loginAfterRegister": "Account created! Please log in manually."
+  },
+  "catalog": {
+    "hero": {
+      "title": "ALL PRODUCTS",
+      "desc": "Discover the best performance running shoes and gear.",
+      "count": "1,248 products"
+    },
+    "loading": "Loading products...",
+    "noProducts": "No products found.",
+    "addToCart": "Add to Cart",
+    "adding": "Adding…",
+    "remove": "Remove",
+    "outOfStock": "Product out of stock",
+    "perDay": "/ day",
+    "noImage": "No image",
+    "partners": "PARTNERS",
+    "loadMore": "Load more",
+    "remaining": "remaining",
+    "banners": {
+      "strava": {
+        "badge": "PARTNER",
+        "desc": "Track every run. Connect with 100M+ athletes worldwide.",
+        "cta": "COMING SOON"
+      },
+      "leaderboard": {
+        "badge": "LEADERBOARD",
+        "title": "COMPETE & WIN",
+        "desc": "Track stats, climb ranks, race runners across Thailand.",
+        "cta": "COMING SOON"
+      },
+      "community": {
+        "title": "JOIN THE COMMUNITY",
+        "desc": "Built for athletes. Backed by community.",
+        "cta": "VIEW COMMUNITY"
+      }
+    }
+  },
+  "showcase": {
+    "badge": "Catalog",
+    "title": "Our shoes",
+    "viewAll": "View all shoes →",
+    "perDay": "/ day",
+    "reserve": "Reserve",
+    "categories": {
+      "All": "All",
+      "Road": "Road",
+      "Trail": "Trail",
+      "Daily trainer": "Daily trainer"
+    }
   }
 }
