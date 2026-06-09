@@ -179,9 +179,9 @@ export default function Catalog() {
         <div id="partners" className="py-10">
           <div className="flex items-center gap-4 mb-6">
             <div className="flex-1 h-px bg-[#1e1e20]" />
-            <h2 className="text-white text-xs font-bold tracking-[0.4em] uppercase">
+            <button className="text-white text-xs font-bold tracking-[0.4em] uppercase border border-[#1e1e20] rounded-lg px-5 py-2 hover:border-[#C3FF51]/40 hover:text-[#C3FF51] transition-colors duration-200">
               PARTNERS
-            </h2>
+            </button>
             <div className="flex-1 h-px bg-[#1e1e20]" />
           </div>
 

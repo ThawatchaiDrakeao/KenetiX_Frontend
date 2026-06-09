@@ -440,7 +440,7 @@ export default function HowItWorks() {
       <Navbar />
 
       <section className="border-y border-kinetix-border/80 mt-20">
-        <div className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-20">
+        <div className="mx-auto grid max-w-[1400px] gap-12 px-4 pt-14 pb-20 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:pt-20 lg:pb-28">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
               {copy.eyebrow}
@@ -470,7 +470,7 @@ export default function HowItWorks() {
             </div>
           </div>
 
-          <div className="relative h-[520px] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 sm:h-[620px] lg:h-[656px]">
+          <div className="relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 min-h-[420px]">
             <img
               src="/videoframe_5325.png"
               alt="Running"
@@ -494,10 +494,10 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section className="mx-auto max-w-[1400px] px-4 pt-8 pb-16 sm:px-6 lg:pt-10 lg:pb-24">
         <div className="flex flex-col justify-between gap-6 border-b border-zinc-800 pb-8 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-aqua">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white">
               {copy.flowEyebrow}
             </p>
             <h2 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl">
@@ -513,7 +513,7 @@ export default function HowItWorks() {
           {copy.steps.map((step) => (
             <article
               key={step.number}
-              className="flex min-h-[300px] flex-col justify-between rounded-lg border border-zinc-800 bg-white/[0.03] p-5 transition-colors hover:border-kinetix-lime/70"
+              className="flex min-h-[300px] flex-col justify-between rounded-lg border border-[#1e1e20] bg-white/[0.03] p-5"
             >
               <div>
                 <div className="flex items-center justify-between gap-4">
@@ -540,7 +540,7 @@ export default function HowItWorks() {
       </section>
 
       <section className="border-y border-zinc-800 bg-zinc-950/70">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-12">
+        <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-kinetix-lime">
               {copy.simpleEyebrow}
@@ -561,7 +561,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 lg:py-24">
         <div className="flex flex-col items-start justify-between gap-8 rounded-lg border border-kinetix-lime/40 bg-kinetix-lime px-6 py-8 text-black sm:px-8 lg:flex-row lg:items-center">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em]">
