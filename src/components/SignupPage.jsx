@@ -36,36 +36,28 @@ export default function SignupPage() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.firstName.trim()) errs.firstName = "First name is required";
-    if (!formData.lastName.trim()) errs.lastName = "Last name is required";
-    if (!formData.email.trim()) errs.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      errs.email = "Invalid email format";
-    if (!formData.phone.trim()) errs.phone = "Phone number is required";
-    if (!formData.address.trim()) errs.address = "Address is required";
-    if (!formData.shoeSize) errs.shoeSize = "Shoe size is required";
-    if (!formData.bankName.trim()) errs.bankName = "Bank name is required";
-    if (!formData.accountNumber.trim())
-      errs.accountNumber = "Account number is required";
-    if (!formData.accountName.trim())
-      errs.accountName = "Account name is required";
-    if (!formData.password) errs.password = "Password is required";
-    else if (formData.password.length < 8)
-      errs.password = "Password must be at least 8 characters";
-    if (formData.password !== formData.confirmPassword)
-      errs.confirmPassword = "Passwords do not match";
-    if (!formData.agreeTerms) errs.agreeTerms = "You must agree to the terms";
-    if (!formData.ageConfirm) errs.ageConfirm = "You must confirm your age";
+    if (!formData.firstName.trim())     errs.firstName     = t("signup.errRequired");
+    if (!formData.lastName.trim())      errs.lastName      = t("signup.errRequired");
+    if (!formData.email.trim())         errs.email         = t("signup.errRequired");
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = t("signup.errEmail");
+    if (!formData.phone.trim())         errs.phone         = t("signup.errRequired");
+    if (!formData.address.trim())       errs.address       = t("signup.errRequired");
+    if (!formData.shoeSize)             errs.shoeSize      = t("signup.errRequired");
+    if (!formData.bankName.trim())      errs.bankName      = t("signup.errRequired");
+    if (!formData.accountNumber.trim()) errs.accountNumber = t("signup.errRequired");
+    if (!formData.accountName.trim())   errs.accountName   = t("signup.errRequired");
+    if (!formData.password)             errs.password      = t("signup.errRequired");
+    else if (formData.password.length < 8) errs.password   = t("signup.errMinPassword");
+    if (formData.password !== formData.confirmPassword) errs.confirmPassword = t("signup.errPasswordMatch");
+    if (!formData.agreeTerms)           errs.agreeTerms    = t("signup.errRequired");
+    if (!formData.ageConfirm)           errs.ageConfirm    = t("signup.errRequired");
     return errs;
   };
 
   const buildPayload = () => ({
-    name: `${formData.firstName}`,
-    surname: `${formData.lastName}`.trim(),
-    email: formData.email,
-    password: formData.password,
-    phone: formData.phone,
-    address: formData.address,
+    name: `${formData.firstName} ${formData.lastName}`.trim(),
+    email: formData.email, password: formData.password,
+    phone: formData.phone, address: formData.address,
     shoe_size: Number(formData.shoeSize),
     bank_name: formData.bankName,
     bank_account_number: formData.accountNumber,
@@ -78,9 +70,7 @@ export default function SignupPage() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      const firstErrorField = document.querySelector(".error-field");
-      if (firstErrorField)
-        firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.querySelector(".error-field")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     const payload = buildPayload();
@@ -90,29 +80,11 @@ export default function SignupPage() {
       try {
         const loginResponse = await API.post("/api/users/login", { email: payload.email, password: payload.password });
         login(loginResponse.data.user);
-
-        // Step 3: Set success state and redirect to dashboard
-        setPreviewData({
-          ...payload,
-          userId:
-            registerResponse.data?.data?._id || loginResponse.data?.user?._id,
-        });
+        setPreviewData({ ...payload, userId: registerResponse.data?.data?._id || loginResponse.data?.user?._id });
         setSubmitted(true);
-
-        setTimeout(() => {
-          navigate("/userdashboard");
-        }, 1500);
-      } catch (loginError) {
-        console.error(
-          "⚠️ Registration succeeded but auto-login failed:",
-          loginError,
-        );
-        console.log("Login error response:", loginError.response?.data);
-
-        // Registration worked, but login failed
-        setApiError(
-          "Account created successfully! However, auto-login failed. Please go to the login page.",
-        );
+        setTimeout(() => navigate("/userdashboard"), 1500);
+      } catch {
+        setApiError(t("signup.loginAfterRegister"));
         setSubmitted(true);
       }
     } catch (registerError) {
@@ -121,21 +93,11 @@ export default function SignupPage() {
         registerError.response?.data?.error?.message ||
         registerError.message || t("signup.errRegistration");
       let message = rawMessage;
-
-      if (
-        typeof message === "string" &&
-        message.trim().toLowerCase() === "error!"
-      ) {
-        if (registerError.response?.data?.errors) {
-          const fieldErrors = registerError.response.data.errors;
-          const joined = Object.values(fieldErrors)
-            .flat()
-            .map((v) => (typeof v === "string" ? v : JSON.stringify(v)))
-            .join(" ");
-          message = joined || "Registration failed. Please try again.";
-        } else {
-          message = "Registration failed. Please try again.";
-        }
+      if (typeof message === "string" && message.trim().toLowerCase() === "error!") {
+        const fieldErrors = registerError.response?.data?.errors;
+        message = fieldErrors
+          ? Object.values(fieldErrors).flat().map((v) => typeof v === "string" ? v : JSON.stringify(v)).join(" ") || t("signup.errRegistration")
+          : t("signup.errRegistration");
       }
       setApiError(message);
       if (registerError.response?.data?.errors) setErrors(registerError.response.data.errors);
@@ -146,14 +108,13 @@ export default function SignupPage() {
 
   const handleReset = () => {
     setFormData(initialFormData); setErrors({}); setSubmitted(false);
-    setPreviewData(null); setApiError(""); setLoading(false);
+    setPreviewData(null); setApiError("");
   };
 
+  // ── Shared input styles ────────────────────────────────────────────────────
   const inp = (field) =>
-    `w-full border rounded-xl px-4 py-3 focus:outline-none transition-colors ${
-      errors[field]
-        ? "border-red-500 focus:border-red-400 error-field"
-        : "border-zinc-700 focus:border-lime-400"
+    `w-full text-sm rounded-xl px-3 py-2.5 focus:outline-none transition-colors ${
+      errors[field] ? "border border-red-400 error-field" : "border border-[#E2E8F0]"
     }`;
   const ist = { background: "#F8FAFC", color: "#0F172A" };
   const onF = (e) => { e.target.style.borderColor = "#C3FF51"; };
@@ -163,45 +124,31 @@ export default function SignupPage() {
     <div className="min-h-screen font-sora flex flex-col" style={{ background: "#F8FAFC" }}>
 
       {/* Back to Home */}
-      <div className="max-w-7xl mx-auto px-6 pt-8">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-lime-500 transition-colors font-sora"
-        >
-          ← Back to Home
+      <div className="max-w-5xl w-full mx-auto px-6 pt-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm transition-colors"
+          style={{ color: "#94A3B8" }}
+          onMouseEnter={(e) => { e.target.style.color = "#0F172A"; }}
+          onMouseLeave={(e) => { e.target.style.color = "#94A3B8"; }}>
+          {t("signup.backToHome")}
         </Link>
       </div>
 
-          {!submitted && <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {[
-              {
-                title: "Profile Data",
-                desc: "Store customer information including full name, email, phone number, address, and shoe size.",
-              },
-              {
-                title: "Bank Information",
-                desc: "Securely save bank name, account number, and account owner details for refund processing.",
-              },
-              {
-                title: "Account Status",
-                desc: "System tracks reject count, account status, suspended date, and account activity.",
-              },
-              {
-                title: "Secure Access",
-                desc: "Your account is protected with authentication and encrypted password management.",
-              },
-            ].map((card) => (
-              <div
-                key={card.title}
-                className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6"
-              >
-                <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  {card.desc}
-                </p>
-              </div>
-            ))}
-          </div>}
+      <div className="max-w-5xl w-full mx-auto px-6 pt-4 pb-8 flex flex-col gap-5 flex-grow">
+
+        {/* Heading */}
+        <div>
+          <p className="text-xs tracking-[0.25em] uppercase mb-2" style={{ color: "#94A3B8" }}>
+            {t("signup.runningShoeRental")}
+          </p>
+          <Link to="/">
+            <span className="text-[28px] font-extrabold tracking-widest text-black">
+              KINETI<span style={{ color: "#C3FF51" }}>X</span>
+            </span>
+          </Link>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] mt-3" style={{ color: "#000000" }}>
+            {t("signup.label")}
+          </p>
+        </div>
 
         {/* Form Card */}
         {!submitted ? (
@@ -219,6 +166,13 @@ export default function SignupPage() {
                 </Link>
               </p>
             </div>
+
+            {apiError && (
+              <div className="mb-4 rounded-xl px-4 py-3 text-sm"
+                style={{ background: "#FEE2E2", border: "1px solid #FECACA", color: "#DC2626" }}>
+                {apiError}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} noValidate>
 
@@ -327,17 +281,10 @@ export default function SignupPage() {
               <div className="mt-5 pt-4 border-t border-[#F1F5F9] grid grid-cols-2 gap-x-8 gap-y-3 items-end">
                 <div className="space-y-2 text-sm" style={{ color: "#64748B" }}>
                   <div>
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="agreeTerms"
-                        checked={formData.agreeTerms}
-                        onChange={handleChange}
-                        className="mt-1 accent-lime-400"
-                      />
-                      <span>
-                        I agree to the Terms of Service and Privacy Policy.
-                      </span>
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input type="checkbox" name="agreeTerms" checked={formData.agreeTerms}
+                        onChange={handleChange} className="mt-0.5 accent-[#C3FF51]" />
+                      <span>{t("signup.agreeTerms")}</span>
                     </label>
                     <ErrorMsg field="agreeTerms" errors={errors} />
                   </div>
@@ -351,16 +298,12 @@ export default function SignupPage() {
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${
-                    loading
-                      ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-                      : "bg-lime-400 text-black hover:scale-[1.01]"
-                  }`}
-                >
-                  {loading ? "CREATING ACCOUNT..." : "+ CREATE ACCOUNT"}
+                <button type="submit" disabled={loading}
+                  className="w-full py-3 rounded-xl font-semibold text-sm transition-all active:scale-[0.98]"
+                  style={loading
+                    ? { background: "#E2E8F0", color: "#94A3B8", cursor: "not-allowed" }
+                    : { background: "#C3FF51", color: "#0F172A" }}>
+                  {loading ? t("signup.creating") : t("signup.submit")}
                 </button>
               </div>
 
@@ -400,6 +343,7 @@ export default function SignupPage() {
           </div>
         )}
 
+      </div>
     </div>
   );
 }
