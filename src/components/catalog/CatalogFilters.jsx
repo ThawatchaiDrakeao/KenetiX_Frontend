@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const BRANDS      = ['Nike', 'Adidas', 'Hoka', 'ASICS', 'New Balance', 'Saucony', 'On Running', 'Puma', 'Under Armour', 'Mizuno'];
 const SIZES       = Array.from({ length: 10 }, (_, i) => `EU ${36 + i}`);
-const PRICE_RANGES = ['1,000 - 2,000 THB', '2,001 - 3,000 THB', '3,001 - 4,000 THB', '>= 5,000 THB'];
+const PRICE_RANGES = ['0 - 200 THB', '201 - 350 THB', '351 - 500 THB', '>= 501 THB'];
 const SORT_OPTIONS = ['Newest', 'Price: Low–High', 'Price: High–Low', 'Top Rated'];
 
 function Dropdown({ label, options, value, onChange, minWidth = 120 }) {
@@ -37,13 +37,14 @@ function Dropdown({ label, options, value, onChange, minWidth = 120 }) {
   );
 }
 
-export default function CatalogFilters() {
-  const [selectedGender, setSelectedGender] = useState(null);
-  const [selectedBrand,  setSelectedBrand]  = useState(null);
-  const [selectedSize,   setSelectedSize]   = useState(null);
-  const [selectedPrice,  setSelectedPrice]  = useState(null);
-  const [sortBy,         setSortBy]         = useState('Newest');
-  const [sortOpen,       setSortOpen]       = useState(false);
+export default function CatalogFilters({
+  selectedGender, setSelectedGender,
+  selectedBrand,  setSelectedBrand,
+  selectedSize,   setSelectedSize,
+  selectedPrice,  setSelectedPrice,
+  sortBy,         setSortBy,
+}) {
+  const [sortOpen, setSortOpen] = useState(false);
 
   const activeFilters = [
     selectedGender && { label: selectedGender, clear: () => setSelectedGender(null) },

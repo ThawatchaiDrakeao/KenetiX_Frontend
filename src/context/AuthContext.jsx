@@ -1,32 +1,47 @@
-import { createContext, useContext, useState } from "react";
-import API from "../api/axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import API, { clearAuth } from "../api/axios";
 
 const AuthContext = createContext();
+const USER_STORAGE_KEY = "kinetix_user";
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem("user");
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-    };
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(USER_STORAGE_KEY);
+    }
+  }, [user]);
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("user");
-        API.post("/api/users/logout");
-    };
+  const login = (userData) => {
+    setUser(userData);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    setUser(null);
+    clearAuth();
+    API.post("/api/users/logout").catch(() => {});
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 }
