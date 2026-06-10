@@ -14,7 +14,45 @@ function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
 
+
     const handleLogin = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        let authResponse = null;
+
+        // 1. Try User Login
+        try {
+            authResponse = await API.post("/api/users/login", { email, password });
+        } catch (userError) {
+            // User login failed, let's try Staff Login next
+            try {
+                authResponse = await API.post("/api/staff/admin/login", { email, password });
+            } catch (staffError) {
+                // Both failed
+                const message = staffError.response?.data?.message || userError.response?.data?.message || "Login Failed";
+                setError(message);
+            }
+        }
+
+        // 2. If either login succeeded, process the session here
+        if (authResponse && authResponse.data) {
+            setAuthToken(authResponse.data.accessToken);
+            login(authResponse.data.user);
+
+            const userRole = authResponse.data.user.role;
+            if (userRole === "ADMIN" || userRole === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/userdashboard");
+            }
+        }
+
+        setLoading(false);
+    };
+
+    /*const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
         setLoading(true);
@@ -57,7 +95,7 @@ function Login() {
             setLoading(false);
         }
     };
-
+*/
     return (
         <>
             <Navbar />

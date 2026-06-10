@@ -90,7 +90,7 @@ function OverviewPage() {
 
         <div className="bg-black rounded-2xl p-6 border border-gray-800">
           <p className="text-sm text-gray-400">Active Shoes</p>
-          <p className="text-3xl font-bold text-gray-200">{stats.totalProducts}</p>
+          <p className="text-3xl font-bold text-gray-200">{stats.activeShoes}</p>
         </div>
 
       </div>
