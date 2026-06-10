@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
-import Login from "./pages/Login";
-import UserDashboard from "./pages/UserDashboard";
-import HowItWorksPage from "./pages/HowItWorksPage";
-import ContactPage from "./pages/ContactPage";
-import CheckOut from "./pages/CheckOut";
-import AdminDashboard from "./pages/AdminDashboard";
-import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
-import SignupPage from "./components/SignupPage";
-import OrderConfirmation from "./pages/OrderConfirmation";
+import Home from "./pages/Home.jsx";
+import Catalog from "./pages/Catalog.jsx";
+import Login from "./pages/Login.jsx";
+import UserDashboard from "./pages/UserDashboard.jsx";
+import HowItWorksPage from "./pages/HowItWorksPage.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
+import CheckOut from "./pages/CheckOut.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute.jsx";
+import SignupPage from "./components/SignupPage.jsx";
+import OrderConfirmation from "./pages/Orderconfirmation.jsx";
 
 export default function App() {
     return (
