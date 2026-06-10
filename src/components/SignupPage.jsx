@@ -55,7 +55,8 @@ export default function SignupPage() {
   };
 
   const buildPayload = () => ({
-    name: `${formData.firstName} ${formData.lastName}`.trim(),
+    name: formData.firstName.trim(),
+    surname: formData.lastName.trim(),
     email: formData.email, password: formData.password,
     phone: formData.phone, address: formData.address,
     shoe_size: Number(formData.shoeSize),

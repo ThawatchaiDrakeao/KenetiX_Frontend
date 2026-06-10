@@ -26,4 +26,20 @@ API.interceptors.request.use(
   }
 );
 
+// On 401 (expired/invalid token), clear session and send the user back to login
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("kinetix_user");
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default API;
