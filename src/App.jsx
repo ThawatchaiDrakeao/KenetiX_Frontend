@@ -1,46 +1,38 @@
-import "./App.css";
-import HeroButton from "./componente/HeroButton";
-import Secondbutton from "./componente/Secondbutton";
-import Section01 from "./componente/Section01";
-import Section_03 from "./componente/Section_03";
-import SignupPage from "./componente/SignupPage";
-import HowItWorks from "./componente/HowItWorks";
-import SingleProductPage from "./componente/SingleProductPage";
-import Navbar from "./componente/Navbar";
-import { LanguageProvider } from "./context/LanguageProvider";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Catalog from "./pages/Catalog";
+import Login from "./pages/Login";
+import UserDashboard from "./pages/UserDashboard";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import ContactPage from "./pages/ContactPage";
+import CheckOut from "./pages/CheckOut";
+import AdminDashboard from "./pages/AdminDashboard";
+import CommunityPage from "./pages/CommunityPage";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import ProtectedUserRoute from "./components/ProtectedUserRoute";
+import SignupPage from "./components/SignupPage";
 
-function AppContent() {
-  const currentPath = window.location.pathname.replace(/\/$/, "");
-
-  if (currentPath === "/how-it-works") {
-    return <HowItWorks />;
-  }
-
-  if (currentPath === "/product") {
-    return <SingleProductPage />;
-  }
-
-  return (
-    <>
-      <Navbar />
-      <Section01 />
-      <SignupPage />
-
-      <div className="flex-col">
-        <HeroButton />
-        <Secondbutton />
-        <Section_03 />
-      </div>
-    </>
-  );
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/"                element={<Home />} />
+            <Route path="/catalog"         element={<Catalog />} />
+            <Route path="/login"           element={<Login />} />
+            <Route path="/signup"          element={<SignupPage />} />
+            <Route path="/userdashboard"   element={<ProtectedUserRoute><UserDashboard /></ProtectedUserRoute>} />
+            <Route path="/howitworkspage"  element={<HowItWorksPage />} />
+            <Route path="/contact"         element={<ContactPage />} />
+            <Route path="/community"       element={<CommunityPage />} />
+            <Route path="/checkout"        element={<CheckOut />} />
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedAdminRoute>
+                        <AdminDashboard />
+                    </ProtectedAdminRoute>
+                }
+            />
+            <Route path="*" element={<Home />} />
+        </Routes>
+    );
 }
-
-function App() {
-  return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
-  );
-}
-
-export default App;
