@@ -9,12 +9,14 @@ import NotificationPanel from "../components/admin/NotificationPanel";
 import OrderManagement from "../components/admin/OrderManagement";
 import ShoeLookup from "../components/admin/ShoeLookup";
 import RecentActivity from "../components/admin/RecentActivity";
-//import QuickConfirm from "../components/admin/QuickConfirm";
+import QuickConfirm from "../components/admin/QuickConfirm";
 import ProfitAnalysis from "../components/admin/ProfitAnalysis";
 import API from "../api/axios";
+import Navbar from "../components/Navbar";
 
 function PageHeader({ title, subtitle }) {
   return (
+
     <div className="mb-7">
       <h1
         className="font-extrabold font-sora leading-tight"
@@ -28,6 +30,7 @@ function PageHeader({ title, subtitle }) {
         </p>
       )}
     </div>
+
   );
 }
 
@@ -71,19 +74,19 @@ function OverviewPage() {
     <div className="flex flex-col gap-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
           <p className="text-sm text-gray-500">Total Orders</p>
           <p className="text-3xl font-bold text-gray-900">{stats.totalOrders}</p>
         </div>
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
           <p className="text-sm text-gray-500">Pending Orders</p>
           <p className="text-3xl font-bold text-yellow-600">{stats.pendingOrders}</p>
         </div>
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
           <p className="text-sm text-gray-500">Total Customers</p>
           <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
         </div>
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
           <p className="text-sm text-gray-500">Active Shoes</p>
           <p className="text-3xl font-bold text-green-600">{stats.totalProducts}</p>
         </div>
@@ -192,13 +195,16 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "#F8FAFC" }}>
-      <AdminSidebar active={activeTab} onChange={setActiveTab} />
-      <main className="flex-1 overflow-y-auto" style={{ background: "#F8FAFC" }}>
-        <div className="px-8 py-8 max-w-[1400px] mx-auto">
-          {renderContent()}
-        </div>
-      </main>
-    </div>
+    <>
+      <Navbar />
+      <div className="flex h-screen overflow-hidden bg-black">
+        <AdminSidebar active={activeTab} onChange={setActiveTab} />
+        <main className="flex-1 overflow-y-auto bg-black">
+          <div className="px-8 py-8 max-w-[1400px] mx-auto">
+            {renderContent()}
+          </div>
+        </main>
+      </div>
+    </>
   );
 }

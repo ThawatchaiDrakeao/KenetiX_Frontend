@@ -20,6 +20,7 @@ import ScrollArrow from "../components/ScrollArrow";
 import UserDashboard from "../pages/UserDashboard"
 //import CatalogNavbar from "../components/catalog/CatalogNavbar";
 import CheckOut from "./CheckOut";
+import OrderConfirmation from "./OrderConfirmation";
 
 function HomeContent() {
   return (
@@ -56,6 +57,7 @@ export default function Home() {
           <Route path="userdashboard" element={<UserDashboard />} />
           {/* <Route path="catalognavbar" element={<CatalogNavbar />} /> */}
           <Route path="checkout" element={<CheckOut />} />
+          <Route path="orderconfirmation" element={<OrderConfirmation />} />
         </Routes>
       </main>
       <Footer />

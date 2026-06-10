@@ -9,6 +9,7 @@ import CheckOut from "./pages/CheckOut";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import SignupPage from "./components/SignupPage";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 export default function App() {
     return (
@@ -30,6 +31,7 @@ export default function App() {
                 }
             />
             <Route path="*" element={<Home />} />
+            <Route path="/orderconfirmation/:orderId" element={<OrderConfirmation />} />
         </Routes>
     );
 }
