@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import API from "../api/axios";
+import API, { setAuthToken } from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { useAdminAuth } from "../context/AdminAuthContext";
-import { useLanguage } from "../context/useLanguage";
-
-const MOCK_ADMIN = { email: "admin@delivery.com", password: "password123" };
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import ActionButton from "../components/ActionButton";
 
 function Login() {
     const [email,    setEmail]    = useState("");
@@ -23,23 +22,39 @@ function Login() {
         setLoading(true);
 
         try {
-            if (email === MOCK_ADMIN.email && password === MOCK_ADMIN.password) {
-                loginAdmin({ name: "Admin Delivery", email, role: "ADMIN", _id: "6a2024a4d1f4eeb792e06584" });
-                navigate("/admin");
-                return;
-            }
+            const response = await API.post("/api/users/login", {
+                email,
+                password,
+            });
 
-            const response = await API.post("/api/users/login", { email, password });
-            const userData = response.data.user;
-            login(userData);
-            if (userData.role === "ADMIN") {
-                loginAdmin(userData);
+            // 🔥 Save token to localStorage
+            setAuthToken(response.data.accessToken);
+
+            login(response.data.user);
+
+            const userRole = response.data.user.role;
+            if (userRole === "ADMIN" || userRole === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/userdashboard");
             }
-        } catch (err) {
-            setError(err.response?.data?.message || t("login.loginFailed"));
+        } catch (error) {
+            try {
+                const staffResponse = await API.post("/api/staff/admin/login", {
+                    email,
+                    password,
+                });
+
+                if (staffResponse.data.user) {
+                    setAuthToken(staffResponse.data.accessToken);
+                    login(staffResponse.data.user);
+                    navigate("/admin");
+                    return;
+                }
+            } catch (staffError) {
+                const message = error.response?.data?.message || "Login Failed";
+                setError(message);
+            }
         } finally {
             setLoading(false);
         }
@@ -147,7 +162,7 @@ function Login() {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

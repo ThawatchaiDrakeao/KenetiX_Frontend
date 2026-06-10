@@ -8,6 +8,13 @@ import { useWishlist } from "../context/WishlistContext";
 import { useLanguage } from "../context/useLanguage";
 
 
+const NAV_LINKS = [
+  { id: "catalog", label: "Catalog", to: "/catalog" },
+  { id: "how", label: "How it works", to: "/howitworkspage" },
+  { id: "community", label: "Community", to: "/userdashboard" },
+  { id: "contact", label: "Contact Us", to: "/contact" },
+];
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -21,6 +28,16 @@ export default function Navbar() {
   const { wishlistCount } = useWishlist();
   const { language, setLanguage, t } = useLanguage();
   const isLoggedIn = !!user;
+  const isAdmin = user && (
+    user.role === "ADMIN" ||
+    user.role === "admin" ||
+    user.userRank === "admin"
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
 
   const NAV_LINKS = [
     { id: "catalog",   label: t("nav.catalog"),   to: "/catalog"        },
@@ -93,7 +110,11 @@ export default function Navbar() {
               </div>
 
               {isLoggedIn ? (
-                <UserActions onOpenCart={() => setCartOpen(true)} cartCount={cartCount} wishlistCount={wishlistCount} isLight={isLight} />
+                <UserActions
+                  onOpenCart={() => setCartOpen(true)}
+                  cartCount={cartCount}
+                  isAdmin={isAdmin}
+                />
               ) : (
                 <GuestActions t={t} />
               )}
@@ -170,20 +191,17 @@ function GuestActions({ t }) {
   );
 }
 
-function UserActions({ onOpenCart, cartCount, wishlistCount, isLight }) {
-  const iconCls = `w-8 h-8 flex items-center justify-center transition-colors ${isLight ? "text-gray-500 hover:text-[#C3FF51]" : "text-white/35 hover:text-[#C3FF51]"}`;
+function UserActions({ onOpenCart, cartCount, isAdmin }) {
   return (
     <>
-      <Link to="/userdashboard#favourites" className={`relative ${iconCls}`} aria-label="Favourites">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-        </svg>
-        {wishlistCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C3FF51] text-[#080809] text-[9px] font-bold rounded-full flex items-center justify-center">
-            {wishlistCount}
-          </span>
-        )}
-      </Link>
+      {isAdmin && (
+        <Link
+          to="/admin"
+          className="text-xs text-neon border border-neon/30 px-3 py-1.5 rounded-lg hover:bg-neon/10 transition-colors font-medium"
+        >
+          Admin
+        </Link>
+      )}
 
       <button onClick={onOpenCart} className={`relative ${iconCls}`} aria-label="Cart">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

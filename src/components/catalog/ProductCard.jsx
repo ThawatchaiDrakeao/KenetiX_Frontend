@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
-import { useWishlist } from "../../context/WishlistContext";
-import { useLanguage } from "../../context/useLanguage";
+import ProductModal from "./ProductModal";
+// import { useWishlist } from "../../context/WishlistContext";
+// import { useLanguage } from "../../context/useLanguage";
 
 export default function ProductCard({ product }) {
   const [adding, setAdding] = useState(false);
-  const [wishing, setWishing] = useState(false);
+
+
+//   const [wishing, setWishing] = useState(false);
   const { cart, addToCart, removeFromCart } = useCart();
   const { isWished, toggleWishlist } = useWishlist();
   const { t } = useLanguage();
@@ -17,8 +20,9 @@ export default function ProductCard({ product }) {
   const image          = defaultVariant?.images?.[0] || null;
   const rentalPrice    = product?.rentalPlan?.[0]?.["1day"] || 0;
 
-  const isInCart = cart.some(
-    (i) => i.item === product._id || i.item?._id === product._id
+
+  const cartItemsForThisProduct = cart.filter(
+    (cartItem) => cartItem.item === product._id || cartItem.item?._id === product._id
   );
 
   const handleAddToCart = async (e) => {

@@ -10,8 +10,13 @@ export default function OrderConfirmationPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Change route mapping context to match plural/singular structure
         API.get(`/api/orders/${orderId}`)
-            .then((res) => { if (res.data.success) setOrder(res.data.data); })
+            .then((res) => {
+                if (res.data.success) {
+                    setOrder(res.data.data);
+                }
+            })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, [orderId]);
@@ -23,6 +28,13 @@ export default function OrderConfirmationPage() {
             </div>
         );
     }
+
+    const orderDate = order?.createdAt
+        ? new Date(order.createdAt).toLocaleString("th-TH", {
+            year: "numeric", month: "long", day: "numeric",
+            hour: "2-digit", minute: "2-digit",
+        })
+        : null;
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col">

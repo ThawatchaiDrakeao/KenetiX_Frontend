@@ -23,20 +23,7 @@ import SignupPage from "../components/SignupPage";
 import ScrollArrow from "../components/ScrollArrow";
 import UserDashboard from "../pages/UserDashboard";
 import CheckOut from "./CheckOut";
-import ProtectedUserRoute from "../components/ProtectedUserRoute";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 36 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] } },
-};
-
-function FadeSection({ children }) {
-  return (
-    <motion.div initial="hidden" whileInView="show" variants={fadeUp} viewport={{ once: true, margin: "-80px" }}>
-      {children}
-    </motion.div>
-  );
-}
+import OrderConfirmation from "./OrderConfirmation";
 
 function HomeContent() {
   return (
@@ -62,7 +49,8 @@ export default function Home() {
       <Navbar />
       <main>
         <Routes>
-          <Route index element={<HomeContent />} />
+          {/*<Route index element={<HomeContent />} /> */}
+          <Route path="/*" element={<HomeContent />} />
           <Route path="howitworkspage" element={<HowItWorksPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="signup" element={<SignupPage />} />
@@ -71,10 +59,7 @@ export default function Home() {
           <Route path="userdashboard" element={<ProtectedUserRoute><UserDashboard /></ProtectedUserRoute>} />
           {/* <Route path="catalognavbar" element={<CatalogNavbar />} /> */}
           <Route path="checkout" element={<CheckOut />} />
-          <Route path="terms" element={<TermsSection />} />
-          <Route path="privacy" element={<PrivacySection />} />
-          <Route path="damage" element={<DamagePolicySection />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="orderconfirmation" element={<OrderConfirmation />} />
         </Routes>
       </main>
       <Footer />

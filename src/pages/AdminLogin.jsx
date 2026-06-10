@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+/*import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../context/AdminAuthContext";
 
@@ -47,13 +47,13 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-dark flex items-center justify-center px-4">
       <div className="w-full max-w-md">
 
-        {/* Logo */}
+        {/* Logo }
         <div className="text-center mb-8">
           <p className="text-neon text-3xl font-bold font-sora tracking-widest">KINETIX</p>
           <p className="text-gray-500 text-sm font-sora mt-1">Admin Portal</p>
         </div>
 
-        {/* Card */}
+        {/* Card }
         <div className="bg-dark-card border border-dark-border rounded-2xl p-8">
           <h2 className="text-white text-xl font-semibold font-sora mb-6">Sign in to Admin</h2>
 
@@ -100,7 +100,7 @@ export default function AdminLogin() {
           </p>
         </div>
 
-        {/* Hint */}
+        {/* Hint }
         <div className="mt-4 bg-dark-elevated border border-dark-border rounded-xl p-3 text-center">
           <p className="text-gray-500 text-xs font-sora">Demo: admin@delivery.com / password123</p>
         </div>
@@ -108,3 +108,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+*/

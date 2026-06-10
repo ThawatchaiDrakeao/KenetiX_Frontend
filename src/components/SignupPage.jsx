@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useLanguage } from "../context/useLanguage";
-import API from "../api/axios";
+import API, { setAuthToken } from "../api/axios";
+import Navbar from "../components/Navbar";
 
 const initialFormData = {
-  firstName: "", lastName: "", email: "", phone: "",
-  address: "", shoeSize: "", bankName: "", accountNumber: "",
-  accountName: "", password: "", confirmPassword: "",
-  agreeTerms: false, ageConfirm: false,
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  shoeSize: "",
+  bankName: "",
+  accountNumber: "",
+  accountName: "",
+  password: "",
+  confirmPassword: "",
+  agreeTerms: false,
+  ageConfirm: false,
 };
 
 function ErrorMsg({ field, errors }) {
@@ -26,42 +35,55 @@ export default function SignupPage() {
   const [apiError,    setApiError]    = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { t } = useLanguage();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const n = { ...prev };
+        delete n[name];
+        return n;
+      });
+    }
   };
 
   const validate = () => {
     const errs = {};
-    if (!formData.firstName.trim())     errs.firstName     = t("signup.errRequired");
-    if (!formData.lastName.trim())      errs.lastName      = t("signup.errRequired");
-    if (!formData.email.trim())         errs.email         = t("signup.errRequired");
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errs.email = t("signup.errEmail");
-    if (!formData.phone.trim())         errs.phone         = t("signup.errRequired");
-    if (!formData.address.trim())       errs.address       = t("signup.errRequired");
-    if (!formData.shoeSize)             errs.shoeSize      = t("signup.errRequired");
-    if (!formData.bankName.trim())      errs.bankName      = t("signup.errRequired");
-    if (!formData.accountNumber.trim()) errs.accountNumber = t("signup.errRequired");
-    if (!formData.accountName.trim())   errs.accountName   = t("signup.errRequired");
-    if (!formData.password)             errs.password      = t("signup.errRequired");
-    else if (formData.password.length < 8) errs.password   = t("signup.errMinPassword");
-    if (formData.password !== formData.confirmPassword) errs.confirmPassword = t("signup.errPasswordMatch");
-    if (!formData.agreeTerms)           errs.agreeTerms    = t("signup.errRequired");
-    if (!formData.ageConfirm)           errs.ageConfirm    = t("signup.errRequired");
+    if (!formData.firstName.trim()) errs.firstName = "First name is required";
+    if (!formData.lastName.trim()) errs.lastName = "Last name is required";
+    if (!formData.email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      errs.email = "Invalid email format";
+    if (!formData.phone.trim()) errs.phone = "Phone number is required";
+    if (!formData.address.trim()) errs.address = "Address is required";
+    if (!formData.shoeSize) errs.shoeSize = "Shoe size is required";
+    if (!formData.bankName.trim()) errs.bankName = "Bank name is required";
+    if (!formData.accountNumber.trim())
+      errs.accountNumber = "Account number is required";
+    if (!formData.accountName.trim())
+      errs.accountName = "Account name is required";
+    if (!formData.password) errs.password = "Password is required";
+    else if (formData.password.length < 8)
+      errs.password = "Password must be at least 8 characters";
+    if (!formData.confirmPassword)
+      errs.confirmPassword = "Please confirm your password";
+    else if (formData.password !== formData.confirmPassword)
+      errs.confirmPassword = "Passwords do not match";
+    if (!formData.agreeTerms) errs.agreeTerms = "You must agree to the terms";
+    if (!formData.ageConfirm) errs.ageConfirm = "You must confirm your age";
     return errs;
   };
 
   const buildPayload = () => ({
-    name: `${formData.firstName} ${formData.lastName}`.trim(),
-    email: formData.email, password: formData.password,
-    phone: formData.phone, address: formData.address,
-    shoe_size: Number(formData.shoeSize),
-    bank_name: formData.bankName,
-    bank_account_number: formData.accountNumber,
-    bank_account_name: formData.accountName,
+    name: formData.firstName.trim(),
+    surname: formData.lastName.trim(),
+    email: formData.email.trim().toLowerCase(),
+    password: formData.password,
+    address: formData.address.trim(),
   });
 
   const handleSubmit = async (e) => {
@@ -70,37 +92,57 @@ export default function SignupPage() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      document.querySelector(".error-field")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const firstErrorField = document.querySelector(".error-field");
+      if (firstErrorField)
+        firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     const payload = buildPayload();
     setLoading(true);
     try {
-      const registerResponse = await API.post("/api/users/register", payload);
+      await API.post("/api/users/register", payload);
       try {
-        const loginResponse = await API.post("/api/users/login", { email: payload.email, password: payload.password });
+        const loginResponse = await API.post("/api/users/login", {
+          email: payload.email,
+          password: payload.password,
+        });
+
+        // 🔥 Save token before setting user
+        setAuthToken(loginResponse.data.accessToken);
         login(loginResponse.data.user);
-        setPreviewData({ ...payload, userId: registerResponse.data?.data?._id || loginResponse.data?.user?._id });
+
+        setPreviewData({
+          ...payload,
+          userId: loginResponse.data.user?._id,
+        });
         setSubmitted(true);
         setTimeout(() => navigate("/userdashboard"), 1500);
-      } catch {
-        setApiError(t("signup.loginAfterRegister"));
+      } catch (loginError) {
+        setApiError(
+          "Account created! However, auto-login failed. Please log in manually."
+        );
         setSubmitted(true);
       }
     } catch (registerError) {
       const rawMessage =
         registerError.response?.data?.message ||
         registerError.response?.data?.error?.message ||
-        registerError.message || t("signup.errRegistration");
+        registerError.message ||
+        "Registration failed. Please try again.";
       let message = rawMessage;
-      if (typeof message === "string" && message.trim().toLowerCase() === "error!") {
+      if (
+        typeof message === "string" &&
+        message.trim().toLowerCase() === "error!"
+      ) {
         const fieldErrors = registerError.response?.data?.errors;
         message = fieldErrors
-          ? Object.values(fieldErrors).flat().map((v) => typeof v === "string" ? v : JSON.stringify(v)).join(" ") || t("signup.errRegistration")
-          : t("signup.errRegistration");
+          ? Object.values(fieldErrors).flat().join(" ")
+          : "Registration failed. Please try again.";
       }
       setApiError(message);
-      if (registerError.response?.data?.errors) setErrors(registerError.response.data.errors);
+      if (registerError.response?.data?.errors) {
+        setErrors(registerError.response.data.errors);
+      }
     } finally {
       setLoading(false);
     }
@@ -228,7 +270,6 @@ export default function SignupPage() {
                       className={`${inp("address")} resize-none`} style={ist} onFocus={onF} onBlur={onB("address")} />
                     <ErrorMsg field="address" errors={errors} />
                   </div>
-                </div>
 
                 {/* RIGHT — Bank + Security */}
                 <div className="space-y-3">
@@ -344,6 +385,6 @@ export default function SignupPage() {
         )}
 
       </div>
-    </div>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  getAllProducts,
+  getAllShoes,
   getShoeById,
   getShoesByBrand,
   getShoesByCategory,
@@ -14,7 +14,7 @@ const SEARCH_FIELDS = [
 ];
 
 const placeholder = {
-  all: "Click Search to get all products...",
+  all: "Click Search to get all shoes...",
   id: "Enter Shoe ID...",
   brand: "Example: Nike, Adidas, Asics...",
   category: "Example: Road, Trail, Daily trainer...",
@@ -38,11 +38,11 @@ const idleFilter = {
 };
 
 function normalizeShoes(data) {
+  // Handle different response formats from your API
   if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.products)) return data.products;
-  if (Array.isArray(data?.shoes)) return data.shoes;
   if (Array.isArray(data?.data)) return data.data;
-  if (data && typeof data === "object") return [data];
+  if (Array.isArray(data?.products)) return data.products;
+  if (data && typeof data === "object" && !Array.isArray(data)) return [data];
   return [];
 }
 
@@ -61,11 +61,9 @@ function getStatusClass(isActive) {
   if (isActive === true) {
     return "text-[#4D7C0F] bg-[rgba(195,255,81,0.12)] border-[rgba(195,255,81,0.35)]";
   }
-
   if (isActive === false) {
     return "text-[#DC2626] bg-[#FEE2E2] border-[#FECACA]";
   }
-
   return "text-[#64748B] bg-[#F8FAFC] border-[#E2E8F0]";
 }
 
@@ -86,22 +84,27 @@ export default function ShoeLookup() {
     setError("");
 
     try {
+      let response;
       let data;
 
       if (searchBy === "all") {
-        data = await getAllProducts();
+        response = await getAllShoes();
+        data = normalizeShoes(response);
       } else if (searchBy === "id") {
-        data = await getShoeById(q);
+        response = await getShoeById(q);
+        data = normalizeShoes(response);
       } else if (searchBy === "brand") {
-        data = await getShoesByBrand(q);
+        response = await getShoesByBrand(q);
+        data = normalizeShoes(response);
       } else {
-        data = await getShoesByCategory(q);
+        response = await getShoesByCategory(q);
+        data = normalizeShoes(response);
       }
 
-      setResults(normalizeShoes(data));
+      setResults(data);
       setSearched(true);
     } catch (err) {
-      setError(err.message || "Failed to fetch shoes. Please try again.");
+      setError(err.response?.data?.message || err.message || "Failed to fetch shoes. Please try again.");
       setResults([]);
       setSearched(true);
     } finally {
@@ -183,23 +186,23 @@ export default function ShoeLookup() {
             Found {results.length} item{results.length === 1 ? "" : "s"}
           </p>
           {results.map((shoe) => (
-            <div key={shoe._id || shoe.id || shoe.name} className="rounded-xl p-4" style={{ border: "1px solid #E2E8F0" }}>
+            <div key={shoe._id || shoe.id || shoe.modelName} className="rounded-xl p-4" style={{ border: "1px solid #E2E8F0" }}>
               <div className="flex items-center justify-between mb-3 gap-3">
                 <p className="font-semibold font-sora" style={{ color: "#0F172A" }}>
-                  {shoe.name || "Unnamed shoe"}
+                  {shoe.modelName || shoe.name || "Unnamed shoe"}
                 </p>
-                <span className={`text-xs px-2 py-0.5 rounded-full border font-sora ${getStatusClass(shoe.is_active)}`}>
-                  {getStatusLabel(shoe.is_active)}
+                <span className={`text-xs px-2 py-0.5 rounded-full border font-sora ${getStatusClass(shoe.isActive)}`}>
+                  {getStatusLabel(shoe.isActive)}
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                 {[
-                  { label: "Brand", value: shoe.brand || "-" },
+                  { label: "Brand", value: shoe.brandId?.brandName || shoe.brand || "-" },
                   { label: "Category", value: shoe.category || "-" },
-                  { label: "Size", value: shoe.size || "-" },
-                  { label: "Color", value: shoe.color || "-" },
-                  { label: "Price", value: formatPrice(shoe.price) },
+                  { label: "Gender", value: shoe.gender || "-" },
+                  { label: "Price (1 day)", value: formatPrice(shoe.rentalPlan?.[0]?.["1day"] || shoe.price) },
                   { label: "Stock", value: shoe.stock ?? "-" },
+                  { label: "Description", value: shoe.description?.substring(0, 50) || "-" },
                 ].map((item) => (
                   <div key={item.label} className="rounded-lg p-2" style={inner}>
                     <p className="text-xs font-sora" style={{ color: "#94A3B8" }}>{item.label}</p>
@@ -214,7 +217,7 @@ export default function ShoeLookup() {
 
       {!searched && !loading && (
         <p className="text-xs font-sora" style={{ color: "#CBD5E1" }}>
-          Choose All to load every product, or choose another search type and enter a query.
+          Choose All to load every shoe, or choose another search type and enter a query.
         </p>
       )}
     </div>

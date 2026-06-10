@@ -105,12 +105,12 @@ export default function AdminSidebar({ active, onChange }) {
       className="flex flex-col h-full shrink-0"
       style={{
         width: "280px",
-        background: "#FFFFFF",
-        borderRight: "1px solid #E2E8F0",
+        background: "#000000",
+        borderRight: "1px solid #374151",
       }}
     >
       {/* Logo */}
-      <div className="px-6 py-5" style={{ borderBottom: "1px solid #E2E8F0" }}>
+      <div className="px-6 py-5" style={{ borderBottom: "1px solid #374151" }}>
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
@@ -118,8 +118,8 @@ export default function AdminSidebar({ active, onChange }) {
           >
             <span className="text-[#0F172A] font-black text-[13px] font-sora leading-none">K</span>
           </div>
-          <span className="font-bold font-sora text-[14px] tracking-[0.08em] uppercase" style={{ color: "#0F172A" }}>
-            KINETI<span style={{ color: "#4D7C0F" }}>X</span>
+          <span className="font-bold font-sora text-[14px] tracking-[0.08em] uppercase" style={{ color: "#E5E7EB" }}>
+            KINETI<span style={{ color: "#C3FF51" }}>X</span>
           </span>
         </div>
       </div>
@@ -135,20 +135,20 @@ export default function AdminSidebar({ active, onChange }) {
               whileTap={{ scale: 0.98 }}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-sora text-[13px] relative"
               style={{
-                background: isActive ? "rgba(195,255,81,0.12)" : "transparent",
-                color: isActive ? "#0F172A" : "#64748B",
+                background: isActive ? "#111111" : "transparent",
+                color: isActive ? "#E5E7EB" : "#9CA3AF",
                 transition: "background 150ms ease, color 150ms ease",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = "#F1F5F9";
-                  e.currentTarget.style.color = "#0F172A";
+                  e.currentTarget.style.background = "#111111";
+                  e.currentTarget.style.color = "#E5E7EB";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "#64748B";
+                  e.currentTarget.style.color = "#9CA3AF";
                 }
               }}
             >
@@ -156,7 +156,7 @@ export default function AdminSidebar({ active, onChange }) {
                 <motion.span
                   layoutId="active-bar"
                   className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-r"
-                  style={{ background: "#4D7C0F" }}
+                  style={{ background: "#E5E7EB" }}
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
                 />
               )}
@@ -176,26 +176,26 @@ export default function AdminSidebar({ active, onChange }) {
       </nav>
 
       {/* User */}
-      <div className="px-4 py-4" style={{ borderTop: "1px solid #E2E8F0" }}>
+      <div className="px-4 py-4" style={{ borderTop: "1px solid #374151" }}>
         <div className="flex items-center gap-3 px-1">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold font-sora shrink-0"
-            style={{ background: "#F1F5F9", color: "#64748B", border: "1px solid #E2E8F0" }}
+            style={{ background: "#111111", color: "#D1D5DB", border: "1px solid #374151" }}
           >
             AD
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold font-sora truncate leading-tight" style={{ color: "#0F172A" }}>Admin</p>
-            <p className="text-[11px] font-sora truncate leading-tight" style={{ color: "#94A3B8" }}>
+            <p className="text-[12px] font-semibold font-sora truncate leading-tight" style={{ color: "#E5E7EB" }}>Admin</p>
+            <p className="text-[11px] font-sora truncate leading-tight" style={{ color: "#9CA3AF" }}>
               admin@kinetix.com
             </p>
           </div>
           <button
             onClick={handleLogout}
             className="shrink-0 p-1 rounded transition-colors"
-            style={{ color: "#CBD5E1" }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "#94A3B8"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = "#CBD5E1"; }}
+            style={{ color: "#9CA3AF" }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#E5E7EB"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#9CA3AF"; }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

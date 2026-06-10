@@ -10,9 +10,9 @@ export default function ContactPage() {
 
             <main className="max-w-[1400px] w-full my-20 mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start flex-grow">
 
-                <div className="lg:col-span-4">
-                    <ContactInfo />
-                </div>
+                    <div className="lg:col-span-4">
+                        <ContactInfo />
+                    </div>
 
                 <div className="lg:col-span-8">
                     <ContactForm />

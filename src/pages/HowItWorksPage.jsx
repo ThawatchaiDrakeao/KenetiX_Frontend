@@ -1,5 +1,6 @@
 import { useLanguage } from "../context/useLanguage";
 import { Link } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -268,12 +269,6 @@ export default function HowItWorks() {
                     {step.meta}
                   </span>
                 </div>
-                <h3 className="mt-8 text-2xl font-bold leading-tight text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-4 text-sm leading-7 text-zinc-400">
-                  {step.description}
-                </p>
               </div>
               <div className="mt-8 h-1 w-full rounded-full bg-zinc-800">
                 <div className="h-1 rounded-full bg-gradient-to-r from-kinetix-lime to-kinetix-aqua" />
