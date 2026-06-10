@@ -7,8 +7,8 @@ const API_BASE_URL =
 
 const API = axios.create({
   //baseURL: import.meta.env.VITE_API_URL || "https://kinetix-qnx5.onrender.com",
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
-  withCredentials: true,  // Important for cookies
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,7 +26,7 @@ API.interceptors.request.use(
 
     // Log request in development
     if (import.meta.env.DEV) {
-      console.log(`📤 ${config.method?.toUpperCase()} ${config.url}`, config.data);
+      console.log(` ${config.method?.toUpperCase()} ${config.url}`, config.data);
     }
 
     return config;

@@ -11,8 +11,8 @@ export default function QuickConfirm() {
 
   const fetchPendingOrders = async () => {
     try {
-      // Fetch orders with pending status
-      const response = await API.get("/order?status=pending");
+      // CHANGE THIS - Use admin endpoint instead
+      const response = await API.get("/admin/orders?status=pending");
       setPendingOrders(response.data?.data || []);
     } catch (error) {
       console.error("Error fetching pending orders:", error);
@@ -23,7 +23,8 @@ export default function QuickConfirm() {
 
   const handleConfirm = async (orderId) => {
     try {
-      await API.patch(`/admin/orders/${orderId}/status`, { status: "confirmed" });
+      // CHANGE THIS - Use admin endpoint
+      await API.put(`/order/${orderId}/status`, { status: "confirmed" });
       fetchPendingOrders(); // Refresh list
     } catch (error) {
       console.error("Error confirming order:", error);
@@ -32,7 +33,8 @@ export default function QuickConfirm() {
 
   const handleReject = async (orderId) => {
     try {
-      await API.patch(`/admin/orders/${orderId}/status`, { status: "cancelled" });
+      // CHANGE THIS - Use admin endpoint
+      await API.put(`/order/${orderId}/status`, { status: "cancelled" });
       fetchPendingOrders(); // Refresh list
     } catch (error) {
       console.error("Error rejecting order:", error);
