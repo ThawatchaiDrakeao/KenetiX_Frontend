@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { clearAuth } from "../api/axios";
 import Button from "./ui/Button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "../context/CartContext";
@@ -18,9 +19,18 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { cartCount } = useCart();
+  const navigate = useNavigate();
   const isLoggedIn = !!user;
+
+  const handleLogout = () => {
+    clearAuth();
+    logout();
+    setCartOpen(false);
+    setMenuOpen(false);
+    navigate("/");
+  };
   const isAdmin = user && (
     user.role === "ADMIN" ||
     user.role === "admin" ||
@@ -78,6 +88,7 @@ export default function Navbar() {
                   onOpenCart={() => setCartOpen(true)}
                   cartCount={cartCount}
                   isAdmin={isAdmin}
+                  onLogout={handleLogout}
                 />
               ) : (
                 <GuestActions />
@@ -128,14 +139,13 @@ export default function Navbar() {
             <div className="flex flex-col gap-2 pt-4">
               {isLoggedIn ? (
                 <>
-
                   <Button
                     variant="outline"
                     size="sm"
-                    to="/profile"
+                    to="/userdashboard"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Profile
+                    Dashboard
                   </Button>
 
                   <Button
@@ -148,6 +158,13 @@ export default function Navbar() {
                   >
                     Cart
                   </Button>
+
+                  <button
+                    onClick={handleLogout}
+                    className="py-3 text-sm text-red-400 hover:text-red-300 transition-colors text-left"
+                  >
+                    Logout
+                  </button>
                 </>
               ) : (
                 <>
@@ -206,7 +223,7 @@ function GuestActions() {
   );
 }
 
-function UserActions({ onOpenCart, cartCount, isAdmin }) {
+function UserActions({ onOpenCart, cartCount, isAdmin, onLogout }) {
   return (
     <>
       {isAdmin && (
@@ -237,9 +254,17 @@ function UserActions({ onOpenCart, cartCount, isAdmin }) {
       {/* Profile */}
       <Link to="/userdashboard" className="w-8 h-8 flex items-center justify-center text-white/35 hover:text-[#C3FF51] transition-colors" aria-label="Account">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 012 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
         </svg>
       </Link>
+
+      {/* Logout */}
+      <button
+        onClick={onLogout}
+        className="text-xs text-red-400 hover:text-red-300 transition-colors font-medium ml-2"
+      >
+        Logout
+      </button>
     </>
   );
 }

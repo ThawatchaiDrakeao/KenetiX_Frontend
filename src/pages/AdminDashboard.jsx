@@ -9,7 +9,7 @@ import NotificationPanel from "../components/admin/NotificationPanel";
 import OrderManagement from "../components/admin/OrderManagement";
 import ShoeLookup from "../components/admin/ShoeLookup";
 import RecentActivity from "../components/admin/RecentActivity";
-//import QuickConfirm from "../components/admin/QuickConfirm";
+import QuickConfirm from "../components/admin/QuickConfirm";
 import ProfitAnalysis from "../components/admin/ProfitAnalysis";
 import API from "../api/axios";
 
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
     <div className="flex h-screen overflow-hidden" style={{ background: "#F8FAFC" }}>
       <AdminSidebar active={activeTab} onChange={setActiveTab} />
       <main className="flex-1 overflow-y-auto" style={{ background: "#F8FAFC" }}>
-        <div className="px-8 py-8 max-w-[1400px] mx-auto">
+        <div className="px-8 py-8 max-w-/[1400px/] mx-auto">
           {renderContent()}
         </div>
       </main>

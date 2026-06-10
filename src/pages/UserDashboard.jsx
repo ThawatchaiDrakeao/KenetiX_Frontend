@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import { useAuth } from "../context/AuthContext";
-import API from "../api/axios";
+import Navbar from "../components/Navbar.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import API from "../api/axios.js";
+import Footer from "../components/Footer.jsx";
 
 export default function UserDashboard() {
     const { user } = useAuth();
@@ -151,6 +152,7 @@ export default function UserDashboard() {
                     </a>
                 </section>
             </main>
+            <Footer />
         </div>
     );
 }

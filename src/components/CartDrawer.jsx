@@ -45,7 +45,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     {cart.map((item, index) => (
                         <div key={item._id || index} className="flex gap-4 mb-6 pb-6 border-b border-zinc-800 last:border-0">
                             {/* Image */}
-                            <div className="w-20 h-20 bg-zinc-800 rounded-lg flex-shrink-0 overflow-hidden">
+                            <div className="w-20 h-20 bg-zinc-800 rounded-lg flex-shrink:0 overflow-hidden">
                                 {item.image
                                     ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                     : <div className="w-full h-full flex items-center justify-center">

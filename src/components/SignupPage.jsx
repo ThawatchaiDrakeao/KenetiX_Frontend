@@ -237,7 +237,7 @@ export default function SignupPage() {
           </div>
 
           {/* Register Form */}
-          <div className="bg-zinc-950 border border-zinc-800 rounded-[32px] p-8 shadow-2xl shadow-lime-500/10">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-/[32px/] p-8 shadow-2xl shadow-lime-500/10">
             {!submitted ? (
               <>
                 <div className="mb-8 text-center">
