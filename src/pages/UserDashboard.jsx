@@ -13,6 +13,8 @@ const api = {
     changePassword: (data) => API.put("/api/users/profile", { password: data.newPassword }).then(r => r.data),
     getStats:       ()     => API.get("/api/users/profile/stats").then(r => r.data.data),
     getOrders:      ()     => API.get("/api/orders/my").then(r => r.data.data || []).catch(() => []),
+    getRewards:     ()     => API.get("/api/rewards/points").then(r => r.data.data),
+    redeemPoints:   (points) => API.post("/api/rewards/redeem", { points }).then(r => r.data),
 };
 
 // ─── SKELETON ──────────────────────────────────────────────────────────────────
@@ -263,6 +265,10 @@ const MAIN_NAV = [
         sectionId: "favourites", label: "Favourite",
         icon: <Icon><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></Icon>,
     },
+    {
+        sectionId: "rewards", label: "Rewards",
+        icon: <Icon><polygon points="12 2 15 8.5 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 9 8.5 12 2"/></Icon>,
+    },
 ];
 
 const ACCOUNT_NAV = [
@@ -358,6 +364,69 @@ const FavouriteProductItem = ({ id, brand, name, price, image, onRemove, onView 
     </div>
 );
 
+const RewardsSection = ({ rewards, loading, error, onRetry, redeemAmount, onRedeemAmountChange, onRedeem, redeeming }) => (
+    <section id="rewards" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
+        <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Rewards</h2>
+        </div>
+        {loading ? (
+            <Skeleton className="h-32 w-full" />
+        ) : error ? (
+            <ErrorBanner message="โหลดข้อมูลแต้มไม่ได้" onRetry={onRetry} />
+        ) : (
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center justify-between flex-wrap gap-6">
+                    <div>
+                        <p className="text-sm" style={{ color: "#94A3B8" }}>คะแนนสะสมของคุณ</p>
+                        <p className="text-5xl font-extrabold" style={{ color: "#0F172A" }}>
+                            {(rewards?.points || 0).toLocaleString()}{" "}
+                            <span className="text-lg font-medium" style={{ color: "#94A3B8" }}>pts</span>
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-sm" style={{ color: "#94A3B8" }}>ระดับปัจจุบัน</p>
+                        <p className="text-2xl font-bold capitalize" style={{ color: "#0F172A" }}>{rewards?.level || "-"}</p>
+                    </div>
+                </div>
+
+                {rewards?.nextLevel && (
+                    <div>
+                        <div className="flex justify-between text-xs mb-2" style={{ color: "#94A3B8" }}>
+                            <span className="capitalize">{rewards.level}</span>
+                            <span className="capitalize">{rewards.nextLevel} ({rewards.points}/{rewards.nextLevelPoints})</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full" style={{ background: "#E2E8F0" }}>
+                            <div
+                                className="h-2 rounded-full bg-neon"
+                                style={{ width: `${Math.min(100, ((rewards.points || 0) / rewards.nextLevelPoints) * 100)}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                <div className="flex items-center gap-3 pt-4 border-t border-[#E2E8F0]">
+                    <input
+                        type="number"
+                        min="1"
+                        value={redeemAmount}
+                        onChange={onRedeemAmountChange}
+                        placeholder="จำนวนแต้มที่ต้องการแลก"
+                        className="flex-1 px-4 py-2.5 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-neon/30"
+                        style={{ color: "#0F172A" }}
+                    />
+                    <button
+                        onClick={onRedeem}
+                        disabled={redeeming || !redeemAmount}
+                        className="text-xs font-semibold px-5 py-2.5 rounded-lg bg-neon text-neutral-950 hover:bg-neon-hover transition-colors disabled:opacity-50"
+                    >
+                        {redeeming ? "กำลังแลก..." : "แลกแต้ม"}
+                    </button>
+                </div>
+            </div>
+        )}
+    </section>
+);
+
 const ACTIVE_STATUSES  = ["Waiting", "successful"];
 const HISTORY_STATUSES = ["Done", "Fail"];
 
@@ -384,8 +453,11 @@ const DashboardPage = () => {
     const [stats,          setStats]          = useState(null);
     const [activeRentals,  setActiveRentals]  = useState([]);
     const [rentalHistory,  setRentalHistory]  = useState([]);
+    const [rewards,        setRewards]        = useState(null);
+    const [redeemAmount,   setRedeemAmount]   = useState("");
+    const [redeeming,      setRedeeming]      = useState(false);
     const [loading,        setLoading]        = useState({
-        profile: true, stats: true, orders: true,
+        profile: true, stats: true, orders: true, rewards: true,
     });
     const [errors,         setErrors]         = useState({});
     const [modal,          setModal]          = useState(null); // "editProfile" | "changePassword"
@@ -445,9 +517,34 @@ const DashboardPage = () => {
         queueMicrotask(() => {
             load("profile", api.getProfile, setProfile);
             load("stats",   api.getStats,   setStats);
+            load("rewards", api.getRewards, setRewards);
             loadOrders();
         });
     }, [loadOrders]);
+
+    const loadRewards = useCallback(() => {
+        setLoad("rewards", true); clearError("rewards");
+        return api.getRewards()
+            .then(setRewards)
+            .catch((e) => setError("rewards", e.message))
+            .finally(() => setLoad("rewards", false));
+    }, []);
+
+    const handleRedeem = async () => {
+        const points = Number(redeemAmount);
+        if (!points || points <= 0) return;
+        setRedeeming(true);
+        try {
+            const res = await api.redeemPoints(points);
+            await loadRewards();
+            setRedeemAmount("");
+            showToast(res.message || "แลกแต้มสำเร็จ!");
+        } catch (e) {
+            showToast(e.response?.data?.message || "แลกแต้มไม่สำเร็จ", "error");
+        } finally {
+            setRedeeming(false);
+        }
+    };
 
     // ─── ACTIONS ─────────────────────────────────────────────────────────────
     const handleLogout = () => { logout(); navigate("/login"); };
@@ -701,6 +798,18 @@ const DashboardPage = () => {
                                     </div>
                                 )}
                             </section>
+
+                            {/* REWARDS */}
+                            <RewardsSection
+                                rewards={rewards}
+                                loading={loading.rewards}
+                                error={errors.rewards}
+                                onRetry={loadRewards}
+                                redeemAmount={redeemAmount}
+                                onRedeemAmountChange={(e) => setRedeemAmount(e.target.value)}
+                                onRedeem={handleRedeem}
+                                redeeming={redeeming}
+                            />
 
                             {/* RENTAL HISTORY */}
                             <section id="rental-history" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
