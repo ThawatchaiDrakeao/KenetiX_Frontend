@@ -7,7 +7,9 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import ContactPage from "./pages/ContactPage";
 import CheckOut from "./pages/CheckOut";
 import AdminDashboard from "./pages/AdminDashboard";
+import CommunityPage from "./pages/CommunityPage";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import ProtectedUserRoute from "./components/ProtectedUserRoute";
 import SignupPage from "./components/SignupPage";
 import OrderConfirmation from "./pages/OrderConfirmation";
 

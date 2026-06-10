@@ -38,7 +38,7 @@ export default function Section04() {
                     {featuredProducts.map((product, index) => (
                         <div
                             key={index}
-                            className="rounded-7 border border-[#1f2937] bg-[#0b0c10] overflow-hidden hover:border-[#C3FF51] transition group"
+                            className="rounded-lg border border-[#1f2937] bg-[#0b0c10] overflow-hidden hover:border-[#C3FF51] transition group"
                         >
                             <div className="h-64 bg-gradient-to-br from-[#1f2937] to-[#090a0d] flex items-center justify-center text-7xl group-hover:scale-105 transition">
                                 👟

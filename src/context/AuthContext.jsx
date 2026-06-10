@@ -1,7 +1,8 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import API from "../api/axios";
 
 const AuthContext = createContext();
+const USER_STORAGE_KEY = "kinetix_user";
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(() => {
@@ -27,6 +28,7 @@ export function AuthProvider({ children }) {
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 }

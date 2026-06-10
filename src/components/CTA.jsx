@@ -1,6 +1,9 @@
 import Button from "./ui/Button";
+import { useLanguage } from "../context/useLanguage";
 
 export default function CTA() {
+  const { t } = useLanguage();
+
   return (
     <section id="cta" className="py-10 lg:py-12 relative overflow-hidden">
       {/* Background glow */}
@@ -22,23 +25,22 @@ export default function CTA() {
         <div className="inline-flex items-center gap-2 bg-neon/10 border border-neon/20 rounded-full px-4 py-1.5 mb-6">
           <span className="w-2 h-2 rounded-full bg-neon animate-pulse" />
           <span className="text-neon text-xs font-semibold tracking-wider uppercase">
-            Ready to run?
+            {t("cta.badge")}
           </span>
         </div>
 
         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
-          Stop wondering.{" "}
-          <span className="text-neon">Start running.</span>
+          {t("cta.title1")}{" "}
+          <span className="text-neon">{t("cta.title2")}</span>
         </h2>
 
-        <p className="text-white/50 text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-10">
-          Your next PR might be on your feet already. Browse the catalog, and
-          test the shoes that elite runners swear by
+        <p className="text-white/50 text-lg max-w-xl mx-auto leading-relaxed mb-10">
+          {t("cta.desc")}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="primary" size="lg" to="/catalog">
-            Browse the catalog
+            {t("cta.browseCatalog")}
             <svg
               className="w-4 h-4"
               fill="none"

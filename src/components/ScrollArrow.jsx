@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const SECTIONS = [
+const DEFAULT_SECTIONS = [
     "hero",
     "features",
     "how-it-works",
@@ -13,11 +13,9 @@ const SECTIONS = [
     "cta",
 ];
 
-export default function ScrollArrow() {
+export default function ScrollArrow({ sections = DEFAULT_SECTIONS }) {
     const [activeSection, setActiveSection] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
-
-    const sections = SECTIONS;
 
     useEffect(() => {
         const handleScroll = () => {

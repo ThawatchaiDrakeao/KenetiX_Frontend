@@ -22,17 +22,17 @@ const initialFormData = {
 
 function ErrorMsg({ field, errors }) {
   return errors[field] ? (
-    <p className="text-red-400 text-xs mt-1 ml-1">{errors[field]}</p>
+    <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
   ) : null;
 }
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState(initialFormData);
-  const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [formData,    setFormData]    = useState(initialFormData);
+  const [errors,      setErrors]      = useState({});
+  const [submitted,   setSubmitted]   = useState(false);
   const [previewData, setPreviewData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
+  const [loading,     setLoading]     = useState(false);
+  const [apiError,    setApiError]    = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -149,355 +149,241 @@ export default function SignupPage() {
   };
 
   const handleReset = () => {
-    setFormData(initialFormData);
-    setErrors({});
-    setSubmitted(false);
-    setPreviewData(null);
-    setApiError("");
-    setLoading(false);
+    setFormData(initialFormData); setErrors({}); setSubmitted(false);
+    setPreviewData(null); setApiError("");
   };
 
-  const inputClass = (field) =>
-    `w-full bg-black border rounded-xl px-4 py-3 focus:outline-none transition-colors ${errors[field]
-      ? "border-red-500 focus:border-red-400 error-field"
-      : "border-zinc-700 focus:border-lime-400"
+  // ── Shared input styles ────────────────────────────────────────────────────
+  const inp = (field) =>
+    `w-full text-sm rounded-xl px-3 py-2.5 focus:outline-none transition-colors ${
+      errors[field] ? "border border-red-400 error-field" : "border border-[#E2E8F0]"
     }`;
+  const ist = { background: "#F8FAFC", color: "#0F172A" };
+  const onF = (e) => { e.target.style.borderColor = "#C3FF51"; };
+  const onB = (field) => (e) => { e.target.style.borderColor = errors[field] ? "#f87171" : "#E2E8F0"; };
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-black text-white font-sans">
-        <div className="max-w-7xl mx-auto px-6 pt-28 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-          {/* Left Content */}
-          <div className="space-y-8">
-            <div>
-              <p className="text-lime-400 uppercase tracking-[0.2em] text-sm mb-4">
-                Customer Registration
-              </p>
-              <h1 className="text-5xl font-bold leading-tight">
-                Join the <span className="text-lime-400">KINETIX</span>
-                <br />
-                Running Shoe Rental Platform
-              </h1>
-              <p className="text-zinc-400 mt-6 max-w-lg leading-relaxed">
-                Register your account to start renting premium running shoes,
-                manage your profile, and track your rental history.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {[
-                {
-                  title: "Profile Data",
-                  desc: "Store customer information including full name, email, phone number, address, and shoe size.",
-                },
-                {
-                  title: "Bank Information",
-                  desc: "Securely save bank name, account number, and account owner details for refund processing.",
-                },
-                {
-                  title: "Account Status",
-                  desc: "System tracks reject count, account status, suspended date, and account activity.",
-                },
-                {
-                  title: "Secure Access",
-                  desc: "Your account is protected with authentication and encrypted password management.",
-                },
-              ].map((card) => (
-                <div
-                  key={card.title}
-                  className="bg-zinc-950 border border-zinc-800 rounded-3xl p-6"
-                >
-                  <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed">
-                    {card.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-            {submitted && previewData && (
-              <div className="bg-zinc-950 border border-lime-400/30 rounded-3xl p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
-                  <h3 className="text-lime-400 font-semibold text-sm uppercase tracking-wider">
-                    Registration Successful
-                  </h3>
-                </div>
-                <p className="text-zinc-500 text-xs">
-                  {apiError
-                    ? "Account created! Please login manually."
-                    : "Redirecting to your dashboard..."}
-                </p>
-                {previewData.userId && (
-                  <p className="text-zinc-500 text-xs">
-                    User ID: {previewData.userId}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+    <div className="min-h-screen font-sora flex flex-col" style={{ background: "#F8FAFC" }}>
 
-          {/* Register Form */}
-          <div className="bg-zinc-950 border border-zinc-800 rounded-[32px] p-8 shadow-2xl shadow-lime-500/10">
-            {!submitted ? (
-              <>
-                <div className="mb-8 text-center">
-                  <h2 className="text-4xl font-bold">Create Account</h2>
-                  <p className="text-zinc-400 mt-3">
-                    Join the Kinetix ecosystem today
-                  </p>
-                </div>
-                {apiError && (
-                  <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
-                    {apiError}
-                  </div>
-                )}
-                <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-                  {/* Personal Information */}
-                  <div>
-                    <h3 className="text-lime-400 font-semibold mb-4 text-sm uppercase tracking-wider">
-                      Personal Information
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <input
-                          type="text"
-                          name="firstName"
-                          placeholder="First Name"
-                          value={formData.firstName}
-                          onChange={handleChange}
-                          className={inputClass("firstName")}
-                        />
-                        <ErrorMsg field="firstName" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="lastName"
-                          placeholder="Last Name"
-                          value={formData.lastName}
-                          onChange={handleChange}
-                          className={inputClass("lastName")}
-                        />
-                        <ErrorMsg field="lastName" errors={errors} />
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-4">
-                      <div>
-                        <input
-                          type="email"
-                          name="email"
-                          placeholder="Email Address"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className={inputClass("email")}
-                        />
-                        <ErrorMsg field="email" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="phone"
-                          placeholder="Phone Number"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className={inputClass("phone")}
-                        />
-                        <ErrorMsg field="phone" errors={errors} />
-                      </div>
-                      <div>
-                        <textarea
-                          name="address"
-                          placeholder="Address"
-                          rows={3}
-                          value={formData.address}
-                          onChange={handleChange}
-                          className={`${inputClass("address")} resize-none`}
-                        />
-                        <ErrorMsg field="address" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="number"
-                          name="shoeSize"
-                          placeholder="Shoe Size"
-                          value={formData.shoeSize}
-                          onChange={handleChange}
-                          className={inputClass("shoeSize")}
-                        />
-                        <ErrorMsg field="shoeSize" errors={errors} />
-                      </div>
-                    </div>
-                  </div>
+      {/* Back to Home */}
+      <div className="max-w-5xl w-full mx-auto px-6 pt-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm transition-colors"
+          style={{ color: "#94A3B8" }}
+          onMouseEnter={(e) => { e.target.style.color = "#0F172A"; }}
+          onMouseLeave={(e) => { e.target.style.color = "#94A3B8"; }}>
+          {t("signup.backToHome")}
+        </Link>
+      </div>
 
-                  {/* Bank Information */}
-                  <div>
-                    <h3 className="text-lime-400 font-semibold mb-4 text-sm uppercase tracking-wider">
-                      Bank Information
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <input
-                          type="text"
-                          name="bankName"
-                          placeholder="Bank Name"
-                          value={formData.bankName}
-                          onChange={handleChange}
-                          className={inputClass("bankName")}
-                        />
-                        <ErrorMsg field="bankName" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="accountNumber"
-                          placeholder="Account Number"
-                          value={formData.accountNumber}
-                          onChange={handleChange}
-                          className={inputClass("accountNumber")}
-                        />
-                        <ErrorMsg field="accountNumber" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="accountName"
-                          placeholder="Account Name"
-                          value={formData.accountName}
-                          onChange={handleChange}
-                          className={inputClass("accountName")}
-                        />
-                        <ErrorMsg field="accountName" errors={errors} />
-                      </div>
-                    </div>
-                  </div>
+      <div className="max-w-5xl w-full mx-auto px-6 pt-4 pb-8 flex flex-col gap-5 flex-grow">
 
-                  {/* Security */}
-                  <div>
-                    <h3 className="text-lime-400 font-semibold mb-4 text-sm uppercase tracking-wider">
-                      Security
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <input
-                          type="password"
-                          name="password"
-                          placeholder="Password (min 8 characters)"
-                          value={formData.password}
-                          onChange={handleChange}
-                          className={inputClass("password")}
-                        />
-                        <ErrorMsg field="password" errors={errors} />
-                      </div>
-                      <div>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          placeholder="Confirm Password"
-                          value={formData.confirmPassword}
-                          onChange={handleChange}
-                          className={inputClass("confirmPassword")}
-                        />
-                        <ErrorMsg field="confirmPassword" errors={errors} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Terms */}
-                  <div className="space-y-3 text-sm text-zinc-400 pt-2">
-                    <div>
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="agreeTerms"
-                          checked={formData.agreeTerms}
-                          onChange={handleChange}
-                          className="mt-1 accent-lime-400"
-                        />
-                        <span>
-                          I agree to the Terms of Service and Privacy Policy.
-                        </span>
-                      </label>
-                      <ErrorMsg field="agreeTerms" errors={errors} />
-                    </div>
-                    <div>
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="ageConfirm"
-                          checked={formData.ageConfirm}
-                          onChange={handleChange}
-                          className="mt-1 accent-lime-400"
-                        />
-                        <span>I confirm that I am over 20 years old.</span>
-                      </label>
-                      <ErrorMsg field="ageConfirm" errors={errors} />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className={`w-full py-4 rounded-2xl font-bold transition-all mt-4 ${loading
-                      ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-                      : "bg-lime-400 text-black hover:scale-[1.01]"
-                      }`}
-                  >
-                    {loading ? "CREATING ACCOUNT..." : "+ CREATE ACCOUNT"}
-                  </button>
-                  <p className="text-center text-zinc-500 text-sm pt-2">
-                    Already have an account?{" "}
-                    <Link
-                      to="/login"
-                      className="text-white hover:text-lime-400 cursor-pointer"
-                    >
-                      Sign In
-                    </Link>
-                  </p>
-                </form>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16 space-y-6 text-center">
-                <div className="w-20 h-20 rounded-full bg-lime-400/10 border border-lime-400/30 flex items-center justify-center">
-                  <svg
-                    className="w-10 h-10 text-lime-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold">Account Created!</h2>
-                  {apiError ? (
-                    <p className="text-amber-400 mt-2 text-sm">{apiError}</p>
-                  ) : (
-                    <p className="text-zinc-400 mt-2">
-                      Redirecting to your dashboard...
-                    </p>
-                  )}
-                </div>
-                <button
-                  onClick={() => navigate("/userdashboard")}
-                  className="w-full bg-lime-400 text-black py-3 rounded-2xl font-semibold hover:scale-[1.01] transition-transform"
-                >
-                  Go to Dashboard
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="w-full border border-zinc-700 text-zinc-300 py-3 rounded-2xl font-semibold hover:border-lime-400 hover:text-lime-400 transition-colors"
-                >
-                  Register Another Account
-                </button>
-              </div>
-            )}
-          </div>
+        {/* Heading */}
+        <div>
+          <p className="text-xs tracking-[0.25em] uppercase mb-2" style={{ color: "#94A3B8" }}>
+            {t("signup.runningShoeRental")}
+          </p>
+          <Link to="/">
+            <span className="text-[28px] font-extrabold tracking-widest text-black">
+              KINETI<span style={{ color: "#C3FF51" }}>X</span>
+            </span>
+          </Link>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] mt-3" style={{ color: "#000000" }}>
+            {t("signup.label")}
+          </p>
         </div>
+
+        {/* Form Card */}
+        {!submitted ? (
+          <div className="rounded-2xl p-6"
+            style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+
+            <div className="flex items-baseline justify-between mb-5">
+              <h2 className="text-xl font-bold" style={{ color: "#0F172A" }}>{t("signup.title")}</h2>
+              <p className="text-xs" style={{ color: "#94A3B8" }}>
+                {t("signup.alreadyHave")}{" "}
+                <Link to="/login" className="font-bold transition-colors" style={{ color: "#000000" }}
+                  onMouseEnter={(e) => { e.target.style.color = "#C3FF51"; }}
+                  onMouseLeave={(e) => { e.target.style.color = "#000000"; }}>
+                  {t("signup.signIn")}
+                </Link>
+              </p>
+            </div>
+
+            {apiError && (
+              <div className="mb-4 rounded-xl px-4 py-3 text-sm"
+                style={{ background: "#FEE2E2", border: "1px solid #FECACA", color: "#DC2626" }}>
+                {apiError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate>
+
+              {/* ── Two-column fields ── */}
+              <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+
+                {/* LEFT — Personal Information */}
+                <div className="space-y-3">
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "#64748B" }}>
+                    {t("signup.personalInfo")}
+                  </p>
+
+                  {/* First + Last name */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <input type="text" name="firstName" placeholder={t("signup.firstNamePlaceholder")}
+                        value={formData.firstName} onChange={handleChange}
+                        className={inp("firstName")} style={ist} onFocus={onF} onBlur={onB("firstName")} />
+                      <ErrorMsg field="firstName" errors={errors} />
+                    </div>
+                    <div>
+                      <input type="text" name="lastName" placeholder={t("signup.lastNamePlaceholder")}
+                        value={formData.lastName} onChange={handleChange}
+                        className={inp("lastName")} style={ist} onFocus={onF} onBlur={onB("lastName")} />
+                      <ErrorMsg field="lastName" errors={errors} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <input type="email" name="email" placeholder={t("signup.emailPlaceholder")}
+                      value={formData.email} onChange={handleChange}
+                      className={inp("email")} style={ist} onFocus={onF} onBlur={onB("email")} />
+                    <ErrorMsg field="email" errors={errors} />
+                  </div>
+
+                  <div>
+                    <input type="text" name="phone" placeholder={t("signup.phonePlaceholder")}
+                      value={formData.phone} onChange={handleChange}
+                      className={inp("phone")} style={ist} onFocus={onF} onBlur={onB("phone")} />
+                    <ErrorMsg field="phone" errors={errors} />
+                  </div>
+
+                  <div>
+                    <input type="number" name="shoeSize" placeholder={t("signup.shoeSizePlaceholder")}
+                      value={formData.shoeSize} onChange={handleChange}
+                      className={inp("shoeSize")} style={ist} onFocus={onF} onBlur={onB("shoeSize")} />
+                    <ErrorMsg field="shoeSize" errors={errors} />
+                  </div>
+
+                  <div>
+                    <textarea name="address" placeholder={t("signup.addressPlaceholder")} rows={3}
+                      value={formData.address} onChange={handleChange}
+                      className={`${inp("address")} resize-none`} style={ist} onFocus={onF} onBlur={onB("address")} />
+                    <ErrorMsg field="address" errors={errors} />
+                  </div>
+
+                {/* RIGHT — Bank + Security */}
+                <div className="space-y-3">
+                  <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "#64748B" }}>
+                    {t("signup.bankInfo")}
+                  </p>
+
+                  <div>
+                    <input type="text" name="bankName" placeholder={t("signup.bankNamePlaceholder")}
+                      value={formData.bankName} onChange={handleChange}
+                      className={inp("bankName")} style={ist} onFocus={onF} onBlur={onB("bankName")} />
+                    <ErrorMsg field="bankName" errors={errors} />
+                  </div>
+
+                  <div>
+                    <input type="text" name="accountNumber" placeholder={t("signup.accountNumberPlaceholder")}
+                      value={formData.accountNumber} onChange={handleChange}
+                      className={inp("accountNumber")} style={ist} onFocus={onF} onBlur={onB("accountNumber")} />
+                    <ErrorMsg field="accountNumber" errors={errors} />
+                  </div>
+
+                  <div>
+                    <input type="text" name="accountName" placeholder={t("signup.accountNamePlaceholder")}
+                      value={formData.accountName} onChange={handleChange}
+                      className={inp("accountName")} style={ist} onFocus={onF} onBlur={onB("accountName")} />
+                    <ErrorMsg field="accountName" errors={errors} />
+                  </div>
+
+                  <p className="text-[11px] font-bold uppercase tracking-wider pt-1" style={{ color: "#64748B" }}>
+                    {t("signup.security")}
+                  </p>
+
+                  <div>
+                    <input type="password" name="password" placeholder={t("signup.passwordPlaceholder")}
+                      value={formData.password} onChange={handleChange}
+                      className={inp("password")} style={ist} onFocus={onF} onBlur={onB("password")} />
+                    <ErrorMsg field="password" errors={errors} />
+                  </div>
+
+                  <div>
+                    <input type="password" name="confirmPassword" placeholder={t("signup.confirmPasswordPlaceholder")}
+                      value={formData.confirmPassword} onChange={handleChange}
+                      className={inp("confirmPassword")} style={ist} onFocus={onF} onBlur={onB("confirmPassword")} />
+                    <ErrorMsg field="confirmPassword" errors={errors} />
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Bottom: checkboxes + submit ── */}
+              <div className="mt-5 pt-4 border-t border-[#F1F5F9] grid grid-cols-2 gap-x-8 gap-y-3 items-end">
+                <div className="space-y-2 text-sm" style={{ color: "#64748B" }}>
+                  <div>
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input type="checkbox" name="agreeTerms" checked={formData.agreeTerms}
+                        onChange={handleChange} className="mt-0.5 accent-[#C3FF51]" />
+                      <span>{t("signup.agreeTerms")}</span>
+                    </label>
+                    <ErrorMsg field="agreeTerms" errors={errors} />
+                  </div>
+                  <div>
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input type="checkbox" name="ageConfirm" checked={formData.ageConfirm}
+                        onChange={handleChange} className="mt-0.5 accent-[#C3FF51]" />
+                      <span>{t("signup.ageConfirm")}</span>
+                    </label>
+                    <ErrorMsg field="ageConfirm" errors={errors} />
+                  </div>
+                </div>
+
+                <button type="submit" disabled={loading}
+                  className="w-full py-3 rounded-xl font-semibold text-sm transition-all active:scale-[0.98]"
+                  style={loading
+                    ? { background: "#E2E8F0", color: "#94A3B8", cursor: "not-allowed" }
+                    : { background: "#C3FF51", color: "#0F172A" }}>
+                  {loading ? t("signup.creating") : t("signup.submit")}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        ) : (
+          /* Success State */
+          <div className="flex-grow flex items-center justify-center">
+            <div className="rounded-2xl p-10 text-center max-w-sm w-full"
+              style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ background: "rgba(195,255,81,0.1)", border: "1px solid rgba(195,255,81,0.3)" }}>
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="#C3FF51">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold mb-1" style={{ color: "#0F172A" }}>{t("signup.accountCreated")}</h2>
+              {apiError ? (
+                <p className="text-sm mb-1" style={{ color: "#F59E0B" }}>{apiError}</p>
+              ) : (
+                <p className="text-sm mb-1" style={{ color: "#94A3B8" }}>{t("signup.redirecting")}</p>
+              )}
+              <p className="font-semibold mb-6" style={{ color: "#4D7C0F" }}>{previewData?.name}</p>
+              <button onClick={() => navigate("/userdashboard")}
+                className="w-full py-2.5 rounded-xl font-semibold text-sm mb-3 active:scale-[0.98]"
+                style={{ background: "#C3FF51", color: "#0F172A" }}>
+                {t("signup.goToDashboard")}
+              </button>
+              <button onClick={handleReset}
+                className="w-full py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                style={{ border: "1px solid #E2E8F0", color: "#64748B" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#C3FF51"; e.currentTarget.style.color = "#4D7C0F"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.color = "#64748B"; }}>
+                {t("signup.registerAnother")}
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );

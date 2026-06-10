@@ -7,12 +7,14 @@ import Footer from "../components/Footer";
 import ActionButton from "../components/ActionButton";
 
 function Login() {
-    const [email, setEmail] = useState("");
+    const [email,    setEmail]    = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [error,    setError]    = useState("");
+    const [loading,  setLoading]  = useState(false);
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login }       = useAuth();
+    const { loginAdmin }  = useAdminAuth();
+    const { t } = useLanguage();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -59,56 +61,103 @@ function Login() {
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="max-w-md mx-auto py-20 px-4">
-                <div className="bg-[#12121a] p-8 rounded-2xl border border-gray-800 shadow-2xl">
-                    <h2 className="text-4xl font-bold mb-6 text-center text-white">Login</h2>
+        <div className="min-h-screen flex items-center justify-center px-4 font-sora"
+            style={{ background: "#F8FAFC" }}>
+            <div className="w-full max-w-md">
+
+                {/* Logo */}
+                <div className="text-center mb-8">
+                    <p className="text-xs tracking-[0.25em] uppercase mb-2" style={{ color: "#94A3B8" }}>
+                        {t("login.runningShoeRental")}
+                    </p>
+                    <Link to="/">
+                        <span className="text-[28px] font-extrabold tracking-widest text-black">
+                            KINETI<span className="text-[#C3FF51]">X</span>
+                        </span>
+                    </Link>
+                </div>
+
+                {/* Card */}
+                <div className="rounded-2xl p-8"
+                    style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+
+                    <h2 className="text-2xl font-bold mb-1" style={{ color: "#000000" }}>
+                        {t("login.title")}
+                    </h2>
+                    <p className="text-sm mb-6" style={{ color: "#94A3B8" }}>
+                        {t("login.desc")}
+                    </p>
 
                     {error && (
-                        <div className="mb-4 bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">
+                        <div className="mb-5 rounded-xl px-4 py-3 text-sm"
+                            style={{ background: "#FEE2E2", border: "1px solid #FECACA", color: "#DC2626" }}>
                             {error}
                         </div>
                     )}
 
-                    <form className="space-y-4" onSubmit={handleLogin}>
+                    <form className="space-y-4" onSubmit={handleLogin} noValidate>
                         <div>
-                            <label className="block text-left mt-5 text-sm text-gray-400 mb-1">
-                                Email Address
+                            <label className="block text-xs mb-1.5" style={{ color: "#64748B" }}>
+                                {t("login.emailLabel")}
                             </label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
+                                placeholder={t("login.emailPlaceholder")}
                                 required
-                                placeholder="Enter your email"
+                                className="w-full text-sm rounded-xl px-4 py-3 focus:outline-none transition-colors"
+                                style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", color: "#0F172A" }}
+                                onFocus={(e) => { e.target.style.borderColor = "#C3FF51"; }}
+                                onBlur={(e)  => { e.target.style.borderColor = "#E2E8F0"; }}
                             />
                         </div>
+
                         <div>
-                            <label className="block text-left text-sm text-gray-400 mb-1">
-                                Password
+                            <label className="block text-xs mb-1.5" style={{ color: "#64748B" }}>
+                                {t("login.passwordLabel")}
                             </label>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-[#0a0a0f] border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all"
+                                placeholder={t("login.passwordPlaceholder")}
                                 required
-                                placeholder="Enter your password"
+                                className="w-full text-sm rounded-xl px-4 py-3 focus:outline-none transition-colors"
+                                style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", color: "#0F172A" }}
+                                onFocus={(e) => { e.target.style.borderColor = "#C3FF51"; }}
+                                onBlur={(e)  => { e.target.style.borderColor = "#E2E8F0"; }}
                             />
                         </div>
-                        <ActionButton text={loading ? "Signing In..." : "Sign In"} disabled={loading} />
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-3 rounded-xl font-semibold text-sm transition-all mt-2 active:scale-[0.98]"
+                            style={loading
+                                ? { background: "#E2E8F0", color: "#94A3B8", cursor: "not-allowed" }
+                                : { background: "#C3FF51", color: "#0F172A" }}>
+                            {loading ? t("login.signingIn") : t("login.signIn")}
+                        </button>
                     </form>
-                    <div className="mt-6 flex flex-col items-center gap-2">
-                        <p className="text-sm text-gray-400">
-                            Don't have an account?{" "}
-                            <Link to="/signup" className="text-blue-500 cursor-pointer hover:underline">
-                                Sign up
+
+                    <div className="mt-6 space-y-3 text-center">
+                        <p className="text-sm" style={{ color: "#64748B" }}>
+                            {t("login.noAccount")}{" "}
+                            <Link to="/signup"
+                                className="font-medium transition-colors"
+                                style={{ color: "#4D7C0F" }}
+                                onMouseEnter={(e) => { e.target.style.color = "#C3FF51"; }}
+                                onMouseLeave={(e) => { e.target.style.color = "#4D7C0F"; }}>
+                                {t("login.signUp")}
                             </Link>
                         </p>
-                        <Link to="/" className="text-gray-500 hover:text-white text-sm transition-all mt-2 underline">
-                            Back to Home
+                        <Link to="/"
+                            className="block text-sm transition-colors"
+                            style={{ color: "#94A3B8" }}
+                            onMouseEnter={(e) => { e.target.style.color = "#0F172A"; }}
+                            onMouseLeave={(e) => { e.target.style.color = "#94A3B8"; }}>
+                            {t("login.backToHome")}
                         </Link>
                     </div>
                 </div>

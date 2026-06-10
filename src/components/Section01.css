@@ -9,7 +9,7 @@ body {
 }
 
 .marquee-strip {
-    background-color: rgb(167, 255, 0);
+    background-color: #C3FF51;
     padding: 14px 0;
     overflow: hidden;
     white-space: nowrap;
@@ -32,7 +32,7 @@ body {
 }
 
 .marquee-item {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
     letter-spacing: 0.08em;
     color: black;

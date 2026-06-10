@@ -1,4 +1,4 @@
-@type { import('tailwindcss').Config }
+/** @type { import('tailwindcss').Config } */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -17,7 +17,9 @@ export default {
         cyan: '#00E5FF',
       },
       fontFamily: {
-        sora: ['Sora', 'sans-serif'],
+        sora: ['"SF Pro Display"', '"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        display: ['"SF Pro Display"', '"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['"SF Pro Display"', '"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
       },
       animation: {
         float: 'float 6s ease-in-out infinite',

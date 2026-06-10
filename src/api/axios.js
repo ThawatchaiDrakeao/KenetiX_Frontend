@@ -1,6 +1,10 @@
 // api/axios.js
 import axios from "axios";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://kinetix-qnx5.onrender.com";
+
 const API = axios.create({
   //baseURL: import.meta.env.VITE_API_URL || "https://kinetix-qnx5.onrender.com",
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
