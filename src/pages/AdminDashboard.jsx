@@ -1,4 +1,3 @@
-// pages/AdminDashboard.jsx
 import { useState, useEffect } from "react";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import SummaryMetrics from "../components/admin/SummaryMetrics";
@@ -16,21 +15,19 @@ import Navbar from "../components/Navbar";
 
 function PageHeader({ title, subtitle }) {
   return (
-
     <div className="mb-7">
       <h1
         className="font-extrabold font-sora leading-tight"
-        style={{ fontSize: "22px", letterSpacing: "-0.02em", color: "#0F172A" }}
+        style={{ fontSize: "22px", letterSpacing: "-0.02em", color: "#FFFFFF" }}
       >
         {title}
       </h1>
       {subtitle && (
-        <p className="text-[13px] font-sora mt-1" style={{ color: "#64748B" }}>
+        <p className="text-[13px] font-sora mt-1" style={{ color: "#94A3B8" }}>
           {subtitle}
         </p>
       )}
     </div>
-
   );
 }
 
@@ -65,7 +62,7 @@ function OverviewPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Loading dashboard...</p>
+        <p className="text-gray-300">Loading dashboard...</p>
       </div>
     );
   }
@@ -74,22 +71,28 @@ function OverviewPage() {
     <div className="flex flex-col gap-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
-          <p className="text-sm text-gray-500">Total Orders</p>
-          <p className="text-3xl font-bold text-gray-900">{stats.totalOrders}</p>
+
+        {/* CHANGED COLORS ONLY BELOW */}
+        <div className="bg-black rounded-2xl p-6 border border-gray-800">
+          <p className="text-sm text-gray-400">Total Orders</p>
+          <p className="text-3xl font-bold text-gray-200">{stats.totalOrders}</p>
         </div>
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
-          <p className="text-sm text-gray-500">Pending Orders</p>
-          <p className="text-3xl font-bold text-yellow-600">{stats.pendingOrders}</p>
+
+        <div className="bg-black rounded-2xl p-6 border border-gray-800">
+          <p className="text-sm text-gray-400">Pending Orders</p>
+          <p className="text-3xl font-bold text-gray-200">{stats.pendingOrders}</p>
         </div>
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
-          <p className="text-sm text-gray-500">Total Customers</p>
-          <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
+
+        <div className="bg-black rounded-2xl p-6 border border-gray-800">
+          <p className="text-sm text-gray-400">Total Customers</p>
+          <p className="text-3xl font-bold text-gray-200">{stats.totalUsers}</p>
         </div>
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-200">
-          <p className="text-sm text-gray-500">Active Shoes</p>
-          <p className="text-3xl font-bold text-green-600">{stats.totalProducts}</p>
+
+        <div className="bg-black rounded-2xl p-6 border border-gray-800">
+          <p className="text-sm text-gray-400">Active Shoes</p>
+          <p className="text-3xl font-bold text-gray-200">{stats.totalProducts}</p>
         </div>
+
       </div>
 
       {/* Main Content Grid */}
@@ -197,9 +200,9 @@ export default function AdminDashboard() {
   return (
     <>
       <Navbar />
-      <div className="flex h-screen overflow-hidden bg-black">
+      <div className="flex h-screen overflow-hidden" style={{ background: "#000000" }}>
         <AdminSidebar active={activeTab} onChange={setActiveTab} />
-        <main className="flex-1 overflow-y-auto bg-black">
+        <main className="flex-1 overflow-y-auto" style={{ background: "#000000" }}>
           <div className="px-8 py-8 max-w-[1400px] mx-auto">
             {renderContent()}
           </div>
