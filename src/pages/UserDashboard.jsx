@@ -1,33 +1,18 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { useWishlist } from "../context/WishlistContext";
 
 // ─── API ───────────────────────────────────────────────────────────────────────
 const api = {
-    getProfile:       ()         => API.get("/api/users/profile").then(r => r.data),
-    updateProfile:    (data)     => API.put("/api/users/profile", data).then(r => r.data),
-    changePassword:   (data)     => API.put("/api/users/change-password", data).then(r => r.data),
-    getStats:         ()         => API.get("/api/users/profile/stats").then(r => r.data),
-    getActiveRentals: ()         => API.get("/api/rentals/active").then(r => r.data).catch(() => []),
-    getNotifications: ()         => API.get("/api/notifications").then(r => r.data).catch(() => []),
-    getRewards:       ()         => API.get("/api/rewards/points").then(r => r.data).catch(() => null),
-    getFavBrands:     ()         => API.get("/api/user/brands").then(r => r.data).catch(() => []),
-    getRentalHistory: (params={}) => {
-        const qs = new URLSearchParams(params).toString();
-        return API.get(`/api/rentals/history${qs ? `?${qs}` : ""}`).then(r => r.data).catch(() => ({ data: [], total: 0, page: 1 }));
-    },
-    exportHistory: async () => {
-        const res = await API.get("/api/rentals/history/export", { responseType: "blob" });
-        const url = URL.createObjectURL(res.data);
-        const a = document.createElement("a");
-        a.href = url; a.download = "rental-history.csv"; a.click();
-        URL.revokeObjectURL(url);
-    },
-    createRental: (body) => API.post("/api/rentals", body).then(r => r.data),
-    redeemPoints: (body) => API.post("/api/rewards/redeem", body).then(r => r.data),
+    getProfile:     ()     => API.get("/api/users/profile").then(r => r.data.data),
+    updateProfile:  (data) => API.put("/api/users/profile", data).then(r => r.data.data),
+    changePassword: (data) => API.put("/api/users/profile", { password: data.newPassword }).then(r => r.data),
+    getStats:       ()     => API.get("/api/users/profile/stats").then(r => r.data.data),
+    getOrders:      ()     => API.get("/api/orders/my").then(r => r.data.data || []).catch(() => []),
 };
 
 // ─── SKELETON ──────────────────────────────────────────────────────────────────
@@ -267,20 +252,16 @@ const MAIN_NAV = [
         icon: <Icon><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></Icon>,
     },
     {
-        sectionId: "notifications", label: "Notifications", badgeKey: "notifCount",
-        icon: <Icon><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></Icon>,
-    },
-    {
         sectionId: "rental-history", label: "Rental History",
         icon: <Icon><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>,
     },
     {
-        sectionId: "reward-points", label: "Reward Points",
-        icon: <Icon><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></Icon>,
+        sectionId: "pre-booking", label: "Currently Renting",
+        icon: <Icon><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></Icon>,
     },
     {
-        sectionId: "pre-booking", label: "Favourite",
-        icon: <Icon><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></Icon>,
+        sectionId: "favourites", label: "Favourite",
+        icon: <Icon><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></Icon>,
     },
 ];
 
@@ -311,27 +292,16 @@ const StatCard = ({ title, value, detail, detailColor, iconColor }) => (
     </div>
 );
 
-const UserLevelBadge = ({ level, isActive }) => (
-    <span
-        className="text-xs font-semibold px-4 py-1.5 rounded-full border"
-        style={isActive
-            ? { background: "rgba(195,255,81,0.15)", color: "#4D7C0F", borderColor: "#C3FF51" }
-            : { background: "#F8FAFC", color: "#94A3B8", borderColor: "#E2E8F0" }}
-    >
-        {level.toUpperCase()}
-    </span>
-);
-
-const CurrentRentalItem = ({ brand, name, size, date, price, rentalId, onOrder, disabled }) => (
+const CurrentRentalItem = ({ brand, name, size, date, price, image }) => (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 flex items-center gap-6">
         <div className="w-16 h-16 bg-[#F1F5F9] rounded-lg flex items-center justify-center p-3">
             <img
-                src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=400&h=400"
+                src={image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=400&h=400"}
                 alt={name}
                 className="w-full h-auto"
             />
         </div>
-        <div className="flex-1 grid grid-cols-5 gap-4 items-center">
+        <div className="flex-1 grid grid-cols-4 gap-4 items-center">
             <div className="col-span-2">
                 <p className="text-sm" style={{ color: "#94A3B8" }}>{brand}</p>
                 <p className="text-lg font-bold" style={{ color: "#0F172A" }}>{name}</p>
@@ -343,20 +313,55 @@ const CurrentRentalItem = ({ brand, name, size, date, price, rentalId, onOrder, 
                 </p>
                 <p className="text-xs" style={{ color: "#94A3B8" }}>/ วัน</p>
             </div>
-            <div className="text-right">
-                <button
-                    onClick={() => onOrder(rentalId)}
-                    disabled={disabled}
-                    className="bg-neon text-neutral-950 font-bold px-5 py-2 rounded-lg text-sm hover:bg-neon-hover disabled:opacity-50 transition-colors"
-                >
-                    Order
-                </button>
-            </div>
         </div>
     </div>
 );
 
-const RentalHistoryRow = ({ brand, model, size, dateRange, days, price, status, onReRent }) => (
+const FavouriteProductItem = ({ id, brand, name, price, image, onRemove, onView }) => (
+    <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 flex items-center gap-6">
+        <div className="w-16 h-16 bg-[#F1F5F9] rounded-lg flex items-center justify-center p-3">
+            <img
+                src={image || "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=400&h=400"}
+                alt={name}
+                className="w-full h-auto"
+            />
+        </div>
+        <div className="flex-1 grid grid-cols-4 gap-4 items-center">
+            <div className="col-span-2">
+                <p className="text-sm" style={{ color: "#94A3B8" }}>{brand}</p>
+                <p className="text-lg font-bold" style={{ color: "#0F172A" }}>{name}</p>
+            </div>
+            <div className="text-right">
+                <p className="text-2xl font-bold" style={{ color: "#0F172A" }}>
+                    <span className="text-neon">฿</span>{price}
+                </p>
+                <p className="text-xs" style={{ color: "#94A3B8" }}>/ วัน</p>
+            </div>
+        </div>
+        <div className="flex items-center gap-2">
+            <button
+                onClick={() => onView(id)}
+                className="text-xs font-semibold px-4 py-2 rounded-lg border bg-neon text-neutral-950 border-neon transition-colors hover:bg-neon-hover"
+            >
+                เช่าเลย
+            </button>
+            <button
+                onClick={() => onRemove(id)}
+                aria-label="Remove from favourites"
+                className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#E2E8F0] text-red-500 hover:bg-red-50 transition-colors"
+            >
+                <svg className="w-4 h-4" fill="currentColor" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+);
+
+const ACTIVE_STATUSES  = ["Waiting", "successful"];
+const HISTORY_STATUSES = ["Done", "Fail"];
+
+const RentalHistoryRow = ({ brand, model, size, dateRange, days, price, status }) => (
     <tr className="border-b border-[#E2E8F0] text-sm" style={{ color: "#64748B" }}>
         <td className="py-5 font-bold" style={{ color: "#0F172A" }}>
             <p className="text-xs font-normal" style={{ color: "#94A3B8" }}>{brand}</p>
@@ -369,36 +374,8 @@ const RentalHistoryRow = ({ brand, model, size, dateRange, days, price, status, 
             <span className="text-neon">฿</span>{price}
         </td>
         <td className="py-5 text-center">{status}</td>
-        <td className="py-5 text-right">
-            <button
-                onClick={() => onReRent({ brand, model, size })}
-                className="text-xs px-4 py-1.5 rounded-lg border transition-colors hover:border-neon hover:text-[#4D7C0F]"
-                style={{ background: "#F8FAFC", color: "#64748B", borderColor: "#E2E8F0" }}
-            >
-                Re-rent
-            </button>
-        </td>
     </tr>
 );
-
-const ActivityItem = ({ title, time, type }) => {
-    const iconColors = {
-        check:   "bg-green-500",
-        points:  "bg-neon",
-        cancel:  "bg-red-500",
-        upgrade: "bg-yellow-400",
-        booked:  "bg-orange-500",
-    };
-    return (
-        <div className="flex gap-4 items-start py-3">
-            <div className={`w-2.5 h-2.5 mt-1.5 rounded-full ${iconColors[type] || "bg-[#CBD5E1]"}`} />
-            <div>
-                <p className="text-sm" style={{ color: "#0F172A" }}>{title}</p>
-                <p className="text-xs" style={{ color: "#94A3B8" }}>{time}</p>
-            </div>
-        </div>
-    );
-};
 
 // ─── MAIN DASHBOARD ────────────────────────────────────────────────────────────
 const DashboardPage = () => {
@@ -406,27 +383,17 @@ const DashboardPage = () => {
     const [profile,        setProfile]        = useState(null);
     const [stats,          setStats]          = useState(null);
     const [activeRentals,  setActiveRentals]  = useState([]);
-    const [notifications,  setNotifications]  = useState([]);
-    const [rewards,        setRewards]        = useState(null);
-    const [favBrands,      setFavBrands]      = useState([]);
     const [rentalHistory,  setRentalHistory]  = useState([]);
-    const [historyMeta,    setHistoryMeta]    = useState({ total: 0, page: 1 });
     const [loading,        setLoading]        = useState({
-        profile: true, stats: true, activeRentals: true,
-        notifications: true, rewards: true, favBrands: true, history: true,
+        profile: true, stats: true, orders: true,
     });
     const [errors,         setErrors]         = useState({});
-    const [historySearch,  setHistorySearch]  = useState("");
-    const [historyBrand,   setHistoryBrand]   = useState("All");
-    const [orderLoading,   setOrderLoading]   = useState(null);
-    const [redeemLoading,  setRedeemLoading]  = useState(false);
-    const [exportLoading,  setExportLoading]  = useState(false);
     const [modal,          setModal]          = useState(null); // "editProfile" | "changePassword"
     const [toast,          setToast]          = useState(null);
 
     const { logout, user } = useAuth();
     const navigate         = useNavigate();
-    const isFirstRender    = useRef(true);
+    const { wishlist, removeFromWishlist } = useWishlist();
 
     const setLoad  = (key, val) => setLoading(p => ({ ...p, [key]: val }));
     const setError = (key, msg) => setErrors(p => ({ ...p, [key]: msg }));
@@ -437,21 +404,33 @@ const DashboardPage = () => {
         setTimeout(() => setToast(null), 4000);
     };
 
-    // ─── RENTAL HISTORY FETCH ─────────────────────────────────────────────────
-    const loadHistory = useCallback(async ({ q, brand, page }) => {
-        setLoad("history", true);
-        clearError("history");
+    // ─── ORDERS FETCH (active rentals + history) ─────────────────────────────
+    const loadOrders = useCallback(async () => {
+        setLoad("orders", true);
+        clearError("orders");
         try {
-            const params = { page: page || 1 };
-            if (q)                   params.q     = q;
-            if (brand && brand !== "All") params.brand = brand;
-            const res = await api.getRentalHistory(params);
-            setRentalHistory(res.data);
-            setHistoryMeta({ total: res.total, page: res.page });
+            const orders = await api.getOrders();
+            const flatten = (statuses) => orders
+                .filter(o => statuses.includes(o.status))
+                .flatMap(o => (o.items || []).map(item => ({
+                    rentalId: o._id,
+                    brand:    item.brand || "",
+                    name:     item.name,
+                    model:    item.name,
+                    image:    item.image,
+                    size:     item.size,
+                    price:    item.rentalFee,
+                    days:     item.rentalDays,
+                    date:     new Date(o.createdAt).toLocaleDateString("th-TH"),
+                    dateRange: new Date(o.createdAt).toLocaleDateString("th-TH"),
+                    status:   o.status,
+                })));
+            setActiveRentals(flatten(ACTIVE_STATUSES));
+            setRentalHistory(flatten(HISTORY_STATUSES));
         } catch (e) {
-            setError("history", e.message);
+            setError("orders", e.message);
         } finally {
-            setLoad("history", false);
+            setLoad("orders", false);
         }
     }, []);
 
@@ -463,78 +442,17 @@ const DashboardPage = () => {
             catch (e) { setError(key, e.message); }
             finally   { setLoad(key, false); }
         };
-        load("profile",       api.getProfile,        setProfile);
-        load("stats",         api.getStats,           setStats);
-        load("activeRentals", api.getActiveRentals,   setActiveRentals);
-        load("notifications", api.getNotifications,   setNotifications);
-        load("rewards",       api.getRewards,         setRewards);
-        load("favBrands",     api.getFavBrands,       setFavBrands);
-        loadHistory({ q: "", brand: "All", page: 1 });
-    }, [loadHistory]);
-
-    // ─── DEBOUNCED HISTORY SEARCH ─────────────────────────────────────────────
-    useEffect(() => {
-        if (isFirstRender.current) { isFirstRender.current = false; return; }
-        const t = setTimeout(() => {
-            loadHistory({ q: historySearch, brand: historyBrand, page: 1 });
-        }, 400);
-        return () => clearTimeout(t);
-    }, [historySearch, historyBrand, loadHistory]);
+        queueMicrotask(() => {
+            load("profile", api.getProfile, setProfile);
+            load("stats",   api.getStats,   setStats);
+            loadOrders();
+        });
+    }, [loadOrders]);
 
     // ─── ACTIONS ─────────────────────────────────────────────────────────────
     const handleLogout = () => { logout(); navigate("/login"); };
 
-    const handleOrder = async (rentalId) => {
-        setOrderLoading(rentalId);
-        try {
-            await api.createRental({ rentalId, action: "order" });
-            setActiveRentals(await api.getActiveRentals());
-            showToast("สั่งซื้อสำเร็จ!");
-        } catch (e) {
-            showToast(`สั่งซื้อไม่สำเร็จ: ${e.message}`, "error");
-        } finally {
-            setOrderLoading(null);
-        }
-    };
-
-    const handleReRent = async ({ brand, model, size }) => {
-        try {
-            await api.createRental({ brand, model, size, action: "re-rent" });
-            const [updatedRentals, updatedStats] = await Promise.all([api.getActiveRentals(), api.getStats()]);
-            setActiveRentals(updatedRentals);
-            setStats(updatedStats);
-            showToast("Re-rent สำเร็จ!");
-        } catch (e) {
-            showToast(`Re-rent ไม่สำเร็จ: ${e.message}`, "error");
-        }
-    };
-
-    const handleRentNew = () => showToast("เร็วๆ นี้: เปิดหน้าเลือกรองเท้า", "success");
-
-    const handleRedeem = async () => {
-        setRedeemLoading(true);
-        try {
-            const res = await api.redeemPoints({ points: 500 });
-            setRewards(await api.getRewards());
-            showToast(`แลกสำเร็จ! คะแนนคงเหลือ: ${res.remaining}`);
-        } catch (e) {
-            showToast(`แลกคะแนนไม่สำเร็จ: ${e.message}`, "error");
-        } finally {
-            setRedeemLoading(false);
-        }
-    };
-
-    const handleExport = async () => {
-        setExportLoading(true);
-        try {
-            await api.exportHistory();
-            showToast("Export สำเร็จ!");
-        } catch (e) {
-            showToast(`Export ไม่สำเร็จ: ${e.message}`, "error");
-        } finally {
-            setExportLoading(false);
-        }
-    };
+    const handleRentNew = () => navigate("/catalog");
 
     const handleProfileSaved = (updated) => {
         setProfile(prev => ({ ...prev, ...updated }));
@@ -542,15 +460,25 @@ const DashboardPage = () => {
         showToast("บันทึกข้อมูลสำเร็จ!");
     };
 
-    const scrollToSection = (sectionId) => {
+    const scrollToSection = useCallback((sectionId) => {
         document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
         setActiveSection(sectionId);
+    }, []);
+
+    // ─── SCROLL TO HASH SECTION ON LOAD ───────────────────────────────────────
+    useEffect(() => {
+        const sectionId = window.location.hash?.slice(1);
+        if (sectionId) {
+            queueMicrotask(() => scrollToSection(sectionId));
+        }
+    }, [scrollToSection]);
+
+    const handleRemoveFavourite = async (productId) => {
+        const ok = await removeFromWishlist(productId);
+        if (ok) showToast("ลบออกจากรายการโปรดแล้ว");
     };
 
-    const notifCount  = notifications.length;
-    const progressPct = rewards
-        ? Math.min(Math.round((rewards.points / rewards.nextLevelPoints) * 100), 100)
-        : 0;
+    const handleViewFavourite = () => navigate("/catalog");
 
     return (
         <div className="min-h-screen font-sans flex flex-col antialiased pt-16 lg:pt-18" style={{ background: "#F8FAFC" }}>
@@ -613,11 +541,6 @@ const DashboardPage = () => {
                                     )}
                                     <span className="shrink-0">{item.icon}</span>
                                     <span className="flex-1 truncate font-medium">{item.label}</span>
-                                    {item.badgeKey === "notifCount" && notifCount > 0 && (
-                                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded min-w-[18px] text-center" style={{ background: "#FEE2E2", color: "#DC2626" }}>
-                                            {notifCount}
-                                        </span>
-                                    )}
                                 </motion.button>
                             );
                         })}
@@ -705,53 +628,76 @@ const DashboardPage = () => {
                     </div>
 
                     {/* STAT CARDS */}
-                    <div className="grid grid-cols-4 gap-6 mb-10">
+                    <div className="grid grid-cols-3 gap-6 mb-10">
                         {loading.stats ? (
-                            <><StatCardSkeleton /><StatCardSkeleton /><StatCardSkeleton /><StatCardSkeleton /></>
+                            <><StatCardSkeleton /><StatCardSkeleton /><StatCardSkeleton /></>
                         ) : errors.stats ? (
-                            <div className="col-span-4">
+                            <div className="col-span-3">
                                 <ErrorBanner message="โหลดสถิติไม่ได้" onRetry={() => api.getStats().then(setStats)} />
                             </div>
                         ) : (
                             <>
-                                <StatCard title="Total Rentals"  value={(stats?.totalRentals || 0).toLocaleString()} detail="↑ 1.2% from last month" iconColor="bg-neon" />
-                                <StatCard title="Active Rentals" value={stats?.activeRentals || 0} detail="Pairs ∙ Return in 5 days" />
-                                <StatCard title="Reward Points"  value={(stats?.points || 0).toLocaleString()} detail={`${((rewards?.nextLevelPoints || 3000) - (stats?.points || 0))} more points to ${rewards?.nextLevel || "Platinum"}`} />
+                                <StatCard title="Total Rentals"  value={(stats?.totalRentals || 0).toLocaleString()} detail="ทั้งหมดที่เคยเช่า" iconColor="bg-neon" />
+                                <StatCard title="Active Rentals" value={stats?.activeRentals || 0} detail="กำลังเช่าอยู่ตอนนี้" />
                                 <StatCard title="Return Score"   value={`${stats?.returnScore || 0}%`} detail="✓ Always returned on time" detailColor="text-green-500" />
                             </>
                         )}
                     </div>
 
-                    <div className="grid grid-cols-12 gap-8">
-
-                        {/* LEFT COLUMN */}
-                        <div className="col-span-8 flex flex-col gap-10">
+                    <div className="flex flex-col gap-10">
 
                             {/* CURRENTLY RENTING */}
                             <section id="pre-booking" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
                                 <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Favourite</h2>
-                                    <a href="#" className="text-xs font-semibold px-4 py-2 rounded-lg border bg-neon text-neutral-950 border-neon transition-colors hover:bg-neon-hover">View All →</a>
+                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Currently Renting</h2>
                                 </div>
-                                {loading.activeRentals ? (
+                                {loading.orders ? (
                                     <div className="flex flex-col gap-5">
                                         <RentalItemSkeleton />
                                         <RentalItemSkeleton />
                                     </div>
-                                ) : errors.activeRentals ? (
-                                    <ErrorBanner message="โหลดรายการเช่าไม่ได้" onRetry={() => api.getActiveRentals().then(setActiveRentals)} />
+                                ) : errors.orders ? (
+                                    <ErrorBanner message="โหลดรายการเช่าไม่ได้" onRetry={loadOrders} />
                                 ) : activeRentals.length === 0 ? (
                                     <p className="text-sm" style={{ color: "#94A3B8" }}>ไม่มีรายการเช่าปัจจุบัน</p>
                                 ) : (
                                     <div className="flex flex-col gap-5">
                                         {activeRentals.map((rental, i) => (
-                                            <CurrentRentalItem
-                                                key={rental.rentalId || i}
-                                                {...rental}
-                                                onOrder={handleOrder}
-                                                disabled={orderLoading === rental.rentalId}
-                                            />
+                                            <CurrentRentalItem key={rental.rentalId || i} {...rental} />
                                         ))}
+                                    </div>
+                                )}
+                            </section>
+
+                            {/* FAVOURITES */}
+                            <section id="favourites" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Favourite</h2>
+                                    <button onClick={handleRentNew} className="text-xs font-semibold px-4 py-2 rounded-lg border bg-neon text-neutral-950 border-neon transition-colors hover:bg-neon-hover">Browse Catalog →</button>
+                                </div>
+                                {wishlist.length === 0 ? (
+                                    <p className="text-sm" style={{ color: "#94A3B8" }}>ยังไม่มีสินค้าที่กดถูกใจ</p>
+                                ) : (
+                                    <div className="flex flex-col gap-5">
+                                        {wishlist.map((item) => {
+                                            const product       = item.productId && typeof item.productId === "object" ? item.productId : item;
+                                            const productId     = item.productId?._id || item.productId || item._id;
+                                            const defaultVariant = product?.variants?.[0];
+                                            const image          = defaultVariant?.images?.[0] || null;
+                                            const price          = product?.rentalPlan?.[0]?.["1day"] || 0;
+                                            return (
+                                                <FavouriteProductItem
+                                                    key={productId}
+                                                    id={productId}
+                                                    brand={product?.brand || ""}
+                                                    name={product?.modelName || "Product"}
+                                                    price={price}
+                                                    image={image}
+                                                    onRemove={handleRemoveFavourite}
+                                                    onView={handleViewFavourite}
+                                                />
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </section>
@@ -760,207 +706,37 @@ const DashboardPage = () => {
                             <section id="rental-history" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
                                 <div className="flex items-center justify-between mb-8">
                                     <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Rental History</h2>
-                                    <button
-                                        onClick={handleExport}
-                                        disabled={exportLoading}
-                                        className="text-sm font-medium disabled:opacity-50 transition-colors hover:text-[#4D7C0F]"
-                                        style={{ color: "#94A3B8" }}
-                                    >
-                                        {exportLoading ? "กำลัง Export..." : "Export CSV →"}
-                                    </button>
                                 </div>
 
-                                <div className="flex items-center gap-3 mb-6 border border-[#E2E8F0] rounded-2xl p-2" style={{ background: "#F8FAFC" }}>
-                                    <input
-                                        type="search"
-                                        placeholder="Search by brand, model, date..."
-                                        value={historySearch}
-                                        onChange={(e) => setHistorySearch(e.target.value)}
-                                        className="flex-1 bg-transparent text-sm px-3 py-2.5 rounded-lg border-r border-[#E2E8F0] focus:ring-0 focus:outline-none placeholder:text-[#94A3B8]"
-                                        style={{ color: "#0F172A" }}
-                                    />
-                                    <div className="flex items-center gap-1.5 pl-1">
-                                        {["All", "Nike", "Adidas", "ASICS", "Hoka", "Brooks"].map((filter) => (
-                                            <button
-                                                key={filter}
-                                                onClick={() => setHistoryBrand(filter)}
-                                                className={`text-xs font-semibold px-4 py-2 rounded-lg border transition-colors ${
-                                                    historyBrand === filter
-                                                        ? "bg-neon text-neutral-950 border-neon"
-                                                        : "border-[#E2E8F0] hover:border-neon hover:text-[#4D7C0F]"
-                                                }`}
-                                                style={historyBrand !== filter ? { color: "#64748B" } : {}}
-                                            >
-                                                {filter}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {errors.history && (
+                                {errors.orders && (
                                     <div className="mb-4">
-                                        <ErrorBanner message="โหลดประวัติการเช่าไม่ได้" onRetry={() => loadHistory({ q: historySearch, brand: historyBrand, page: 1 })} />
+                                        <ErrorBanner message="โหลดประวัติการเช่าไม่ได้" onRetry={loadOrders} />
                                     </div>
                                 )}
 
                                 <table className="w-full text-left">
                                     <thead className="border-b border-[#E2E8F0] text-xs uppercase tracking-wide" style={{ color: "#94A3B8" }}>
                                         <tr>
-                                            {["Shoes", "Size", "Date", "Days", "Price", "Status", ""].map((th) => (
-                                                <th key={th} className={`py-4 font-semibold text-center ${th === "" ? "text-right" : ""}`}>{th}</th>
+                                            {["Shoes", "Size", "Date", "Days", "Price", "Status"].map((th) => (
+                                                <th key={th} className="py-4 font-semibold text-center">{th}</th>
                                             ))}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {loading.history ? (
+                                        {loading.orders ? (
                                             <><TableRowSkeleton /><TableRowSkeleton /><TableRowSkeleton /></>
-                                        ) : rentalHistory.length === 0 && !errors.history ? (
+                                        ) : rentalHistory.length === 0 && !errors.orders ? (
                                             <tr>
-                                                <td colSpan={7} className="py-10 text-center text-sm" style={{ color: "#94A3B8" }}>ไม่พบรายการที่ค้นหา</td>
+                                                <td colSpan={6} className="py-10 text-center text-sm" style={{ color: "#94A3B8" }}>ไม่พบประวัติการเช่า</td>
                                             </tr>
                                         ) : (
                                             rentalHistory.map((row, i) => (
-                                                <RentalHistoryRow key={i} {...row} onReRent={handleReRent} />
+                                                <RentalHistoryRow key={i} {...row} />
                                             ))
                                         )}
                                     </tbody>
                                 </table>
-
-                                {historyMeta.total > 5 && (
-                                    <div className="flex justify-between items-center mt-6 text-sm" style={{ color: "#94A3B8" }}>
-                                        <span>ทั้งหมด {historyMeta.total} รายการ</span>
-                                        <div className="flex gap-2">
-                                            <button
-                                                disabled={historyMeta.page <= 1}
-                                                onClick={() => loadHistory({ q: historySearch, brand: historyBrand, page: historyMeta.page - 1 })}
-                                                className="px-3 py-1.5 rounded-lg border border-[#E2E8F0] hover:border-[#CBD5E1] disabled:opacity-40 transition-colors"
-                                            >
-                                                ← ก่อนหน้า
-                                            </button>
-                                            <button
-                                                disabled={historyMeta.page * 5 >= historyMeta.total}
-                                                onClick={() => loadHistory({ q: historySearch, brand: historyBrand, page: historyMeta.page + 1 })}
-                                                className="px-3 py-1.5 rounded-lg border border-[#E2E8F0] hover:border-[#CBD5E1] disabled:opacity-40 transition-colors"
-                                            >
-                                                ถัดไป →
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
                             </section>
-                        </div>
-
-                        {/* RIGHT COLUMN */}
-                        <aside className="col-span-4 flex flex-col gap-10">
-
-                            {/* REWARD POINTS */}
-                            <section id="reward-points" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
-                                <div className="flex items-center justify-between mb-8">
-                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Reward Points</h2>
-                                    <button
-                                        onClick={handleRedeem}
-                                        disabled={redeemLoading || loading.rewards}
-                                        className="text-sm font-medium disabled:opacity-50 transition-colors hover:text-[#4D7C0F]"
-                                        style={{ color: "#94A3B8" }}
-                                    >
-                                        {redeemLoading ? "กำลังแลก..." : "Redeem"}
-                                    </button>
-                                </div>
-
-                                {loading.rewards ? (
-                                    <>
-                                        <Skeleton className="h-4 w-20 mb-3" />
-                                        <Skeleton className="h-10 w-32 mb-6" />
-                                        <Skeleton className="h-8 w-full rounded-full" />
-                                    </>
-                                ) : errors.rewards ? (
-                                    <ErrorBanner message="โหลด Reward ไม่ได้" />
-                                ) : (
-                                    <>
-                                        <p className="text-4xl font-black mb-6 flex items-baseline gap-2" style={{ color: "#0F172A" }}>
-                                            {(rewards?.points || 0).toLocaleString()}
-                                            <span className="text-2xl font-bold text-[#0F172A] hover:text-neon transition-colors cursor-default">Points</span>
-                                        </p>
-                                        <div className="relative pt-6 border-t border-[#E2E8F0] mt-6">
-                                            <p className="absolute -top-3 right-0 bg-white text-xs px-2" style={{ color: "#64748B" }}>
-                                                {rewards?.nextLevel} requires{" "}
-                                                <span className="font-bold" style={{ color: "#0F172A" }}>{(rewards?.nextLevelPoints || 0).toLocaleString()} Points</span>
-                                            </p>
-                                            <div className="w-full h-1.5 bg-[#E2E8F0] rounded-full mb-4">
-                                                <div
-                                                    className="h-full bg-neon rounded-full transition-all duration-700"
-                                                    style={{ width: `${progressPct}%` }}
-                                                />
-                                            </div>
-                                            <div className="flex gap-2 flex-wrap">
-                                                {["bronze", "gold", "silver", "platinum", "diamond"].map((lvl) => (
-                                                    <UserLevelBadge
-                                                        key={lvl}
-                                                        level={lvl}
-                                                        isActive={lvl === rewards?.level?.toLowerCase()}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-                            </section>
-
-                            {/* FAVORITE BRANDS */}
-                            <section className="bg-white border border-[#E2E8F0] rounded-3xl p-8">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Favourite Brands</h2>
-                                    <a href="#" className="text-sm font-medium transition-colors hover:text-[#4D7C0F]" style={{ color: "#94A3B8" }}>Edit</a>
-                                </div>
-                                {loading.favBrands ? (
-                                    <div className="grid grid-cols-3 gap-5">
-                                        {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}
-                                    </div>
-                                ) : errors.favBrands ? (
-                                    <ErrorBanner message="โหลดแบรนด์ไม่ได้" />
-                                ) : (
-                                    <div className="grid grid-cols-3 gap-5">
-                                        {favBrands.map((brand) => (
-                                            <div key={brand.name} className="border border-[#E2E8F0] rounded-2xl p-5 flex flex-col items-center gap-2.5" style={{ background: "#F8FAFC" }}>
-                                                <div className="w-12 h-12 bg-[#F1F5F9] rounded-full flex items-center justify-center font-black text-2xl text-neon border border-[#E2E8F0]">
-                                                    {brand.name === "New Balance" ? "NB" : brand.name === "ASICS" ? "AS" : brand.name.slice(0, 1).toUpperCase()}
-                                                </div>
-                                                <p className="text-sm font-bold" style={{ color: "#0F172A" }}>{brand.name}</p>
-                                                <p className="text-xs" style={{ color: "#94A3B8" }}>{brand.count} times</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
-
-                            {/* RECENT ACTIVITY */}
-                            <section id="notifications" className={`bg-white border border-[#E2E8F0] rounded-3xl p-8 ${SECTION_SCROLL_MARGIN}`}>
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl font-semibold" style={{ color: "#0F172A" }}>Recent Activity</h2>
-                                </div>
-                                {loading.notifications ? (
-                                    <div className="flex flex-col gap-4">
-                                        {[...Array(4)].map((_, i) => (
-                                            <div key={i} className="flex gap-4 items-start">
-                                                <Skeleton className="w-2.5 h-2.5 mt-1.5 rounded-full" />
-                                                <div className="flex-1 flex flex-col gap-1.5">
-                                                    <Skeleton className="h-4 w-full" />
-                                                    <Skeleton className="h-3 w-24" />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : errors.notifications ? (
-                                    <ErrorBanner message="โหลด Activity ไม่ได้" />
-                                ) : (
-                                    <div className="flex flex-col gap-2">
-                                        {notifications.map((activity, i) => (
-                                            <ActivityItem key={i} {...activity} />
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
-                        </aside>
                     </div>
                 </main>
             </div>

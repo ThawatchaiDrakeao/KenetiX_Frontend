@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import { useLanguage } from "../../context/useLanguage";
 
 export default function ProductCard({ product }) {
   const [adding, setAdding] = useState(false);
-  const [wished, setWished] = useState(false);
+  const [wishing, setWishing] = useState(false);
   const { cart, addToCart, removeFromCart } = useCart();
+  const { isWished, toggleWishlist } = useWishlist();
   const { t } = useLanguage();
+
+  const wished = isWished(product._id);
 
   const defaultVariant = product?.variants?.[0];
   const defaultSize    = defaultVariant?.size?.[0];
@@ -39,14 +43,23 @@ export default function ProductCard({ product }) {
     await removeFromCart({ item: product._id, skuColorCode: defaultVariant.skuColorCode, size: defaultSize.size });
   };
 
+  const handleToggleWishlist = async (e) => {
+    e.stopPropagation();
+    setWishing(true);
+    await toggleWishlist(product._id);
+    setWishing(false);
+  };
+
   return (
     <div className="group bg-dark-card border border-dark-border rounded-lg overflow-hidden transition-all duration-300 hover:border-neon/20 flex flex-col">
 
       {/* Image */}
       <div className="relative bg-dark-elevated h-48 flex items-center justify-center overflow-hidden">
         <button
-          onClick={(e) => { e.stopPropagation(); setWished((w) => !w); }}
-          className="absolute top-2 right-2 z-10 hover:scale-110 transition-transform"
+          onClick={handleToggleWishlist}
+          disabled={wishing}
+          aria-label={wished ? "Remove from favourites" : "Add to favourites"}
+          className="absolute top-2 right-2 z-10 hover:scale-110 transition-transform disabled:opacity-50"
         >
           <svg
             className={`w-3.5 h-3.5 transition-colors ${wished ? "text-red-500" : "text-white/40"}`}
