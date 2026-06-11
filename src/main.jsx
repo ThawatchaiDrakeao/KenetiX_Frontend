@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { LanguageProvider } from "./context/LanguageProvider";
-import { AuthProvider } from "./context/AuthContext";
-import { AdminAuthProvider } from "./context/AdminAuthContext";
+import { LanguageProvider } from "./context/LanguageProvider.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { AdminAuthProvider } from "./context/AdminAuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { WishlistProvider } from "./context/WishlistContext.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
