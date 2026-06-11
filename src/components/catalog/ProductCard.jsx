@@ -1,25 +1,29 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 import ProductModal from "./ProductModal";
 
 export default function ProductCard({ product }) {
-  const [wished, setWished] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [adding, setAdding] = useState(false);
 
-
   const { cart, addToCart, removeFromCart } = useCart();
+  const { isWished, toggleWishlist } = useWishlist();
+  const wished = isWished(product._id);
 
   const defaultVariant = product?.variants?.[0];
   const defaultSize = defaultVariant?.size?.[0];
   const image = defaultVariant?.images?.[0] || "/placeholder-shoe.png";
   const rentalPrice = product?.rentalPlan?.[0]?.["1day"] || 0;
 
-
   const cartItemsForThisProduct = cart.filter(
-    (cartItem) => cartItem.item === product._id || cartItem.item?._id === product._id
+    (cartItem) =>
+      cartItem.item === product._id || cartItem.item?._id === product._id,
   );
-  const quantityInCart = cartItemsForThisProduct.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const quantityInCart = cartItemsForThisProduct.reduce(
+    (sum, item) => sum + (item.quantity || 1),
+    0,
+  );
   const isInCart = quantityInCart > 0;
 
   const handleAddToCart = async (e) => {
@@ -44,11 +48,10 @@ export default function ProductCard({ product }) {
   const handleRemoveFromCart = async (e) => {
     e.stopPropagation();
     if (!defaultVariant || !defaultSize) return;
-
     await removeFromCart({
       item: product._id,
       skuColorCode: defaultVariant.skuColorCode,
-      size: defaultSize.size
+      size: defaultSize.size,
     });
   };
 
@@ -59,14 +62,20 @@ export default function ProductCard({ product }) {
         onClick={() => setIsModalOpen(true)}
       >
         {/* Image Section */}
-        <div className="relative bg-[#141415] overflow-hidden" style={{ aspectRatio: "1/1" }}>
+        <div
+          className="relative bg-[#141415] overflow-hidden"
+          style={{ aspectRatio: "1/1" }}
+        >
           <button
-            onClick={(e) => { e.stopPropagation(); setWished(!wished); }}
-            className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist(product._id);
+            }}
+            className="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center hover:scale-110 transition-transform"
           >
             <svg
-              className={`w-3 h-3 ${wished ? "text-red-400" : "text-white/40"}`}
-              fill={wished ? "currentColor" : "none"}
+              className={`w-4 h-4 ${wished ? "text-red-400" : "text-zinc-400"}`}
+              fill="currentColor"
               stroke="currentColor"
               strokeWidth={2}
               viewBox="0 0 24 24"
@@ -80,9 +89,15 @@ export default function ProductCard({ product }) {
           </button>
 
           {image && image !== "/placeholder-shoe.png" ? (
-            <img src={image} alt={product.modelName} className="w-full h-full object-cover" />
+            <img
+              src={image}
+              alt={product.modelName}
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-zinc-500">No Image</div>
+            <div className="w-full h-full flex items-center justify-center text-zinc-500">
+              No Image
+            </div>
           )}
         </div>
 
@@ -99,43 +114,46 @@ export default function ProductCard({ product }) {
 
           <div className="text-zinc-400 text-xs">Rental from</div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-white font-bold">฿{rentalPrice.toLocaleString()}</span>
-            <span className="text-zinc-500 text-xs">/day</span>
-          </div>
+          <div className="flex items-center justify-between gap-2 mt-auto">
+            <span className="text-white font-bold">
+              ฿{rentalPrice.toLocaleString()}
+              <span className="text-zinc-500 text-xs font-normal">/day</span>
+            </span>
 
-          {/* Dynamic Cart Button */}
-          {isInCart ? (
-            <div className="w-full mt-auto flex items-center justify-between bg-[#1e1e20] rounded-md overflow-hidden">
-              <button
-                onClick={handleRemoveFromCart}
-                className="w-10 py-2 text-white/60 hover:text-white hover:bg-white/10 font-bold"
-              >
-                −
-              </button>
-              <span className="text-[#C3FF51] text-xs font-bold">
-                {quantityInCart} in Cart
-              </span>
+            {/* Dynamic Cart Button */}
+            {isInCart ? (
+              <div className="flex items-center justify-between bg-[#1e1e20] rounded-md overflow-hidden">
+                <button
+                  onClick={handleRemoveFromCart}
+                  className="w-8 py-1.5 text-white/60 hover:text-white hover:bg-white/10 font-bold"
+                >
+                  −
+                </button>
+                <span className="text-[#C3FF51] text-xs font-bold px-1">
+                  {quantityInCart} in Cart
+                </span>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={adding}
+                  className="w-8 py-1.5 text-white/60 hover:text-white hover:bg-white/10 font-bold"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
               <button
                 onClick={handleAddToCart}
                 disabled={adding}
-                className="w-10 py-2 text-white/60 hover:text-white hover:bg-white/10 font-bold"
+                className="bg-[#C3FF51] text-[#080809] text-[10px] font-bold py-2 px-4 rounded-md hover:bg-[#d3ff70] active:scale-95 transition-all duration-200 disabled:opacity-50"
               >
-                +
+                {adding ? "Adding..." : "Add to Cart"}
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleAddToCart}
-              disabled={adding}
-              className="w-full mt-auto bg-[#C3FF51] text-[#080809] text-[10px] font-bold py-2 rounded-md hover:bg-[#d3ff70] active:scale-95 transition-all duration-200 disabled:opacity-50"
-            >
-              {adding ? "Adding..." : "Add to Cart"}
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Product Detail Modal */}
       <ProductModal
         product={product}
         isOpen={isModalOpen}

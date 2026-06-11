@@ -65,7 +65,7 @@ export default function CheckoutPage() {
     const executeOrderPlacement = async () => {
         setLoading(true);
         try {
-            const orderRes = await API.post("/api/order", {
+            const orderRes = await API.post("/api/orders/create-order", {
                 items: itemsWithDays.map((item) => ({
                     productId: item.item,
                     name: item.name,

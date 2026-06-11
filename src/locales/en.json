@@ -1,0 +1,640 @@
+{
+  "nav": {
+    "catalog": "Catalog",
+    "howItWorks": "How it works",
+    "community": "Community",
+    "contactUs": "Contact Us",
+    "login": "Log in",
+    "signup": "Sign Up",
+    "profile": "Profile",
+    "cart": "Cart"
+  },
+  "hero": {
+    "badge": "Now in Bangkok",
+    "title1": "Rent.",
+    "title2": "Test.",
+    "title3": "Run.",
+    "title4": "Decide.",
+    "desc": "Try the world's best running shoes. Rent first, buy with confidence.",
+    "browseCatalog": "Browse catalog",
+    "howItWorks": "How it works",
+    "startingFrom": "Starting from",
+    "availableNow": "Available now",
+    "stats": {
+      "models": "Premium models",
+      "rating": "Avg. rating",
+      "delivery": "24h Delivery",
+      "runners": "Happy runners"
+    }
+  },
+  "features": {
+    "badge": "Why KINETIX",
+    "title": "The smarter way to run",
+    "desc": "Stop guessing which shoe is right for you. Rent first, buy with confidence.",
+    "items": [
+      {
+        "title": "Try before you buy",
+        "desc": "Test the latest models in a real workout. Pay only for the pair you love."
+      },
+      {
+        "title": "Always fresh pairs",
+        "desc": "Cleaned and inspected between every rental. Near-new condition, every time."
+      },
+      {
+        "title": "Flexible rentals",
+        "desc": "1 day, 3 days, or a full week. Choose the plan that fits your training."
+      },
+      {
+        "title": "We deliver to you",
+        "desc": "Delivered straight to your door. No pick-up or travel required."
+      },
+      {
+        "title": "Damage protection",
+        "desc": "Normal wear is fully covered. Rent with confidence, no unexpected costs."
+      },
+      {
+        "title": "Performance data",
+        "desc": "Personalized insights after each rental to find the shoe that fits your gait."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "steps": [
+      {
+        "label": "Create your account",
+        "desc": "Sign up with your shoe size and deposit info — ready in minutes."
+      },
+      {
+        "label": "Choose your shoe",
+        "desc": "Browse 120+ models and find the pair that fits you."
+      },
+      {
+        "label": "Door to door",
+        "desc": "We deliver straight to you — no travel needed."
+      },
+      {
+        "label": "Run & test",
+        "desc": "Put the shoes through real training sessions."
+      },
+      {
+        "label": "Return or buy",
+        "desc": "Love them? Buy at a discount. Not for you? Return."
+      }
+    ]
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Simple, honest pricing",
+    "desc": "Pick a plan, we deliver the shoes. Your next favorite shoe is one run away.",
+    "mostPopular": "Most Popular",
+    "plans": [
+      {
+        "name": "Single rental",
+        "price": "290",
+        "period": "per 24h rental",
+        "desc": "Perfect for testing a shoe before your next race.",
+        "features": [
+          "1 pair per rental",
+          "Standard catalog access",
+          "We will deliver it to you"
+        ],
+        "cta": "Reserve a pair"
+      },
+      {
+        "name": "3-day pass",
+        "price": "690",
+        "period": "per 3-day rental",
+        "desc": "A full training week to truly feel the difference.",
+        "features": [
+          "1 pair for 3 days",
+          "Pick-up & return at partner locations",
+          "Damage protection included",
+          "Priority reservation",
+          "10% discount on purchase"
+        ],
+        "cta": "Start a 3-day pass"
+      },
+      {
+        "name": "7-day bundle",
+        "price": "1,490",
+        "period": "weekly rental",
+        "desc": "Try 3 different models in one week. The ultimate comparison.",
+        "features": [
+          "3 pairs (swap once/rental)",
+          "Full catalog + early access",
+          "Home delivery in Bangkok",
+          "Damage protection included",
+          "Priority reservation",
+          "15% discount on purchase"
+        ],
+        "cta": "Get the bundle"
+      }
+    ]
+  },
+  "reviews": {
+    "badge": "Reviews",
+    "title": "Runners love it",
+    "count": "1,200+ reviews"
+  },
+  "community": {
+    "badge": "Community",
+    "title": "Runners sharing the experience",
+    "page": {
+      "heroBadge": "KINETIX COMMUNITY",
+      "heroLine1": "Run Together.",
+      "heroLine2": "Recover Together.",
+      "heroLine3": "Grow Together.",
+      "heroDesc": "Join a community built around movement, recovery, and meaningful connections. Run together. Grow together.",
+      "joinCta": "Join Community →",
+      "exploreActivities": "Explore Activities",
+      "experiencesBadge": "Featured Experiences",
+      "whatWeDo": "What We Do Together",
+      "comingSoon": "Coming Soon",
+      "eventsBadge": "Upcoming Events",
+      "joinThisWeek": "Join This Week",
+      "seatsLeft": "seats left",
+      "seats": "seats",
+      "join": "Join",
+      "testimonialsBadge": "Testimonials",
+      "heardFromCommunity": "Heard from the Community",
+      "readyBadge": "Ready to Join?",
+      "ctaLine1": "Run Together.",
+      "ctaLine2": "Recover Together.",
+      "ctaLine3": "Grow Together.",
+      "ctaDesc": "Your community is waiting. Join KINETIX and start your journey.",
+      "becomeMember": "Become a Member",
+      "bookActivities": "Booking Activities",
+      "stats": [
+        {
+          "value": "3,500+",
+          "label": "Members"
+        },
+        {
+          "value": "25+",
+          "label": "Weekly Activities"
+        },
+        {
+          "value": "40+",
+          "label": "Monthly Meetups"
+        },
+        {
+          "value": "4.9★",
+          "label": "Community Rating"
+        }
+      ],
+      "experiences": [
+        {
+          "id": "run",
+          "title": "RUN CLUB",
+          "tag": "Tue & Sat — 19:00",
+          "points": [
+            "Group runs every week",
+            "5km / 10km routes",
+            "Urban night running",
+            "GPS tracked sessions"
+          ]
+        },
+        {
+          "id": "ice",
+          "title": "ICE BATH RECOVERY",
+          "tag": "Every Thursday — 18:30",
+          "points": [
+            "Guided cold exposure",
+            "Breathwork protocol",
+            "3–8 min immersion",
+            "Performance recovery"
+          ]
+        },
+        {
+          "id": "coffee",
+          "title": "COFFEE SOCIAL",
+          "tag": "Every Sunday — 08:00",
+          "points": [
+            "Community networking",
+            "Wellness conversations",
+            "Specialty coffee",
+            "Post-run gathering"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": 1,
+          "title": "Run Club Night Session",
+          "date": "Sat 14 Jun",
+          "time": "19:00",
+          "seats": 8,
+          "type": "RUN"
+        },
+        {
+          "id": 2,
+          "title": "Ice Bath Recovery Workshop",
+          "date": "Thu 19 Jun",
+          "time": "18:30",
+          "seats": 4,
+          "type": "ICE"
+        },
+        {
+          "id": 3,
+          "title": "Coffee Community Meetup",
+          "date": "Sun 22 Jun",
+          "time": "08:00",
+          "seats": 12,
+          "type": "COFFEE"
+        }
+      ],
+      "testimonials": [
+        {
+          "name": "Jirayu J.",
+          "initials": "JJ",
+          "role": "Top Runner",
+          "text": "Running brought me here. The people made me stay. KINETIX Community completely changed how I approach fitness and recovery."
+        },
+        {
+          "name": "Anne T.",
+          "initials": "AT",
+          "role": "Recovery Champion",
+          "text": "The best fitness and wellness community I've ever joined. Ice bath sessions combined with Sunday coffee meetups — nothing like it."
+        },
+        {
+          "name": "Cookie Y.",
+          "initials": "CY",
+          "role": "Community Connector",
+          "text": "I came for the running, I stayed for the community. Every Sunday coffee social is the absolute highlight of my week."
+        }
+      ]
+    }
+  },
+  "ourStory": {
+    "badge": "Our Story",
+    "title1": "The story behind",
+    "body": "KINETIX was born from a simple desire — to give everyone the chance to try on shoes and find the pair that truly fits before committing to buy.",
+    "quote": "Because we believe the right shoe will take you further than you've ever gone before."
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Questions answered",
+    "stillQuestions": "Still have questions?",
+    "items": [
+      {
+        "q": "How many days can I rent and what is the price?",
+        "a": "Kinetix offers 3 packages: 1 day, 3 days, and 7 days. Starting at ฿200/day depending on the model, plus a 20% retail price deposit refunded after shoe inspection."
+      },
+      {
+        "q": "How is delivery handled and when will I receive it?",
+        "a": "Kinetix delivers Door-to-Door the next day (D+1) before noon. Orders accepted 24/7. Rental period starts from 12:00 PM on the delivery day."
+      },
+      {
+        "q": "Can I cancel an order?",
+        "a": "Cancellations are only accepted before 23:59 on the order date for a full refund. If you need to change size, cancel and re-order before 23:59."
+      },
+      {
+        "q": "When will my deposit be refunded?",
+        "a": "Grade A/B: Full refund within 1 business day. Grade C/D: 48hr dispute window then partial refund. Grade E (lost): No refund + full retail price charged. Credit card via Omise 3–5 business days."
+      },
+      {
+        "q": "Can I check the shoe condition before receiving?",
+        "a": "Yes! Every pair shows its current grade (A–D) with condition notes before you order, and you'll see the grade with photo evidence after returning."
+      },
+      {
+        "q": "What happens if I refuse to accept delivery?",
+        "a": "Order is cancelled with a full refund, but your account records a reject count. 2nd time: Warning. 3rd time: Account may be temporarily suspended."
+      },
+      {
+        "q": "What payment methods are available?",
+        "a": "3 options: Credit/Debit card, PromptPay, and Bank Transfer — via Omise. Kinetix never stores your card data."
+      },
+      {
+        "q": "What sizes and brands are available?",
+        "a": "Running shoes from Nike, Adidas, and On Running in EU sizes 36–47. Over 180 pairs in Men, Women, and Unisex categories."
+      }
+    ]
+  },
+  "cta": {
+    "badge": "Ready to run?",
+    "title1": "Stop wondering.",
+    "title2": "Start running.",
+    "desc": "Your next PR might be on your feet already. Browse the catalog, and test the shoes that elite runners swear by.",
+    "browseCatalog": "Browse the catalog"
+  },
+  "footer": {
+    "tagline1": "Rent. Test. Run. Decide.",
+    "tagline2": "Premium running shoes, by the rental.",
+    "newsletter": {
+      "label": "Stay in the loop",
+      "desc": "Get exclusive offers, new arrivals, and more.",
+      "placeholder": "Enter your email"
+    },
+    "sections": {
+      "rental": "RENTAL",
+      "brand": "BRAND",
+      "legal": "LEGAL"
+    },
+    "links": {
+      "catalog": "Catalog",
+      "howItWorks": "How it works",
+      "reviews": "Reviews",
+      "ourStory": "Our story",
+      "partners": "Partners",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "damagePolicy": "Damage policy"
+    },
+    "copyright": "All rights reserved."
+  },
+  "contact": {
+    "badge": "Contact Us",
+    "title": "Contact Us",
+    "subtitle": "Have questions or issues? The Kinetix team is ready to help.",
+    "phone": {
+      "label": "Phone",
+      "hours": "Open daily 9:00 AM - 9:00 PM"
+    },
+    "email": {
+      "label": "Email"
+    },
+    "line": {
+      "label": "Line Official Account"
+    },
+    "replyNote1": "Our team will ",
+    "replyNote2": "contact you back within 24 hours",
+    "replyNote3": " after receiving your form.",
+    "form": {
+      "title": "Report an Issue / Send a Message",
+      "subtitle": "Fill out the form below, and our team will assist you as soon as possible.",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "e.g., John Doe",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "08x-xxx-xxxx",
+      "orderId": "Order ID",
+      "orderIdPlaceholder": "e.g., KNX-2026-00123",
+      "issueDetails": "Issue Details",
+      "issueDetailsPlaceholder": "Please describe your issue in detail...",
+      "attachImages": "Attach Images",
+      "attachNote": "(recommended for shoe damage cases)",
+      "uploadText": "Click to upload images",
+      "uploadSubtext": "PNG, JPG, HEIC — Max 10MB per file (up to 5 images)",
+      "important": "Important",
+      "sendMessage": "Send Message"
+    }
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "browseProducts": "Browse Products",
+    "loading": "Loading cart..."
+  },
+  "terms": {
+    "badge": "Terms of Service",
+    "title": "Terms of Service",
+    "updated": "Last updated: June 2025",
+    "items": [
+      {
+        "title": "1. Acceptance of Terms",
+        "body": "By registering or using Kinetix shoe rental services, you accept all terms of service. If you do not accept, please do not use the service."
+      },
+      {
+        "title": "2. User Eligibility",
+        "body": "Must be 20 years or older, or have parental consent. · Must provide a valid delivery address. · Must provide correct bank account information for deposit refunds."
+      },
+      {
+        "title": "3. Ordering and Cancellation",
+        "body": "Orders are confirmed when Omise reports successful payment. · Cancellations accepted only before 23:59 on the order date for a full refund. · After 23:59 cancellations are not possible as items are packed."
+      },
+      {
+        "title": "4. Delivery and Receipt",
+        "body": "Kinetix delivers the next day (D+1) before noon, every day including holidays. · Rental period starts from 12:00 PM on the delivery date. · Refusing delivery 3+ times may result in temporary account suspension."
+      },
+      {
+        "title": "5. Returning Shoes",
+        "body": "Press Notify Return in the app before 12:00 PM on the due date, or within Grace Period 1:00 PM. · The time you press notify determines Late/On-time status. · Driver will pick up from your address."
+      },
+      {
+        "title": "6. Limitation of Liability",
+        "body": "Kinetix is not liable for delays due to force majeure. · Not liable for injuries from wearing shoes. · Using shoes for unintended purposes constitutes a breach of contract."
+      }
+    ]
+  },
+  "privacy": {
+    "badge": "Privacy Policy",
+    "title": "Privacy Policy",
+    "updated": "Last updated: June 2025",
+    "items": [
+      {
+        "title": "1. Data We Collect",
+        "lines": [
+          "Personal data: Full name, email, phone number",
+          "Delivery data: Address, shoe size",
+          "Financial data: Bank name, account number (for deposit refunds only)",
+          "Transaction data: Order history, payments, returns",
+          "Behavioral data: Rejection count, reviews, Run Club activity"
+        ]
+      },
+      {
+        "title": "2. Purpose of Use",
+        "lines": [
+          "Process rental orders, delivery, and returns",
+          "Send SMS and Email notifications for order status and return deadlines",
+          "Refund deposits via specified channels",
+          "Risk assessment and fraud prevention"
+        ]
+      },
+      {
+        "title": "3. Data Security",
+        "lines": [
+          "Kinetix does not store credit card data — all card transactions via Omise (PCI DSS)",
+          "Bank account data used for deposit refunds only",
+          "Database uses encryption and role-based access control (RBAC)"
+        ]
+      },
+      {
+        "title": "4. Third-Party Disclosure",
+        "lines": [
+          "Omise: For payment processing and refunds",
+          "SMS Provider: For notifications",
+          "Driver Team: Delivery address for logistics",
+          "Government Agencies: When required by law"
+        ]
+      },
+      {
+        "title": "5. Your Rights",
+        "lines": [
+          "View data: Request to see all your personal data",
+          "Edit data: Update name, address, phone, or bank account in your profile",
+          "Delete account: Request full deletion via hello@kinetix.run"
+        ]
+      }
+    ]
+  },
+  "damage": {
+    "badge": "Damage Policy",
+    "title": "Damage Policy",
+    "intro": "After receiving returned shoes, our Admin team inspects and grades A–E with photo evidence. The grade determines deposit refund as follows:",
+    "noCost": "None",
+    "dispute": {
+      "title": "Dispute Window (48 hours)",
+      "body": "For Grade C or D, you have 48 hours to dispute the inspection result by contacting"
+    },
+    "grades": [
+      {
+        "grade": "A",
+        "label": "Perfect",
+        "criteria": "Like new, no marks",
+        "cost": "None",
+        "refund": "Full refund within 1 business day"
+      },
+      {
+        "grade": "B",
+        "label": "Normal Wear",
+        "criteria": "Normal use marks, light dust",
+        "cost": "None",
+        "refund": "Full refund within 1 business day"
+      },
+      {
+        "grade": "C",
+        "label": "Minor Damage",
+        "criteria": "Scratches, permanent stains, worn sole (repairable)",
+        "cost": "Actual repair cost",
+        "refund": "Partial refund after 48hr dispute window"
+      },
+      {
+        "grade": "D",
+        "label": "Major Damage",
+        "criteria": "Heavy damage, not worth repairing",
+        "cost": "Damage fee ≤ retail price",
+        "refund": "Partial refund after 48hr dispute window"
+      },
+      {
+        "grade": "E",
+        "label": "Lost",
+        "criteria": "Lost / not returned",
+        "cost": "Full retail price",
+        "refund": "No refund + charge difference"
+      }
+    ]
+  },
+  "login": {
+    "runningShoeRental": "Running Shoe Rental",
+    "title": "Sign in to your account",
+    "desc": "Enter your credentials to continue",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signingIn": "Signing in…",
+    "signIn": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "backToHome": "← Back to Home",
+    "loginFailed": "Login failed. Please try again."
+  },
+  "signup": {
+    "runningShoeRental": "Running Shoe Rental",
+    "label": "Customer Registration",
+    "title": "Create Account",
+    "backToHome": "← Back to Home",
+    "alreadyHave": "Already have an account?",
+    "signIn": "Sign In",
+    "personalInfo": "Personal Information",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "emailPlaceholder": "Email Address",
+    "phonePlaceholder": "Phone Number",
+    "shoeSizePlaceholder": "Shoe Size",
+    "addressPlaceholder": "Address",
+    "bankInfo": "Bank Information",
+    "bankNamePlaceholder": "Bank Name",
+    "accountNumberPlaceholder": "Account Number",
+    "accountNamePlaceholder": "Account Name",
+    "security": "Security",
+    "passwordPlaceholder": "Password (min 8 characters)",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "agreeTerms": "I agree to the Terms of Service and Privacy Policy.",
+    "ageConfirm": "I confirm that I am over 20 years old.",
+    "creating": "Creating Account…",
+    "submit": "+ Create Account",
+    "accountCreated": "Account Created!",
+    "redirecting": "Redirecting to your dashboard…",
+    "goToDashboard": "Go to Dashboard",
+    "registerAnother": "Register Another Account",
+    "errRequired": "Required",
+    "errEmail": "Invalid email",
+    "errMinPassword": "Min 8 characters",
+    "errPasswordMatch": "Passwords do not match",
+    "errRegistration": "Registration failed. Please try again.",
+    "loginAfterRegister": "Account created! Please log in manually.",
+    "customerRegistration": "Customer Registration",
+    "heroLine1": "Join the",
+    "heroLine2": "Running Shoe Rental Platform",
+    "heroDesc": "Register your account to start renting premium running shoes, manage your profile, and track your rental history.",
+    "card1Title": "Profile Data",
+    "card1Desc": "Store customer information including full name, email, phone number, address, and shoe size.",
+    "card2Title": "Bank Information",
+    "card2Desc": "Securely save bank name, account number, and account owner details for refund processing.",
+    "card3Title": "Account Status",
+    "card3Desc": "System tracks reject count, account status, suspended date, and account activity.",
+    "card4Title": "Secure Access",
+    "card4Desc": "Your account is protected with authentication and encrypted password management.",
+    "createAccount": "Create Account",
+    "joinEcosystem": "Join the Kinetix ecosystem today",
+    "loginManually": "Account created! Please login manually.",
+    "creatingAccount": "CREATING ACCOUNT...",
+    "createAccountBtn": "+ CREATE ACCOUNT",
+    "errEmailFormat": "Invalid email format",
+    "errPasswordLength": "Password must be at least 8 characters",
+    "errTerms": "You must agree to the terms",
+    "errAge": "You must confirm your age"
+  },
+  "catalog": {
+    "hero": {
+      "title": "ALL PRODUCTS",
+      "desc": "Discover the best performance running shoes and gear.",
+      "count": "1,248 products"
+    },
+    "loading": "Loading products...",
+    "noProducts": "No products found.",
+    "addToCart": "Add to Cart",
+    "adding": "Adding…",
+    "remove": "Remove",
+    "outOfStock": "Product out of stock",
+    "perDay": "/ day",
+    "noImage": "No image",
+    "partners": "PARTNERS",
+    "loadMore": "Load more",
+    "remaining": "remaining",
+    "banners": {
+      "strava": {
+        "badge": "PARTNER",
+        "desc": "Track every run. Connect with 100M+ athletes worldwide.",
+        "cta": "COMING SOON"
+      },
+      "leaderboard": {
+        "badge": "LEADERBOARD",
+        "title": "COMPETE & WIN",
+        "desc": "Track stats, climb ranks, race runners across Thailand.",
+        "cta": "COMING SOON"
+      },
+      "community": {
+        "title": "JOIN THE COMMUNITY",
+        "desc": "Built for athletes. Backed by community.",
+        "cta": "VIEW COMMUNITY"
+      }
+    }
+  },
+  "showcase": {
+    "badge": "Catalog",
+    "title": "Our shoes",
+    "viewAll": "View all shoes →",
+    "perDay": "/ day",
+    "reserve": "Reserve",
+    "categories": {
+      "All": "All",
+      "Road": "Road",
+      "Trail": "Trail",
+      "Daily trainer": "Daily trainer"
+    }
+  }
+}

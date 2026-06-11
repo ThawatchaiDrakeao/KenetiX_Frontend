@@ -1,12 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Button from "./ui/Button";
-
-const STATS = [
-  { value: "120+", label: "Premium models" },
-  { value: "4.9★", label: "Avg. rating" },
-  { value: "24h", label: "24h Delivery" },
-  { value: "12k+", label: "Happy runners" },
-];
+import { useLanguage } from "../context/useLanguage";
 
 const HERO_SHOES = [
   { name: "Adizero Adios Pro 4", price: "490", video: "/hero/1.webm" },
@@ -20,9 +14,17 @@ const N = HERO_SHOES.length;
 const CAROUSEL_INTERVAL = 3500;
 
 export default function Hero() {
+  const { t } = useLanguage();
   const [current, setCurrent] = useState(0);
   const [outgoing, setOutgoing] = useState(null);
   const currentRef = useRef(0);
+
+  const STATS = [
+    { value: "120+", label: t("hero.stats.models") },
+    { value: "4.9★", label: t("hero.stats.rating") },
+    { value: "24h", label: t("hero.stats.delivery") },
+    { value: "12k+", label: t("hero.stats.runners") },
+  ];
 
   const advance = () => {
     const c = currentRef.current;
@@ -40,7 +42,7 @@ export default function Hero() {
 
   const getStyle = (i) => {
     const isOut = i === outgoing;
-    const dist = (i - current + N) % N; // 0 = current (top)
+    const dist = (i - current + N) % N;
     const zIndex = isOut ? N + 1 : N - dist;
 
     return {
@@ -85,25 +87,25 @@ export default function Hero() {
             <div className="inline-flex items-center gap-2 bg-neon/10 border border-neon/20 rounded-full px-4 py-1.5 w-fit">
               <span className="w-2 h-2 rounded-full bg-neon animate-pulse" />
               <span className="text-neon text-xs font-semibold tracking-wider uppercase">
-                Now in Bangkok
+                {t("hero.badge")}
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.08] tracking-tight">
-              <span className="text-white">Rent.</span>{" "}
-              <span className="text-white">Test.</span>{" "}
-              <span className="text-neon">Run.</span>
+            <h1 className="text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight">
+              <span className="text-white">{t("hero.title1")}</span>{" "}
+              <span className="text-white">{t("hero.title2")}</span>{" "}
+              <span className="text-neon">{t("hero.title3")}</span>
               <br />
-              <span className="text-white/40">Decide.</span>
+              <span className="text-white/40">{t("hero.title4")}</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-white/55 max-w-md leading-relaxed">
-              Try the world's best running shoes. Rent first, buy with confidence.
+            <p className="text-lg text-white/55 max-w-md leading-relaxed">
+              {t("hero.desc")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button variant="primary" size="lg" to="/catalog">
-                Browse catalog
+                {t("hero.browseCatalog")}
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -119,7 +121,7 @@ export default function Hero() {
                 </svg>
               </Button>
               <Button variant="outline" size="lg" href="#features">
-                How it works
+                {t("hero.howItWorks")}
               </Button>
             </div>
 
@@ -199,7 +201,7 @@ export default function Hero() {
                   <span className="text-neon text-sm font-bold">฿</span>
                 </div>
                 <div>
-                  <p className="text-xs text-white/40">Starting from</p>
+                  <p className="text-xs text-white/40">{t("hero.startingFrom")}</p>
                   <p className="text-white font-bold text-sm">
                     {active.price} / day
                   </p>
@@ -209,7 +211,7 @@ export default function Hero() {
               {/* Floating badge — model */}
               <div className="absolute -top-4 -right-6 bg-dark-elevated border border-neon/20 rounded-2xl px-4 py-3 shadow-xl z-20">
                 <p className="text-neon text-xs font-semibold">{active.name}</p>
-                <p className="text-white/40 text-xs">Available now</p>
+                <p className="text-white/40 text-xs">{t("hero.availableNow")}</p>
               </div>
             </div>
           </div>

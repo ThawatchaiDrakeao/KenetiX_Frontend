@@ -1,9 +1,12 @@
 // api/axios.js
 import axios from "axios";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://kinetix-qnx5.onrender.com";
+
 const API = axios.create({
-  //baseURL: import.meta.env.VITE_API_URL || "https://kinetix-qnx5.onrender.com",
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/",
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -13,64 +16,28 @@ const API = axios.create({
 // Request interceptor - Add auth token to every request
 API.interceptors.request.use(
   (config) => {
-    // Get token from cookie (browser automatically sends it with withCredentials)
-    // Also try to get from localStorage as backup
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // Log request in development
-    if (import.meta.env.DEV) {
-      console.log(` ${config.method?.toUpperCase()} ${config.url}`, config.data);
-    }
-
     return config;
   },
   (error) => {
-    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor - Handle common errors
+// On 401 (expired/invalid token), clear session and send the user back to login
 API.interceptors.response.use(
-  (response) => {
-    // Log response in development
-    if (import.meta.env.DEV) {
-      console.log(`📥 ${response.status} ${response.config.url}`, response.data);
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle 401 Unauthorized - redirect to login
     if (error.response?.status === 401) {
-      console.warn("Authentication expired or invalid");
-      localStorage.removeItem("user");
       localStorage.removeItem("authToken");
-
-      // Redirect to login if not already there
+      localStorage.removeItem("kinetix_user");
       if (!window.location.pathname.includes("/login")) {
         window.location.href = "/login";
       }
     }
-
-    // Handle 403 Forbidden
-    if (error.response?.status === 403) {
-      console.warn("Access forbidden - insufficient permissions");
-      // Optionally show a notification
-    }
-
-    // Handle 500 Server Error
-    if (error.response?.status === 500) {
-      console.error("Server error:", error.response.data);
-    }
-
-    // Handle network errors
-    if (error.code === "ECONNABORTED" || !error.response) {
-      console.error("Network error - check your connection");
-    }
-
     return Promise.reject(error);
   }
 );
@@ -89,7 +56,6 @@ export const setAuthToken = (token) => {
 // Helper method to clear auth on logout
 export const clearAuth = () => {
   localStorage.removeItem("authToken");
-  localStorage.removeItem("user");
   delete API.defaults.headers.common["Authorization"];
 };
 
