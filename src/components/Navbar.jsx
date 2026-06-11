@@ -1,23 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Button from "./ui/Button";
 import CartDrawer from "./CartDrawer";
 import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
+import { useNotifications } from "../context/NotificationContext";
 import { useLanguage } from "../context/useLanguage";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const { pathname } = useLocation();
   const isLight = pathname === "/userdashboard";
 
   const { user } = useAuth();
-  const { cartCount } = useCart();
-  const { wishlistCount } = useWishlist();
+  const { cartCount, isCartOpen, openCart, closeCart } = useCart();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const { language, setLanguage, t } = useLanguage();
   const isLoggedIn = !!user;
   const isAdmin = user && (
@@ -98,11 +97,14 @@ export default function Navbar() {
 
               {isLoggedIn ? (
                 <UserActions
-                  onOpenCart={() => setCartOpen(true)}
+                  onOpenCart={openCart}
                   cartCount={cartCount}
-                  wishlistCount={wishlistCount}
                   isLight={isLight}
                   isAdmin={isAdmin}
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  markAsRead={markAsRead}
+                  markAllAsRead={markAllAsRead}
                 />
               ) : (
                 <GuestActions t={t} />
@@ -147,7 +149,7 @@ export default function Navbar() {
                   <Button variant="outline" size="sm" to="/profile" onClick={() => setMenuOpen(false)}>
                     {t('nav.profile')}
                   </Button>
-                  <Button variant="primary" size="sm" onClick={() => { setCartOpen(true); setMenuOpen(false); }}>
+                  <Button variant="primary" size="sm" onClick={() => { openCart(); setMenuOpen(false); }}>
                     {t('nav.cart')}
                   </Button>
                 </>
@@ -166,7 +168,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
     </>
   );
 }
@@ -180,7 +182,7 @@ function GuestActions({ t }) {
   );
 }
 
-function UserActions({ onOpenCart, cartCount, wishlistCount, isLight, isAdmin }) {
+function UserActions({ onOpenCart, cartCount, isLight, isAdmin, notifications, unreadCount, markAsRead, markAllAsRead }) {
   const iconCls = `w-8 h-8 flex items-center justify-center transition-colors ${isLight ? "text-gray-500 hover:text-[#C3FF51]" : "text-white/35 hover:text-[#C3FF51]"}`;
   return (
     <>
@@ -193,16 +195,14 @@ function UserActions({ onOpenCart, cartCount, wishlistCount, isLight, isAdmin })
         </Link>
       )}
 
-      <Link to="/userdashboard#favourites" className={`relative ${iconCls}`} aria-label="Favourites">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-        </svg>
-        {wishlistCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C3FF51] text-[#080809] text-[9px] font-bold rounded-full flex items-center justify-center">
-            {wishlistCount}
-          </span>
-        )}
-      </Link>
+      <NotificationBell
+        iconCls={iconCls}
+        notifications={notifications}
+        unreadCount={unreadCount}
+        markAsRead={markAsRead}
+        markAllAsRead={markAllAsRead}
+      />
+
 
       <button onClick={onOpenCart} className={`relative ${iconCls}`} aria-label="Cart">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -221,5 +221,71 @@ function UserActions({ onOpenCart, cartCount, wishlistCount, isLight, isAdmin })
         </svg>
       </Link>
     </>
+  );
+}
+
+function NotificationBell({ iconCls, notifications, unreadCount, markAsRead, markAllAsRead }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className={`relative ${iconCls}`}
+        aria-label="Notifications"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+        {unreadCount > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#C3FF51] text-[#080809] text-[9px] font-bold rounded-full flex items-center justify-center">
+            {unreadCount}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-[#0f0f10] border border-[#1e1e20] rounded-xl shadow-xl z-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#1e1e20]">
+            <span className="text-white text-sm font-bold">Notifications</span>
+            {unreadCount > 0 && (
+              <button
+                onClick={markAllAsRead}
+                className="text-[#C3FF51] text-xs hover:underline"
+              >
+                Mark all as read
+              </button>
+            )}
+          </div>
+
+          {notifications.length === 0 ? (
+            <p className="text-zinc-500 text-sm text-center py-8">No notifications</p>
+          ) : (
+            notifications.map((n) => (
+              <button
+                key={n._id}
+                onClick={() => markAsRead(n._id)}
+                className={`block w-full text-left px-4 py-3 border-b border-[#1e1e20] last:border-0 transition-colors hover:bg-white/5 ${n.isRead ? "" : "bg-[#C3FF51]/5"}`}
+              >
+                <p className="text-white text-xs font-semibold">{n.title}</p>
+                <p className="text-zinc-400 text-xs mt-1">{n.message}</p>
+                <p className="text-zinc-600 text-[10px] mt-1">
+                  {new Date(n.createdAt).toLocaleString()}
+                </p>
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
   );
 }

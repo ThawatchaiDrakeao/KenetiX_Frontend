@@ -1,10 +1,9 @@
-import Button from "./ui/Button";
 import { useLanguage } from "../context/useLanguage";
 
 const PLAN_VARIANTS = [
-  { highlight: false, ctaVariant: "outline" },
-  { highlight: true,  ctaVariant: "primary" },
-  { highlight: false, ctaVariant: "outline" },
+  { highlight: false },
+  { highlight: true },
+  { highlight: false },
 ];
 
 export default function Pricing() {
@@ -28,7 +27,7 @@ export default function Pricing() {
 
         <div className="grid sm:grid-cols-3 gap-5 items-start">
           {plans.map((plan, idx) => {
-            const { highlight, ctaVariant } = PLAN_VARIANTS[idx];
+            const { highlight } = PLAN_VARIANTS[idx];
             return (
               <div
                 key={idx}
@@ -85,15 +84,6 @@ export default function Pricing() {
                     </li>
                   ))}
                 </ul>
-
-                <Button
-                  variant={ctaVariant}
-                  size="md"
-                  href="#catalog"
-                  className="mt-auto w-full"
-                >
-                  {plan.cta}
-                </Button>
               </div>
             );
           })}

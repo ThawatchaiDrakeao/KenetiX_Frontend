@@ -5,6 +5,7 @@ import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 
 // ─── API ───────────────────────────────────────────────────────────────────────
 const api = {
@@ -323,7 +324,7 @@ const CurrentRentalItem = ({ brand, name, size, date, price, image }) => (
     </div>
 );
 
-const FavouriteProductItem = ({ id, brand, name, price, image, onRemove, onView }) => (
+const FavouriteProductItem = ({ id, brand, name, price, image, onRemove, onRent }) => (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-5 flex items-center gap-6">
         <div className="w-16 h-16 bg-[#F1F5F9] rounded-lg flex items-center justify-center p-3">
             <img
@@ -346,7 +347,7 @@ const FavouriteProductItem = ({ id, brand, name, price, image, onRemove, onView 
         </div>
         <div className="flex items-center gap-2">
             <button
-                onClick={() => onView(id)}
+                onClick={onRent}
                 className="text-xs font-semibold px-4 py-2 rounded-lg border bg-neon text-neutral-950 border-neon transition-colors hover:bg-neon-hover"
             >
                 เช่าเลย
@@ -466,6 +467,7 @@ const DashboardPage = () => {
     const { logout, user } = useAuth();
     const navigate         = useNavigate();
     const { wishlist, removeFromWishlist } = useWishlist();
+    const { addToCart, openCart } = useCart();
 
     const setLoad  = (key, val) => setLoading(p => ({ ...p, [key]: val }));
     const setError = (key, msg) => setErrors(p => ({ ...p, [key]: msg }));
@@ -575,7 +577,24 @@ const DashboardPage = () => {
         if (ok) showToast("ลบออกจากรายการโปรดแล้ว");
     };
 
-    const handleViewFavourite = () => navigate("/catalog");
+    const handleRentFavourite = async (product) => {
+        const defaultVariant = product?.variants?.[0];
+        const defaultSize = defaultVariant?.size?.[0];
+        if (!defaultVariant || !defaultSize) {
+            showToast("สินค้าหมดสต็อก");
+            return;
+        }
+        const ok = await addToCart({
+            item: product._id,
+            name: product.modelName,
+            image: defaultVariant.images?.[0] || "",
+            price: product?.rentalPlan?.[0]?.["1day"] || 0,
+            skuColorCode: defaultVariant.skuColorCode,
+            size: defaultSize.size,
+            quantity: 1,
+        });
+        if (ok) openCart();
+    };
 
     return (
         <div className="min-h-screen font-sans flex flex-col antialiased pt-16 lg:pt-18" style={{ background: "#F8FAFC" }}>
@@ -791,7 +810,7 @@ const DashboardPage = () => {
                                                     price={price}
                                                     image={image}
                                                     onRemove={handleRemoveFavourite}
-                                                    onView={handleViewFavourite}
+                                                    onRent={() => handleRentFavourite(product)}
                                                 />
                                             );
                                         })}

@@ -13,7 +13,11 @@ const CartContext = createContext(null);
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const { user } = useAuth();
+
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
   // Fetch cart from backend
   const fetchUserCart = useCallback(async () => {
@@ -100,6 +104,9 @@ export function CartProvider({ children }) {
     addToCart,
     removeFromCart,
     fetchUserCart,
+    isCartOpen,
+    openCart,
+    closeCart,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
